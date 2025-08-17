@@ -5,7 +5,7 @@ import CaseHistory from './components/CaseHistory'
 import { initOfflineStorage } from './utils/offline'
 
 function App() {
-  const [currentView, setCurrentView] = useState('home')
+  const [activeTab, setActiveTab] = useState('diagnose')
   const [isOfflineReady, setIsOfflineReady] = useState(false)
 
   useEffect(() => {
@@ -25,38 +25,23 @@ function App() {
     }
   }, [])
 
-  const handleStartDiagnosis = () => {
-    setCurrentView('diagnose')
-  }
-
-  const handleViewHistory = () => {
-    setCurrentView('history')
-  }
-
-  const handleBackToHome = () => {
-    setCurrentView('home')
-  }
-
-  const renderCurrentView = () => {
-    switch (currentView) {
+  const renderActiveTab = () => {
+    switch (activeTab) {
       case 'diagnose':
-        return <DiagnoseFlow onBack={handleBackToHome} />
+        return <DiagnoseFlow onBack={() => setActiveTab('history')} />
       case 'history':
-        return <CaseHistory onBack={handleBackToHome} />
+        return <CaseHistory onBack={() => setActiveTab('diagnose')} />
+      case 'connect':
+        return <div className="p-4">Connect feature coming soon.</div>
       default:
-        return (
-          <Layout 
-            onStartDiagnosis={handleStartDiagnosis}
-            onViewHistory={handleViewHistory}
-          />
-        )
+        return null
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {renderCurrentView()}
-    </div>
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+      {renderActiveTab()}
+    </Layout>
   )
 }
 
