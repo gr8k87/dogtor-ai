@@ -64,8 +64,12 @@ waitForPort = 5173
 
 [[ports]]
 localPort = 5000
-externalPort = 80 # ✅ Frontend gets main domain
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
 
 [[ports]]
 localPort = 8000
-externalPort = 8000 # ✅ Backend API accessible at :8000
+externalPort = 8000
