@@ -72,7 +72,10 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <i data-feather="camera" className="w-10 h-10 text-white"></i>
+            <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Health Check</h1>
           <p className="text-gray-600">Take a photo for AI analysis</p>
@@ -91,7 +94,10 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
                   onClick={() => setPreview(null)}
                   className="absolute top-3 right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
                 >
-                  <i data-feather="x" className="w-4 h-4"></i>
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
                 </button>
               )}
             </div>
@@ -121,7 +127,11 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
             >
               <div className="space-y-4">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
-                  <i data-feather="upload-cloud" className="w-8 h-8 text-blue-600"></i>
+                  <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="16,16 12,12 8,16"></polyline>
+                    <line x1="12" y1="12" x2="12" y2="21"></line>
+                    <path d="M20.39 18.39A5 5 0 0 0 16 12h-1.38A7 7 0 1 0 9 20z"></path>
+                  </svg>
                 </div>
                 
                 <div>
@@ -143,7 +153,10 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
                     htmlFor="file-upload"
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
-                    <i data-feather="camera" className="w-5 h-5 mr-2"></i>
+                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
                     Choose Photo
                   </label>
                 </div>
@@ -154,7 +167,10 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <i data-feather="lightbulb" className="w-4 h-4 text-amber-600"></i>
+                  <svg className="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21h6"></path>
+                    <path d="M12 3C8.5 3 6 5.5 6 9c0 1 0 3 3 5h6c3-2 3-4 3-5 0-3.5-2.5-6-6-6z"></path>
+                  </svg>
                 </div>
                 <div>
                   <h4 className="font-medium text-amber-900 mb-1">Photo Tips</h4>

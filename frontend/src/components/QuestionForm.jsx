@@ -56,7 +56,10 @@ function QuestionForm({ questions, observations, onSubmit, onBack, isSubmitting 
               onClick={onBack}
               className="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              <i data-feather="arrow-left" className="w-5 h-5 text-gray-600"></i>
+              <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12,19 5,12 12,5"></polyline>
+              </svg>
             </button>
             <h1 className="text-xl font-bold text-gray-900">Health Questions</h1>
             <div className="w-10 h-10"></div>
@@ -81,7 +84,10 @@ function QuestionForm({ questions, observations, onSubmit, onBack, isSubmitting 
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <i data-feather="eye" className="w-5 h-5 text-blue-600"></i>
+                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">AI Observations</h3>
