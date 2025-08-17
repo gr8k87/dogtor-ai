@@ -62,11 +62,10 @@ task = "shell.exec"
 args = "cd frontend && PORT=${PORT:-5173} npm run dev"
 waitForPort = 5173
 
-# Ports: drop 5000. Keep 5173 for Vite, 8000 for backend if you want to open them.
 [[ports]]
-localPort = 5173
-externalPort = 5173
+localPort = 5000
+externalPort = 80 # ✅ Frontend gets main domain
 
 [[ports]]
 localPort = 8000
-externalPort = 80
+externalPort = 8000 # ✅ Backend API accessible at :8000
