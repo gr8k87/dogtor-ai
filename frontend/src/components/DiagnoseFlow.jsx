@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react'
 import ImageUpload from './ImageUpload'
 import QuestionForm from './QuestionForm'
 import TriageResults from './TriageResults'
+import CaseHistory from './CaseHistory'
 import { analyzeObservations, submitAnswers, generateTriage } from '../services/api'
 import { saveCaseOffline } from '../utils/offline'
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
@@ -9,9 +11,9 @@ import 'react-tabs/style/react-tabs.css';
 import { FaShieldAlt, FaBookOpen, FaPlug } from 'react-icons/fa';
 import { IconContext } from "react-icons";
 
-
 function DiagnoseFlow({ isOnline }) {
   const [step, setStep] = useState('upload') // upload, questions, results
+  const [activeTab, setActiveTab] = useState(0) // 0: diagnose, 1: history, 2: connect
   const [currentCase, setCurrentCase] = useState(null)
   const [observations, setObservations] = useState(null)
   const [questions, setQuestions] = useState([])
@@ -90,160 +92,158 @@ function DiagnoseFlow({ isOnline }) {
     }
   }
 
-  // Offline state
-  if (!isOnline && step !== 'upload') {
+  const renderDiagnoseContent = () => {
+    // Offline state
+    if (!isOnline && step !== 'upload') {
+      return (
+        <div className="max-w-2xl mx-auto p-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+              <i data-feather="wifi-off" className="w-8 h-8 text-yellow-600"></i>
+            </div>
+            <h3 className="text-lg font-medium text-yellow-800 mb-2">Offline Mode</h3>
+            <p className="text-yellow-700 mb-4">
+              Internet connection required for new AI analysis. You can view your case history offline.
+            </p>
+            <button
+              onClick={handleStartNew}
+              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    if (step === 'upload') {
+      return (
+        <>
+          <ImageUpload
+            onUploadComplete={handleUploadComplete}
+            onUploadStart={() => setIsAnalyzing(true)}
+          />
+          {isAnalyzing && (
+            <div className="max-w-2xl mx-auto p-4">
+              <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Analyzing Image...</h3>
+                <p className="text-gray-600">
+                  Our AI is examining the photo to identify key health indicators
+                </p>
+              </div>
+            </div>
+          )}
+        </>
+      )
+    }
+
+    if (step === 'questions') {
+      return (
+        <QuestionForm
+          questions={questions}
+          observations={observations}
+          onSubmit={handleAnswersSubmit}
+          onBack={handleStartNew}
+          isSubmitting={isAnalyzing}
+        />
+      )
+    }
+
+    if (step === 'results') {
+      return (
+        <TriageResults
+          triageResults={triageResults}
+          caseData={currentCase}
+          observations={observations}
+          onStartNew={handleStartNew}
+        />
+      )
+    }
+  }
+
+  const renderHistoryContent = () => {
+    return <CaseHistory isOnline={isOnline} />
+  }
+
+  const renderConnectContent = () => {
     return (
       <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
-            <i data-feather="wifi-off" className="w-8 h-8 text-yellow-600"></i>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+              <FaPlug className="w-8 h-8 text-blue-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Connect with a Veterinarian</h2>
+            <p className="text-gray-600 mb-6 text-sm">
+              Export your case data to share with your veterinarian or connect with partner clinics.
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <p className="text-yellow-800 text-sm">
+                <strong>Coming Soon:</strong> Direct integration with veterinary partners for seamless case sharing.
+              </p>
+            </div>
+            <p className="text-xs text-gray-500">
+              For now, use the Export JSON feature in case history to share your analysis with your vet.
+            </p>
           </div>
-          <h3 className="text-lg font-medium text-yellow-800 mb-2">Offline Mode</h3>
-          <p className="text-yellow-700 mb-4">
-            Internet connection required for new AI analysis. You can view your case history offline.
-          </p>
-          <button
-            onClick={handleStartNew}
-            className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-          >
-            Try Again
-          </button>
         </div>
       </div>
     )
   }
 
-  if (step === 'upload') {
-    return (
-      <>
-        <ImageUpload
-          onUploadComplete={handleUploadComplete}
-          onUploadStart={() => setIsAnalyzing(true)}
-        />
-        {isAnalyzing && (
-          <div className="max-w-2xl mx-auto p-4">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Analyzing Image...</h3>
-              <p className="text-gray-600">
-                Our AI is examining the photo to identify key health indicators
-              </p>
-            </div>
-          </div>
-        )}
-      </>
-    )
-  }
-
-  if (step === 'questions') {
-    return (
-      <QuestionForm
-        questions={questions}
-        observations={observations}
-        onSubmit={handleAnswersSubmit}
-        onBack={handleStartNew}
-        isSubmitting={isAnalyzing}
-      />
-    )
-  }
-
-  if (step === 'results') {
-    return (
-      <TriageResults
-        triageResults={triageResults}
-        caseData={currentCase}
-        observations={observations}
-        onStartNew={handleStartNew}
-      />
-    )
-  }
-
   return (
-    <IconContext.Provider value={{ size: '1.5em', className: 'global-class-name' }}>
-      <Tabs selectedTabClassName="bg-blue-600 text-white" className="flex flex-col md:flex-row">
-        <TabList className="flex justify-around md:flex-col md:w-24 p-2 bg-gray-100 md:h-screen">
-          <Tab
-            onClick={() => setStep('upload')}
-            className="p-3 cursor-pointer rounded-md text-center transition duration-200 ease-in-out hover:bg-gray-200 focus:outline-none"
-          >
-            <div className="flex flex-col items-center">
-              <FaShieldAlt />
-              <span className="text-xs mt-1">Diagnose</span>
-            </div>
-          </Tab>
-          <Tab
-            onClick={() => setStep('history')} // Assuming 'history' is a new state for history view
-            className="p-3 cursor-pointer rounded-md text-center transition duration-200 ease-in-out hover:bg-gray-200 focus:outline-none"
-          >
-            <div className="flex flex-col items-center">
-              <FaBookOpen />
-              <span className="text-xs mt-1">History</span>
-            </div>
-          </Tab>
-          <Tab
-            onClick={() => setStep('connect')} // Assuming 'connect' is a new state for connect view
-            className="p-3 cursor-pointer rounded-md text-center transition duration-200 ease-in-out hover:bg-gray-200 focus:outline-none"
-          >
-            <div className="flex flex-col items-center">
-              <FaPlug />
-              <span className="text-xs mt-1">Connect</span>
-            </div>
-          </Tab>
-        </TabList>
+    <IconContext.Provider value={{ size: '1.5em' }}>
+      <div className="flex flex-col h-screen pb-16">
+        <Tabs 
+          selectedIndex={activeTab} 
+          onSelect={(index) => setActiveTab(index)}
+          className="flex flex-col h-full"
+        >
+          {/* Tab Content */}
+          <div className="flex-1 overflow-auto">
+            <TabPanel>
+              {renderDiagnoseContent()}
+            </TabPanel>
+            <TabPanel>
+              {renderHistoryContent()}
+            </TabPanel>
+            <TabPanel>
+              {renderConnectContent()}
+            </TabPanel>
+          </div>
 
-        <TabPanel className="w-full p-4">
-          {step === 'upload' && (
-            <>
-              <ImageUpload
-                onUploadComplete={handleUploadComplete}
-                onUploadStart={() => setIsAnalyzing(true)}
-              />
-              {isAnalyzing && (
-                <div className="max-w-2xl mx-auto p-4">
-                  <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Analyzing Image...</h3>
-                    <p className="text-gray-600">
-                      Our AI is examining the photo to identify key health indicators
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-          {step === 'questions' && (
-            <QuestionForm
-              questions={questions}
-              observations={observations}
-              onSubmit={handleAnswersSubmit}
-              onBack={handleStartNew}
-              isSubmitting={isAnalyzing}
-            />
-          )}
-          {step === 'results' && (
-            <TriageResults
-              triageResults={triageResults}
-              caseData={currentCase}
-              observations={observations}
-              onStartNew={handleStartNew}
-            />
-          )}
-        </TabPanel>
-        <TabPanel className="w-full p-4">
-          {/* History Content Placeholder */}
-          <h2 className="text-2xl font-bold mb-4">Case History</h2>
-          <p>Your past consultations will be listed here.</p>
-          {/* Add actual history component or logic here */}
-        </TabPanel>
-        <TabPanel className="w-full p-4">
-          {/* Connect Content Placeholder */}
-          <h2 className="text-2xl font-bold mb-4">Connect</h2>
-          <p>Information about connecting with healthcare providers.</p>
-          {/* Add actual connect component or logic here */}
-        </TabPanel>
-      </Tabs>
+          {/* Bottom Tab Navigation - Mobile App Style */}
+          <TabList className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 z-30">
+            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
+                <FaShieldAlt />
+              </div>
+              <span className={`text-xs font-medium ${activeTab === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
+                Diagnose
+              </span>
+            </Tab>
+            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
+                <FaBookOpen />
+              </div>
+              <span className={`text-xs font-medium ${activeTab === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
+                History
+              </span>
+            </Tab>
+            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 2 ? 'text-blue-600' : 'text-gray-500'}`}>
+                <FaPlug />
+              </div>
+              <span className={`text-xs font-medium ${activeTab === 2 ? 'text-blue-600' : 'text-gray-500'}`}>
+                Connect
+              </span>
+            </Tab>
+          </TabList>
+        </Tabs>
+      </div>
     </IconContext.Provider>
-  );
+  )
 }
 
 export default DiagnoseFlow
