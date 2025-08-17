@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 function Layout({ activeTab, setActiveTab, isOnline, children }) {
+  useEffect(() => {
+    // Initialize feather icons when component mounts
+    if (window.feather) {
+      window.feather.replace()
+    }
+  }, [activeTab])
   const tabs = [
     { id: 'diagnose', label: 'Diagnose', icon: 'shield-check' },
     { id: 'history', label: 'History', icon: 'file-text' },
