@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react'
 import { uploadCaseImage } from '../services/api'
 
@@ -66,24 +67,29 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
   }, [])
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Upload Dog Health Photo
-        </h2>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-8">
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <i data-feather="camera" className="w-10 h-10 text-white"></i>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Health Check</h1>
+          <p className="text-gray-600">Take a photo for AI analysis</p>
+        </div>
         
         {preview ? (
-          <div className="space-y-4">
-            <div className="relative">
+          <div className="space-y-6">
+            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden">
               <img
                 src={preview}
                 alt="Preview"
-                className="w-full max-h-64 object-contain rounded-lg border"
+                className="w-full h-64 object-cover"
               />
               {!isUploading && (
                 <button
                   onClick={() => setPreview(null)}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="absolute top-3 right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
                 >
                   <i data-feather="x" className="w-4 h-4"></i>
                 </button>
@@ -91,57 +97,73 @@ function ImageUpload({ onUploadComplete, onUploadStart }) {
             </div>
             
             {isUploading && (
-              <div className="text-center">
-                <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-lg">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent mr-2"></div>
-                  <span className="text-blue-600">Uploading image...</span>
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                  <span className="text-blue-600 font-medium">Analyzing image...</span>
+                </div>
+                <div className="mt-3 bg-blue-50 rounded-lg p-3">
+                  <p className="text-sm text-blue-700 text-center">Our AI is examining the photo for health indicators</p>
                 </div>
               </div>
             )}
           </div>
         ) : (
-          <div
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            className={`
-              border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
-              ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-            `}
-          >
-            <div className="space-y-4">
-              <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                <i data-feather="camera" className="w-8 h-8 text-gray-400"></i>
-              </div>
-              
-              <div>
-                <p className="text-lg font-medium text-gray-900 mb-2">
-                  Drop your image here, or click to select
-                </p>
-                <p className="text-sm text-gray-500 mb-4">
-                  Take a clear photo of your dog's stool for AI analysis
-                </p>
+          <div className="space-y-6">
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={`
+                bg-white rounded-2xl shadow-lg p-8 text-center cursor-pointer transition-all duration-200
+                ${isDragging ? 'bg-blue-50 border-2 border-dashed border-blue-300 scale-105' : 'hover:shadow-xl'}
+              `}
+            >
+              <div className="space-y-4">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+                  <i data-feather="upload-cloud" className="w-8 h-8 text-blue-600"></i>
+                </div>
                 
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileInput}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
-                >
-                  <i data-feather="upload" className="w-5 h-5 mr-2"></i>
-                  Select Image
-                </label>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Upload Photo
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Drag and drop or tap to select
+                  </p>
+                  
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileInput}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    <i data-feather="camera" className="w-5 h-5 mr-2"></i>
+                    Choose Photo
+                  </label>
+                </div>
               </div>
-              
-              <div className="text-xs text-gray-400 space-y-1">
-                <p>• Supported formats: JPG, PNG, WebP</p>
-                <p>• Max size: 5MB (will be auto-resized if larger)</p>
-                <p>• Best results: clear, well-lit photos</p>
+            </div>
+            
+            {/* Tips Card */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-feather="lightbulb" className="w-4 h-4 text-amber-600"></i>
+                </div>
+                <div>
+                  <h4 className="font-medium text-amber-900 mb-1">Photo Tips</h4>
+                  <ul className="text-sm text-amber-800 space-y-1">
+                    <li>• Clear, well-lit photos work best</li>
+                    <li>• Avoid shadows and reflections</li>
+                    <li>• JPG, PNG formats supported</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

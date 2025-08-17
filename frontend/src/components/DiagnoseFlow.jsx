@@ -96,21 +96,23 @@ function DiagnoseFlow({ isOnline }) {
     // Offline state
     if (!isOnline && step !== 'upload') {
       return (
-        <div className="max-w-2xl mx-auto p-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
-              <i data-feather="wifi-off" className="w-8 h-8 text-yellow-600"></i>
+        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-8 flex items-center justify-center">
+          <div className="max-w-md mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-2xl flex items-center justify-center">
+                <i data-feather="wifi-off" className="w-8 h-8 text-yellow-600"></i>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Offline Mode</h3>
+              <p className="text-gray-600 mb-6">
+                Internet connection required for new AI analysis. You can view your case history offline.
+              </p>
+              <button
+                onClick={handleStartNew}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg"
+              >
+                Try Again
+              </button>
             </div>
-            <h3 className="text-lg font-medium text-yellow-800 mb-2">Offline Mode</h3>
-            <p className="text-yellow-700 mb-4">
-              Internet connection required for new AI analysis. You can view your case history offline.
-            </p>
-            <button
-              onClick={handleStartNew}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-            >
-              Try Again
-            </button>
           </div>
         </div>
       )
@@ -124,10 +126,10 @@ function DiagnoseFlow({ isOnline }) {
             onUploadStart={() => setIsAnalyzing(true)}
           />
           {isAnalyzing && (
-            <div className="max-w-2xl mx-auto p-4">
-              <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Analyzing Image...</h3>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-2xl shadow-xl p-8 text-center max-w-sm mx-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Analyzing Image...</h3>
                 <p className="text-gray-600">
                   Our AI is examining the photo to identify key health indicators
                 </p>
@@ -168,24 +170,50 @@ function DiagnoseFlow({ isOnline }) {
 
   const renderConnectContent = () => {
     return (
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-              <FaPlug className="w-8 h-8 text-blue-600" />
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-8">
+        <div className="max-w-md mx-auto">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <FaPlug className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Connect with a Veterinarian</h2>
-            <p className="text-gray-600 mb-6 text-sm">
-              Export your case data to share with your veterinarian or connect with partner clinics.
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Connect with Vets</h1>
+            <p className="text-gray-600">Share your analysis with professionals</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon</h2>
+            <p className="text-gray-600 mb-4 leading-relaxed">
+              Direct integration with veterinary partners for seamless case sharing and professional consultations.
             </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <p className="text-yellow-800 text-sm">
-                <strong>Coming Soon:</strong> Direct integration with veterinary partners for seamless case sharing.
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p className="text-amber-800 text-sm">
+                <strong>For now:</strong> Use the Export feature in case history to share your analysis with your veterinarian.
               </p>
             </div>
-            <p className="text-xs text-gray-500">
-              For now, use the Export JSON feature in case history to share your analysis with your vet.
-            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <h3 className="font-semibold text-gray-900 mb-3">What's Coming</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <i data-feather="video" className="w-4 h-4 text-blue-600"></i>
+                </div>
+                <span className="text-gray-700">Video consultations</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <i data-feather="map-pin" className="w-4 h-4 text-green-600"></i>
+                </div>
+                <span className="text-gray-700">Find nearby clinics</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <i data-feather="share-2" className="w-4 h-4 text-purple-600"></i>
+                </div>
+                <span className="text-gray-700">Direct case sharing</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -193,8 +221,8 @@ function DiagnoseFlow({ isOnline }) {
   }
 
   return (
-    <IconContext.Provider value={{ size: '1.5em' }}>
-      <div className="flex flex-col h-screen pb-16">
+    <IconContext.Provider value={{ size: '1.2em' }}>
+      <div className="flex flex-col h-screen">
         <Tabs 
           selectedIndex={activeTab} 
           onSelect={(index) => setActiveTab(index)}
@@ -213,29 +241,29 @@ function DiagnoseFlow({ isOnline }) {
             </TabPanel>
           </div>
 
-          {/* Bottom Tab Navigation - Mobile App Style */}
-          <TabList className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 z-30">
-            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
-              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
+          {/* Bottom Tab Navigation - Modern Mobile App Style */}
+          <TabList className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 flex justify-around items-center py-3 z-30 shadow-lg">
+            <Tab className="flex flex-col items-center justify-center px-4 py-2 min-w-0 flex-1 transition-all duration-200 cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 transition-all duration-200 ${activeTab === 0 ? 'text-blue-600 scale-110' : 'text-gray-500'}`}>
                 <FaShieldAlt />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
+              <span className={`text-xs font-medium transition-all duration-200 ${activeTab === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
                 Diagnose
               </span>
             </Tab>
-            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
-              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
+            <Tab className="flex flex-col items-center justify-center px-4 py-2 min-w-0 flex-1 transition-all duration-200 cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 transition-all duration-200 ${activeTab === 1 ? 'text-blue-600 scale-110' : 'text-gray-500'}`}>
                 <FaBookOpen />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
+              <span className={`text-xs font-medium transition-all duration-200 ${activeTab === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
                 History
               </span>
             </Tab>
-            <Tab className="flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors cursor-pointer outline-none">
-              <div className={`w-6 h-6 flex items-center justify-center mb-1 ${activeTab === 2 ? 'text-blue-600' : 'text-gray-500'}`}>
+            <Tab className="flex flex-col items-center justify-center px-4 py-2 min-w-0 flex-1 transition-all duration-200 cursor-pointer outline-none">
+              <div className={`w-6 h-6 flex items-center justify-center mb-1 transition-all duration-200 ${activeTab === 2 ? 'text-blue-600 scale-110' : 'text-gray-500'}`}>
                 <FaPlug />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 2 ? 'text-blue-600' : 'text-gray-500'}`}>
+              <span className={`text-xs font-medium transition-all duration-200 ${activeTab === 2 ? 'text-blue-600' : 'text-gray-500'}`}>
                 Connect
               </span>
             </Tab>
