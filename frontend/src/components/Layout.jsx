@@ -2,84 +2,83 @@ import React from 'react'
 
 function Layout({ activeTab, setActiveTab, isOnline, children }) {
   const tabs = [
-    { id: 'diagnose', label: 'Diagnose', icon: 'camera' },
-    { id: 'history', label: 'History', icon: 'folder' },
-    { id: 'connect', label: 'Connect', icon: 'users' }
+    { id: 'diagnose', label: 'Diagnose', icon: 'shield-check' },
+    { id: 'history', label: 'History', icon: 'file-text' },
+    { id: 'connect', label: 'Connect', icon: 'phone' }
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* Mobile Header - Simplified */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-20">
+        <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <i data-feather="heart" className="w-6 h-6 text-white"></i>
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <i data-feather="heart" className="w-5 h-5 text-white"></i>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Dogtor AI</h1>
-                <p className="text-sm text-gray-600">Not a vet, just your first step.</p>
+                <h1 className="text-lg font-bold text-gray-900">Dogtor AI</h1>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               {!isOnline && (
-                <div className="flex items-center text-orange-600 text-sm">
-                  <i data-feather="wifi-off" className="w-4 h-4 mr-1"></i>
-                  Offline
+                <div className="flex items-center text-orange-600 text-xs">
+                  <i data-feather="wifi-off" className="w-3 h-3 mr-1"></i>
+                  <span className="hidden sm:inline">Offline</span>
                 </div>
               )}
               
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-orange-500'}`}></div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Navigation */}
-      <nav className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex space-x-1">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors
-                  ${activeTab === tab.id 
-                    ? 'border-blue-600 text-blue-600' 
-                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-                  }
-                `}
-              >
-                <i data-feather={tab.icon} className="w-4 h-4"></i>
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
       {/* Main Content */}
-      <main className="flex-1 py-6">
+      <main className="flex-1 min-h-screen">
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <div className="text-center text-sm text-gray-600">
-            <p className="mb-2">
-              <strong>Medical Disclaimer:</strong> Dogtor AI provides informational triage only. 
-              Always consult with a qualified veterinarian for definitive diagnosis and treatment.
-            </p>
-            <p>© 2024 Dogtor AI. Not a replacement for professional veterinary care.</p>
-          </div>
+      {/* Bottom Navigation - Mobile App Style */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+        <div className="flex justify-around items-center py-2">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                flex flex-col items-center justify-center px-3 py-2 min-w-0 flex-1 transition-colors
+                ${activeTab === tab.id 
+                  ? 'text-blue-600' 
+                  : 'text-gray-600'
+                }
+              `}
+            >
+              <div className={`
+                w-6 h-6 flex items-center justify-center mb-1
+                ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-500'}
+              `}>
+                <i data-feather={tab.icon} className="w-5 h-5"></i>
+              </div>
+              <span className={`
+                text-xs font-medium
+                ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-500'}
+              `}>
+                {tab.label}
+              </span>
+            </button>
+          ))}
         </div>
-      </footer>
+      </nav>
+
+      {/* Medical Disclaimer - Mobile Optimized */}
+      <div className="fixed bottom-16 left-0 right-0 bg-yellow-50 border-t border-yellow-200 px-4 py-2 text-xs text-yellow-800 text-center hidden" id="disclaimer">
+        ⚠️ Not a vet—informational triage only. Always consult a veterinarian.
+      </div>
     </div>
   )
 }

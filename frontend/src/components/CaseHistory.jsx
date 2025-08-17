@@ -15,7 +15,7 @@ function CaseHistory({ isOnline }) {
   const loadCases = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       if (isOnline) {
         // Load from API
@@ -31,7 +31,7 @@ function CaseHistory({ isOnline }) {
       // Fallback to offline data
       const offlineCases = getCasesOffline()
       setCases(offlineCases)
-      
+
       if (!isOnline) {
         setError('Viewing offline data only. Connect to internet for latest cases.')
       } else {
@@ -45,7 +45,7 @@ function CaseHistory({ isOnline }) {
   const handleCaseClick = async (caseId) => {
     try {
       let fullCase
-      
+
       if (isOnline) {
         fullCase = await getCase(caseId)
       } else {
@@ -53,7 +53,7 @@ function CaseHistory({ isOnline }) {
         const offlineCases = getCasesOffline()
         fullCase = offlineCases.find(c => c.case_id === caseId)
       }
-      
+
       setSelectedCase(fullCase)
     } catch (err) {
       console.error('Failed to load case details:', err)
@@ -65,7 +65,7 @@ function CaseHistory({ isOnline }) {
     const jsonString = JSON.stringify(caseData, null, 2)
     const blob = new Blob([jsonString], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
-    
+
     const a = document.createElement('a')
     a.href = url
     a.download = `dogtor-case-${caseData.case_id}.json`
@@ -102,7 +102,7 @@ function CaseHistory({ isOnline }) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-4">
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Case History</h2>
@@ -301,7 +301,7 @@ function CaseDetail({ case: caseData, onBack, onExport }) {
                   {caseData.triage_summary.urgency_level} Priority
                 </span>
               </div>
-              
+
               <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
                 <p className="text-blue-800">
                   {caseData.triage_summary.triage_summary}
@@ -320,7 +320,7 @@ function CaseDetail({ case: caseData, onBack, onExport }) {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Recommended Actions</h4>
                   <ul className="space-y-1 text-sm text-gray-700">

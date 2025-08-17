@@ -48,14 +48,14 @@ function App() {
 // Connect to Vet tab (MVP stub)
 function ConnectToVet() {
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-4">
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">👩‍⚕️</span>
+            <i data-feather="phone" className="w-8 h-8 text-blue-600"></i>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Connect with a Veterinarian</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Connect with a Veterinarian</h2>
+          <p className="text-gray-600 mb-6 text-sm">
             Export your case data to share with your veterinarian or connect with partner clinics.
           </p>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -63,7 +63,7 @@ function ConnectToVet() {
               <strong>Coming Soon:</strong> Direct integration with veterinary partners for seamless case sharing.
             </p>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             For now, use the Export JSON feature in case history to share your analysis with your vet.
           </p>
         </div>
