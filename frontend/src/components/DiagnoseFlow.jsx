@@ -5,7 +5,7 @@ import QuestionForm from './QuestionForm'
 import TriageResults from './TriageResults'
 import { analyzeObservations, submitAnswers, generateTriage } from '../services/api'
 import { saveCaseOffline } from '../utils/offline'
-import { IconContext } from "react-icons";
+
 
 function DiagnoseFlow({ isOnline, activeTab, setActiveTab }) {
   const [step, setStep] = useState('upload') // upload, questions, results
@@ -171,7 +171,6 @@ function DiagnoseFlow({ isOnline, activeTab, setActiveTab }) {
   }
 
   return (
-    <IconContext.Provider value={{ size: '1.2em' }}>
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         {/* Header */}
         <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-20">
@@ -263,7 +262,6 @@ function DiagnoseFlow({ isOnline, activeTab, setActiveTab }) {
           </button>
         </div>
       </div>
-    </IconContext.Provider>
   )
 }
 
