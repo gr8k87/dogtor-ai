@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
+import Layout from './components/Layout'
 import DiagnoseFlow from './components/DiagnoseFlow'
 import CaseHistory from './components/CaseHistory'
 import { initOfflineStorage } from './utils/offline'
@@ -106,9 +107,15 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+      {/* Network status indicator */}
+      {!isOnline && (
+        <div className="bg-red-500 text-white text-center py-2 text-sm">
+          You are offline. Some features may be limited.
+        </div>
+      )}
       {renderActiveTab()}
-    </div>
+    </Layout>
   )
 }
 
