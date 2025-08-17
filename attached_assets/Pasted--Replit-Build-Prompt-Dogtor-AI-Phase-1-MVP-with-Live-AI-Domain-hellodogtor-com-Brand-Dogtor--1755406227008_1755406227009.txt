@@ -1,0 +1,109 @@
+🔧 Replit Build Prompt — Dogtor AI (Phase-1 MVP with Live AI)
+Domain: hellodogtor.com
+Brand: Dogtor (Dogtor AI in UI only)
+Tagline: “Not a vet, just your first step.”
+Goal
+Build a portable, production-lean MVP that runs locally via Docker and deploys as:
+Backend: FastAPI on Cloud Run (Python)
+Frontend: React (Vite + Tailwind) PWA (Vercel)
+Data/Storage: SQLite (dev) → Supabase Postgres + Storage (prod)
+AI: Live Gemini (vision + question gen) + Live OpenAI (triage)
+Architecture (unchanged portability)
+Strict separation: /frontend, /backend, /infra
+No Replit DB or secrets. Use .env + Docker.
+Images: dev → local /uploads; prod → Supabase Storage (CDN URLs)
+DB: dev → SQLite; prod → Supabase Postgres via DB_URL
+Live AI Integrations
+Implement real provider adapters in backend/services/ai.py:
+1) Gemini Vision (Observations + Follow-up Qs)
+Inputs: image URL (Supabase CDN or local dev URL)
+Outputs (JSON):
+{
+  "observations": {
+    "consistency": "loose|formed|hard|watery|unknown",
+    "color": "brown|yellow|green|black|red|tan|unknown",
+    "mucus": true,
+    "blood": "none|specks|streaks|visible",
+    "foreign_material": "none|grass|plastic|undigested_food|unknown",
+    "notes": "string"
+  },
+  "questions": [
+    {"id":"duration","type":"number","label":"How many days?","required":true},
+    {"id":"diet_change","type":"select","options":["No","Yes (new brand)","Yes (new protein)"]},
+    {"id":"vomiting","type":"select","options":["No","Once","Multiple times"]},
+    {"id":"energy","type":"select","options":["Normal","Slightly low","Low"]},
+    {"id":"deworming_recent","type":"select","options":["No","Within 3 months","> 3 months ago"]}
+  ]
+}
+Models: Prefer Gemini 1.5 Pro (Vision) via Google AI Studio SDK or Vertex AI (your choice).
+Constraints: Max image size ~3–5MB; resize on upload if larger.
+Timeout: 12s; Retry: 1 with exponential backoff; on failure return a minimal safe question set and set observations.notes = "Vision unavailable; using defaults."
+2) ChatGPT/OpenAI (Triage)
+Inputs: Gemini observations + user answers (structured) + short owner-facing prompt guardrails.
+Outputs (JSON):
+{
+  "triage_summary": "empathetic 1–2 sentence recap",
+  "possible_causes": ["...","..."],
+  "recommended_actions": ["...","..."],
+  "urgency_level": "Low|Moderate|High"
+}
+Models: GPT-4o mini (cost-efficient) or GPT-4o for higher quality.
+Tone/Safety: Never give definitive diagnosis; always include seek-vet-if thresholds.
+Timeout: 12s; Retry: 1; on failure respond with a conservative fallback (“We couldn’t complete AI triage right now—monitor hydration; contact a vet if symptoms persist >48h or worsen.”) and mark triage_summary.meta.error=true.
+API Endpoints (live)
+POST /api/cases/upload → store image (dev: /uploads; prod: Supabase Storage) → { case_id, image_url }
+POST /api/cases/{id}/observations → call Gemini → persist {observations, questions} → return payload
+POST /api/cases/{id}/answers → persist {answers} → return merged case
+POST /api/cases/{id}/triage → call OpenAI with observations+answers → persist triage JSON → return triage JSON
+GET /api/cases → list summaries (thumb, summary line, timestamp, status)
+GET /api/cases/{id} → full case JSON
+Data Model (Pydantic/DB)
+{
+  "case_id": "uuid",
+  "timestamp": "ISO8601",
+  "image_url": "string",
+  "observations": {},
+  "user_answers": {},
+  "triage_summary": {},
+  "status": "open|closed",
+  "vet_shared": false
+}
+Frontend (PWA + UX)
+Tabs: Diagnose / History / Connect-to-Vet
+Diagnose flow: upload → “Analyzing…” (Gemini) → render dynamic questions → submit → “Generating triage…” (OpenAI) → result view (summary, causes, actions, urgency chip). Buttons: Save to History, Share with Vet (stub).
+History: list → detail → export JSON
+Connect: MVP export JSON; future partner flow
+Offline: cache last 5–10 cases for read-only view
+Security & Privacy (Phase-1)
+Server-side keys only. No AI keys in frontend.
+Rate limit backend (IP + case-scoped) to deter abuse.
+CORS restricted via env: API_CORS_ORIGINS="http://localhost:5173,https://hellodogtor.com"
+PHI/PII: Don’t collect owner identity in MVP; case data only.
+Medical disclaimer shown near results: “Not a vet—informational triage only.”
+Errors, Timeouts, Fallbacks
+Standard error envelope: { "error": { "code": "AI_TIMEOUT", "message": "..." } }
+On Gemini failure → default question set + proceed to triage with observations.notes
+On OpenAI failure → conservative fallback triage + meta.error=true
+Log structured JSON for Cloud Run
+Env Vars
+Backend
+DB_URL (sqlite:///./dogtor.db dev; Supabase Postgres in prod)
+STORAGE_BACKEND = local | supabase
+SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE
+GEMINI_API_KEY (or Vertex creds via ADC)
+OPENAI_API_KEY
+API_CORS_ORIGINS
+MAX_IMAGE_MB (default 5)
+Frontend
+VITE_API_URL
+VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (if fetching public image URLs directly)
+Dev → Prod
+Docker & Compose for local (frontend :5173, backend :8000, optional local Postgres)
+cloudrun_deploy.sh builds and deploys backend, sets env vars, allows unauthenticated (MVP), and prints service URL
+Vercel for frontend; set VITE_API_URL to Cloud Run URL; attach hellodogtor.com
+Supabase: create bucket (public), set Postgres, copy keys to backend env
+Cost notes (typical MVP)
+Cloud Run free tier likely $0 for backend compute
+Supabase free tier OK initially (then $25/mo Pro)
+Vercel free OK initially
+AI usage: a few dollars/month at light traffic
