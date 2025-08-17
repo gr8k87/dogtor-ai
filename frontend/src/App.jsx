@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import Layout from './components/Layout'
 import DiagnoseFlow from './components/DiagnoseFlow'
 import CaseHistory from './components/CaseHistory'
+import Home from './components/Home'
 import { initOfflineStorage } from './utils/offline'
 
 function App() {
   const [currentView, setCurrentView] = useState('home')
+  const [activeTab, setActiveTab] = useState(null)
   const [isOfflineReady, setIsOfflineReady] = useState(false)
 
   useEffect(() => {
@@ -27,14 +29,31 @@ function App() {
 
   const handleStartDiagnosis = () => {
     setCurrentView('diagnose')
+    setActiveTab('diagnose')
   }
 
   const handleViewHistory = () => {
     setCurrentView('history')
+    setActiveTab('history')
   }
 
   const handleBackToHome = () => {
     setCurrentView('home')
+    setActiveTab(null)
+  }
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    switch (tab) {
+      case 'diagnose':
+        setCurrentView('diagnose')
+        break
+      case 'history':
+        setCurrentView('history')
+        break
+      default:
+        setCurrentView('home')
+    }
   }
 
   const renderCurrentView = () => {
@@ -44,19 +63,14 @@ function App() {
       case 'history':
         return <CaseHistory onBack={handleBackToHome} />
       default:
-        return (
-          <Layout 
-            onStartDiagnosis={handleStartDiagnosis}
-            onViewHistory={handleViewHistory}
-          />
-        )
+        return <Home onStartDiagnosis={handleStartDiagnosis} onViewHistory={handleViewHistory} />
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <Layout activeTab={activeTab} setActiveTab={handleTabChange}>
       {renderCurrentView()}
-    </div>
+    </Layout>
   )
 }
 
