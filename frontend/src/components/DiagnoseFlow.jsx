@@ -105,11 +105,10 @@ function DiagnoseFlow({ onBack }) {
       case 'results':
         return (
           <TriageResults
-            triageResult={triageResult}
-            imageUrl={imageUrl}
+            triageResults={triageResult}
+            caseData={{ case_id: caseId, image_url: imageUrl }}
             observations={observations}
-            onRestart={handleRestart}
-            onBack={onBack}
+            onStartNew={handleRestart}
           />
         )
       default:
