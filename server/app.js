@@ -14,6 +14,7 @@ app.use("/api/diagnose", diagnose);
 
 // Health check
 app.get("/health", (_req, res) => res.json({ ok: true }));
+app.get("/api/ping", (_req,res)=>res.json({pong:true}));
 
 // Serve client build
 app.use(express.static(path.join(__dirname, "static")));
