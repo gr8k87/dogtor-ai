@@ -1,0 +1,82 @@
+Update the Diagnose tab to render the new components explicitly.
+
+Edit /client/src/App.tsx:
+- Import the new components at the top:
+  import ImagePicker from "./components/ImagePicker";
+  import DynamicForm from "./components/DynamicForm";
+
+- Replace the Diagnose placeholder with this full block:
+
+  function DiagnoseView() {
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [formData, setFormData] = useState<Record<string, any>>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [showReview, setShowReview] = useState(false);
+
+    const schema = [
+      { id:'duration_days', type:'number', label:'How many days has this been happening?', min:0, max:30, step:1, required:true },
+      { id:'diet_change',   type:'select', label:'Recent diet change?', options:['Yes','No','Not sure'], required:true },
+      { id:'energy',        type:'radio',  label:'Energy level', options:['Normal','Slightly low','Very low'], required:true },
+      { id:'vomiting',      type:'yesno',  label:'Any vomiting?', required:true },
+      { id:'notes',         type:'text',   label:'Anything else to add?', placeholder:'Optional notes' }
+    ] as const;
+
+    function validate() {
+      const e: Record<string,string> = {};
+      if (!imageFile) e.image = "Please add a photo";
+      schema.forEach(f => {
+        if ((f as any).required && (formData[f.id] === undefined || formData[f.id] === "")) {
+          e[f.id] = "Required";
+        }
+      });
+      setErrors(e);
+      return Object.keys(e).length === 0;
+    }
+
+    function handleSubmit(e: React.FormEvent) {
+      e.preventDefault();
+      if (validate()) setShowReview(true);
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="rounded-2xl border p-4">
+          <h2 className="font-semibold mb-2">Add photo</h2>
+          <ImagePicker onChange={setImageFile} />
+          {errors.image && <p className="text-red-600 text-sm mt-2">{errors.image}</p>}
+        </div>
+
+        <form onSubmit={handleSubmit} className="rounded-2xl border p-4">
+          <h2 className="font-semibold mb-2">Questions</h2>
+          <DynamicForm schema={schema as any} value={formData} onChange={setFormData} />
+          {Object.entries(errors).filter(([k])=>k!=="image").length > 0 && (
+            <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>
+          )}
+          <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">
+            Review
+          </button>
+        </form>
+
+        {showReview && (
+          <div className="rounded-2xl border p-4">
+            <h2 className="font-semibold mb-2">Review</h2>
+            <ul className="text-sm space-y-1">
+              <li><strong>Duration:</strong> {formData.duration_days} day(s)</li>
+              <li><strong>Diet change:</strong> {formData.diet_change}</li>
+              <li><strong>Energy:</strong> {formData.energy}</li>
+              <li><strong>Vomiting:</strong> {formData.vomiting ? "Yes" : "No"}</li>
+              {formData.notes && <li><strong>Notes:</strong> {formData.notes}</li>}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+- In the main App component render section, replace
+  {tab === "Diagnose" && <div>Diagnose (placeholder)</div>}
+  with
+  {tab === "Diagnose" && <DiagnoseView />}
+
+Ensure the imports for React hooks exist:
+  import React, { useState } from "react";
