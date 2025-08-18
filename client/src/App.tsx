@@ -28,6 +28,7 @@ function DiagnoseView() {
   const [loading, setLoading] = useState(true);
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [triage, setTriage] = useState<any | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -62,13 +63,21 @@ function DiagnoseView() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    const res = await fetch("/api/diagnose/triage", {
-      method: "POST", 
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imagePresent: !!imageFile, answers: formData })
-    });
-    const j = await res.json();
-    setTriage(j);
+    
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/diagnose/triage", {
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imagePresent: !!imageFile, answers: formData })
+      });
+      const j = await res.json();
+      setTriage(j);
+    } catch (error) {
+      setErrMsg("Failed to analyze. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (loading) return <div className="p-4">Loading questions…</div>;
@@ -86,8 +95,12 @@ function DiagnoseView() {
         <DynamicForm schema={schema || []} value={formData} onChange={setFormData} />
         {Object.entries(errors).filter(([k]) => k !== "image").length > 0 &&
           <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>}
-        <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">
-          Review
+        <button 
+          type="submit" 
+          disabled={submitting}
+          className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
+        >
+          {submitting ? "Analyzing..." : "Review"}
         </button>
       </form>
       {triage && (
