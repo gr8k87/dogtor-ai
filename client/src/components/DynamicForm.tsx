@@ -1,159 +1,56 @@
 
-import React from 'react';
-
-type FormField = 
-  | { id: string; type: 'select'; label: string; options: string[]; required?: boolean }
-  | { id: string; type: 'radio'; label: string; options: string[]; required?: boolean }
-  | { id: string; type: 'yesno'; label: string; required?: boolean }
-  | { id: string; type: 'text'; label: string; placeholder?: string; required?: boolean }
-  | { id: string; type: 'number'; label: string; min?: number; max?: number; step?: number; required?: boolean };
-
-interface DynamicFormProps {
-  schema: FormField[];
-  value: Record<string, any>;
-  onChange: (next: Record<string, any>) => void;
-  errors?: Record<string, string>;
-}
-
-export default function DynamicForm({ schema, value, onChange, errors = {} }: DynamicFormProps) {
-  const updateValue = (fieldId: string, fieldValue: any) => {
-    onChange({
-      ...value,
-      [fieldId]: fieldValue
-    });
-  };
-
-  const renderField = (field: FormField) => {
-    const hasError = errors[field.id];
-    const errorClass = hasError ? 'border-red-500' : 'border-gray-300';
-    
-    switch (field.type) {
-      case 'select':
-        return (
-          <div key={field.id} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <select
-              value={value[field.id] || ''}
-              onChange={(e) => updateValue(field.id, e.target.value)}
-              className={`w-full min-h-12 px-3 py-2 border ${errorClass} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
-              aria-label={field.label}
-            >
-              <option value="">Select an option</option>
-              {field.options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            {hasError && <p className="text-sm text-red-600">{hasError}</p>}
-          </div>
-        );
-
-      case 'radio':
-        return (
-          <div key={field.id} className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <div className="space-y-2">
-              {field.options.map((option) => (
-                <label key={option} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={field.id}
-                    value={option}
-                    checked={value[field.id] === option}
-                    onChange={(e) => updateValue(field.id, e.target.value)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    aria-label={`${field.label}: ${option}`}
-                  />
-                  <span className="text-sm text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-            {hasError && <p className="text-sm text-red-600">{hasError}</p>}
-          </div>
-        );
-
-      case 'yesno':
-        return (
-          <div key={field.id} className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <div className="flex space-x-4">
-              {['Yes', 'No'].map((option) => (
-                <label key={option} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={field.id}
-                    value={option}
-                    checked={value[field.id] === option}
-                    onChange={(e) => updateValue(field.id, e.target.value)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    aria-label={`${field.label}: ${option}`}
-                  />
-                  <span className="text-sm text-gray-700">{option}</span>
-                </label>
-              ))}
-            </div>
-            {hasError && <p className="text-sm text-red-600">{hasError}</p>}
-          </div>
-        );
-
-      case 'text':
-        return (
-          <div key={field.id} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <input
-              type="text"
-              value={value[field.id] || ''}
-              onChange={(e) => updateValue(field.id, e.target.value)}
-              placeholder={field.placeholder}
-              className={`w-full min-h-12 px-3 py-2 border ${errorClass} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
-              aria-label={field.label}
-            />
-            {hasError && <p className="text-sm text-red-600">{hasError}</p>}
-          </div>
-        );
-
-      case 'number':
-        return (
-          <div key={field.id} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <input
-              type="number"
-              value={value[field.id] || ''}
-              onChange={(e) => updateValue(field.id, e.target.value ? Number(e.target.value) : '')}
-              min={field.min}
-              max={field.max}
-              step={field.step}
-              className={`w-full min-h-12 px-3 py-2 border ${errorClass} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
-              aria-label={field.label}
-            />
-            {hasError && <p className="text-sm text-red-600">{hasError}</p>}
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
+import React from "react";
+type Field =
+ | { id:string; type:'select'; label:string; options:string[]; required?:boolean }
+ | { id:string; type:'radio';  label:string; options:string[]; required?:boolean }
+ | { id:string; type:'yesno';  label:string; required?:boolean }
+ | { id:string; type:'text';   label:string; placeholder?:string; required?:boolean }
+ | { id:string; type:'number'; label:string; min?:number; max?:number; step?:number; required?:boolean };
+type Props = { schema: Field[]; value: Record<string,any>; onChange:(v:Record<string,any>)=>void };
+export default function DynamicForm({ schema, value, onChange }: Props){
+  function set(id:string, v:any){ onChange({ ...value, [id]: v }); }
   return (
-    <div className="space-y-6">
-      {schema.map(renderField)}
+    <div className="space-y-4">
+      {schema.map(f => (
+        <div key={f.id} className="space-y-1">
+          <label className="block text-sm font-medium">{f.label}{(f as any).required && ' *'}</label>
+          {f.type==='select' && (
+            <select className="w-full border rounded-lg h-12 px-3"
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)}>
+              <option value="" disabled>Select…</option>
+              {f.options.map(o=> <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {f.type==='radio' && (
+            <div className="flex gap-3 flex-wrap">
+              {f.options.map(o=>(
+                <label key={o} className="inline-flex items-center gap-2">
+                  <input type="radio" name={f.id} checked={value[f.id]===o}
+                    onChange={()=>set(f.id,o)} /> <span>{o}</span>
+                </label>
+              ))}
+            </div>
+          )}
+          {f.type==='yesno' && (
+            <div className="flex gap-3">
+              <button type="button" onClick={()=>set(f.id,true)}
+                className={`px-4 h-10 rounded-lg border ${value[f.id]===true?'bg-black text-white':''}`}>Yes</button>
+              <button type="button" onClick={()=>set(f.id,false)}
+                className={`px-4 h-10 rounded-lg border ${value[f.id]===false?'bg-black text-white':''}`}>No</button>
+            </div>
+          )}
+          {f.type==='text' && (
+            <input className="w-full border rounded-lg h-12 px-3"
+              placeholder={f.placeholder||''}
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)} />
+          )}
+          {f.type==='number' && (
+            <input type="number" className="w-full border rounded-lg h-12 px-3"
+              min={(f as any).min} max={(f as any).max} step={(f as any).step||1}
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.valueAsNumber)} />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

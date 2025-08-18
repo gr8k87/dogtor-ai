@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
-import Splash from "./Splash";
+import React, { useState } from "react";
 import ImagePicker from "./components/ImagePicker";
 import DynamicForm from "./components/DynamicForm";
 
-const tabs = ["Diagnose", "History", "Connect"] as const;
+const tabs = ["Diagnose","History","Connect"] as const;
 type Tab = typeof tabs[number];
 
-function DiagnoseView() {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
+function DiagnoseView(){
+  const [imageFile, setImageFile] = useState<File|null>(null);
+  const [formData, setFormData] = useState<Record<string,any>>({});
+  const [errors, setErrors] = useState<Record<string,string>>({});
   const [showReview, setShowReview] = useState(false);
 
   const schema = [
@@ -20,19 +19,17 @@ function DiagnoseView() {
     { id:'notes',         type:'text',   label:'Anything else to add?', placeholder:'Optional notes' }
   ] as const;
 
-  function validate() {
+  function validate(){
     const e: Record<string,string> = {};
     if (!imageFile) e.image = "Please add a photo";
-    schema.forEach(f => {
-      if ((f as any).required && (formData[f.id] === undefined || formData[f.id] === "")) {
-        e[f.id] = "Required";
-      }
+    schema.forEach((f:any)=>{
+      if (f.required && (formData[f.id]===undefined || formData[f.id]==='')) e[f.id]='Required';
     });
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return Object.keys(e).length===0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent){
     e.preventDefault();
     if (validate()) setShowReview(true);
   }
@@ -44,18 +41,13 @@ function DiagnoseView() {
         <ImagePicker onChange={setImageFile} />
         {errors.image && <p className="text-red-600 text-sm mt-2">{errors.image}</p>}
       </div>
-
-      <form onSubmit={handleSubmit} className="rounded-2xl border p-4">
+      <form onSubmit={onSubmit} className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Questions</h2>
         <DynamicForm schema={schema as any} value={formData} onChange={setFormData} />
-        {Object.entries(errors).filter(([k])=>k!=="image").length > 0 && (
-          <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>
-        )}
-        <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">
-          Review
-        </button>
+        {Object.entries(errors).filter(([k])=>k!=="image").length>0 &&
+          <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>}
+        <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">Review</button>
       </form>
-
       {showReview && (
         <div className="rounded-2xl border p-4">
           <h2 className="font-semibold mb-2">Review</h2>
@@ -72,61 +64,22 @@ function DiagnoseView() {
   );
 }
 
-export default function App() {
-  const [hasStarted, setHasStarted] = useState(() => {
-    return localStorage.getItem('hasStarted') === '1';
-  });
+export default function App(){
   const [tab, setTab] = useState<Tab>("Diagnose");
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-
-  
-
-  const handleGetStarted = () => {
-    localStorage.setItem('hasStarted', '1');
-    setHasStarted(true);
-  };
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  if (!hasStarted) {
-    return <Splash onGetStarted={handleGetStarted} />;
-  }
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="p-4 text-center font-bold relative">
-        Dogtor AI
-        {!isOnline && (
-          <span className="absolute top-2 right-4 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
-            Offline
-          </span>
-        )}
-      </header>
+    <div className="min-h-dvh flex flex-col">
+      <header className="p-4 text-center font-bold">Dogtor AI</header>
       <main className="flex-1 p-4">
-        {tab === "Diagnose" && <DiagnoseView />}
-        {tab === "History" && <div>History (placeholder)</div>}
-        {tab === "Connect" && <div>Connect to Vet (placeholder)</div>}
+        {tab==="Diagnose" && <DiagnoseView />}
+        {tab==="History" && <div>History (placeholder)</div>}
+        {tab==="Connect" && <div>Connect to Vet (placeholder)</div>}
       </main>
       <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
         <div className="grid grid-cols-3 text-center">
-          {tabs.map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`py-3 ${t === tab ? "font-semibold" : "text-gray-500"}`}
-              aria-current={t === tab ? "page" : undefined}
-            >
+          {tabs.map(t=>(
+            <button key={t} onClick={()=>setTab(t)}
+              className={`py-3 ${t===tab?"font-semibold":"text-gray-500"}`}
+              aria-current={t===tab? "page":undefined}>
               {t}
             </button>
           ))}
