@@ -1,8 +1,8 @@
-# Dogtor AI - Pet Health Assessment Application
+# Dogtor AI - Minimal Scaffold
 
 ## Overview
 
-Dogtor AI is a mobile-first pet health assessment application that helps pet owners evaluate their pets' symptoms and connect with veterinary services. The application provides preliminary health assessments while emphasizing it's "not a vet, just your first step" in pet healthcare. Built as a full-stack monorepo with Express.js backend and React frontend, it features a clean, intuitive interface designed for mobile use.
+Dogtor AI is a minimal veterinary application scaffold with the tagline "Not a vet, just your first step." Built as a monorepo with Express.js backend serving a React frontend through a single port.
 
 ## User Preferences
 
@@ -10,73 +10,64 @@ Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript using Vite as the build tool
-- **UI Framework**: Tailwind CSS with shadcn/ui component library for consistent design
-- **State Management**: TanStack Query (React Query) for server state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Mobile-First Design**: Bottom tab navigation with three main sections (Diagnose, History, Connect)
+### Monorepo Structure
+- `/server` - Express.js backend with static file serving
+- `/client` - React frontend with Vite build system  
+- Single exposed port (5000) for both backend API and frontend serving
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js server
-- **Language**: TypeScript with ES modules
-- **API Design**: RESTful API with structured endpoints for pets, assessments, and vet clinics
-- **Request Logging**: Custom middleware for API request/response logging
-- **Error Handling**: Centralized error handling middleware with proper HTTP status codes
+- **Runtime**: Node.js with Express.js server (ESM modules)
+- **File**: `/server/app.js` - Main server file
+- **Package**: `/server/package.json` - Contains only Express dependency
+- **Endpoints**: 
+  - `/health` - Returns `{ "ok": true }`
+  - `/*` - Serves React build from `/server/static`
+- **Port**: Listens on `process.env.PORT` (defaults to 3000, configured as 5000)
 
-### Data Storage Solutions
-- **ORM**: Drizzle ORM configured for PostgreSQL
-- **Database**: PostgreSQL (configured via Neon serverless)
-- **Schema Management**: Shared schema definitions between client and server
-- **Development Storage**: In-memory storage implementation for development/testing
-- **Migration**: Drizzle Kit for database migrations
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript using Vite as build tool
+- **Styling**: Tailwind CSS for styling
+- **Build Output**: `/server/static` (served by Express)
+- **Structure**: Single App component with three placeholder tabs:
+  - Diagnose (placeholder)
+  - History (placeholder) 
+  - Connect to Vet (placeholder)
 
-### Authentication and Authorization
-- **Session Management**: Express sessions with PostgreSQL session store (connect-pg-simple)
-- **Current Implementation**: Basic session-based authentication foundation
-- **User Management**: User schema defined but not fully implemented in current codebase
+### Build Process
+- **Client Build**: `cd client && npx vite build` → outputs to `/server/static`
+- **Server Start**: `cd server && node app.js`
+- **Workflow**: Uses existing `npm run dev` which runs `tsx server/index.ts` → imports `app.js`
 
-### Application Structure
-- **Monorepo Layout**: Organized into `/client`, `/server`, and `/shared` directories
-- **Shared Types**: Common TypeScript types and schemas in `/shared` for type safety
-- **Build Process**: Vite builds client to `/dist/public`, esbuild bundles server to `/dist`
-- **Development Mode**: Vite dev server with HMR integration
+### Key Features (Minimal)
+- Header displaying "Dogtor AI"
+- Three-tab bottom navigation (Diagnose, History, Connect)
+- Responsive tab switching with active state styling
+- Health check endpoint for monitoring
 
-### Key Features
-- **Pet Management**: Create and manage pet profiles with breed, age, and weight information
-- **Health Assessments**: Symptom input and preliminary health status evaluation
-- **Vet Clinic Directory**: Location-based veterinary clinic listings with contact information
-- **Assessment History**: Timeline of previous health assessments and recommendations
-- **Emergency Services**: Quick access to emergency veterinary contacts
+## Current State
 
-## External Dependencies
+The project has been reset to a minimal scaffold with:
+- ✓ Express server serving React build from single port
+- ✓ Basic three-tab React interface with placeholder content
+- ✓ Tailwind CSS styling setup
+- ✓ Working health endpoint
+- ✓ Proper monorepo structure
 
-### Core Framework Dependencies
-- **@neondatabase/serverless**: Serverless PostgreSQL connection for Neon database
-- **drizzle-orm**: TypeScript ORM for database operations
-- **express**: Web application framework for Node.js
-- **@tanstack/react-query**: Data fetching and caching library
-- **wouter**: Lightweight React router
+## Next Steps
 
-### UI and Styling
-- **@radix-ui/react-***: Comprehensive set of accessible UI primitives
-- **tailwindcss**: Utility-first CSS framework
-- **lucide-react**: Icon library for consistent iconography
-- **class-variance-authority**: Utility for creating variant-based component APIs
+Ready for feature development:
+- Database schema and storage
+- Authentication system
+- Diagnostic assessment logic
+- Veterinary clinic integration
+- Pet health history tracking
 
-### Development and Build Tools
-- **vite**: Frontend build tool with fast HMR
-- **esbuild**: Fast JavaScript bundler for server-side code
-- **drizzle-kit**: Database migration and introspection tool
-- **tsx**: TypeScript execution environment for development
+## Recent Changes
 
-### Form and Validation
-- **react-hook-form**: Form handling with TypeScript support
-- **@hookform/resolvers**: Validation resolvers for react-hook-form
-- **zod**: TypeScript-first schema validation
-- **drizzle-zod**: Integration between Drizzle ORM and Zod validation
-
-### Additional Libraries
-- **date-fns**: Date utility library for formatting and manipulation
-- **nanoid**: Unique ID generator for database records
-- **embla-carousel-react**: Carousel component for UI interactions
+**Date: 2025-01-18**
+- Reset complex application to minimal scaffold
+- Removed database schemas, authentication, and complex UI components
+- Created simple Express server in `/server/app.js`
+- Built minimal React app with three placeholder tabs
+- Configured Vite to build into `/server/static`
+- Verified single-port deployment working correctly

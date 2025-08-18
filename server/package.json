@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "name": "dogtor-server",
+  "private": true,
+  "dependencies": { "express": "^4.19.2" },
+  "scripts": { "start": "node app.js" }
+}
