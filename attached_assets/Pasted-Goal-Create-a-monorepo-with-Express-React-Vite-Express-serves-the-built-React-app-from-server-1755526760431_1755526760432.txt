@@ -1,0 +1,133 @@
+Goal: Create a monorepo with Express + React (Vite). Express serves the built React app from /server/static and listens on process.env.PORT. Include Tailwind and a minimal bottom tab bar (Diagnose · History · Connect). One exposed port only.
+Do:
+Create folders:
+/server
+/client
+Server (ESM):
+server/app.js:
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+app.use(express.json());
+
+// Health check
+app.get("/health", (_req, res) => res.json({ ok: true }));
+
+// Serve client build
+app.use(express.static(path.join(__dirname, "static")));
+app.get("*", (_req, res) =>
+  res.sendFile(path.join(__dirname, "static", "index.html"))
+);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server listening on :${PORT}`));
+server/package.json:
+{
+  "type": "module",
+  "name": "dogtor-server",
+  "private": true,
+  "dependencies": { "express": "^4.19.2" },
+  "scripts": { "start": "node app.js" }
+}
+Client (React + Vite + Tailwind):
+Initialize Vite (React) and Tailwind. Configure build output to /server/static.
+client/vite.config.ts:
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  build: { outDir: "../server/static", emptyOutDir: true },
+  server: { port: 5173 } // not used in Replit; Express serves build
+});
+client/tailwind.config.js:
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: []
+};
+client/postcss.config.js:
+export default { plugins: { tailwindcss: {}, autoprefixer: {} } };
+client/src/index.css:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+Minimal app with bottom tabs:
+client/src/main.tsx mounts <App />.
+client/src/App.tsx:
+import { useState } from "react";
+
+const tabs = ["Diagnose", "History", "Connect"] as const;
+type Tab = typeof tabs[number];
+
+export default function App() {
+  const [tab, setTab] = useState<Tab>("Diagnose");
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <header className="p-4 text-center font-bold">Dogtor AI</header>
+      <main className="flex-1 p-4">
+        {tab === "Diagnose" && <div>Diagnose (placeholder)</div>}
+        {tab === "History" && <div>History (placeholder)</div>}
+        {tab === "Connect" && <div>Connect to Vet (placeholder)</div>}
+      </main>
+      <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
+        <div className="grid grid-cols-3 text-center">
+          {tabs.map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`py-3 ${t===tab ? "font-semibold" : "text-gray-500"}`}
+              aria-current={t===tab ? "page" : undefined}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+}
+Root-level scripts to keep things simple:
+Root package.json:
+{
+  "name": "dogtor-ai",
+  "private": true,
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "build": "npm --workspace client run build",
+    "start": "npm --workspace server run start"
+  }
+}
+Install commands (run these in Replit shell):
+# from repo root
+npm init -y
+npm pkg set workspaces='["client","server"]'
+
+# server deps
+cd server && npm i express && cd ..
+
+# client scaffold
+cd client
+npm create vite@latest . -- --template react-swc
+npm i -D tailwindcss postcss autoprefixer @types/node
+npx tailwindcss init -p
+npm i
+cd ..
+
+# build client to /server/static
+npm run build
+
+# run server (single exposed port)
+npm start
+Acceptance criteria:
+Visiting the Replit web URL shows Dogtor AI with Diagnose · History · Connect tabs.
+/health returns { "ok": true }.
+Only one port is exposed (Express). No CORS or port-forwarding warnings.
+Notes:
+Don’t start the Vite dev server on Replit; always npm run build then npm start.
+All further features will hook into this structure without adding new ports.
