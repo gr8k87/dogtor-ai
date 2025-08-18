@@ -9,14 +9,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// API routes
+// health + api
+app.get("/health", (_req,res)=>res.json({ ok:true }));
 app.use("/api/diagnose", diagnose);
 
-// Health check
-app.get("/health", (_req, res) => res.json({ ok: true }));
-app.get("/api/ping", (_req,res)=>res.json({pong:true}));
-
-// Serve client build
+// serve client build
 app.use(express.static(path.join(__dirname, "static")));
 app.get("*", (_req, res) =>
   res.sendFile(path.join(__dirname, "static", "index.html"))
