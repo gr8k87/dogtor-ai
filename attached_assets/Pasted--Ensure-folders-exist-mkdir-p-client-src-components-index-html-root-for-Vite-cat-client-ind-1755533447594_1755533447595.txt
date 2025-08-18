@@ -1,0 +1,215 @@
+# Ensure folders exist
+mkdir -p client/src/components
+
+# index.html (root for Vite)
+cat > client/index.html <<'EOF'
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dogtor AI</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+EOF
+
+# main.tsx (mount App)
+cat > client/src/main.tsx <<'EOF'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+createRoot(document.getElementById("root")!).render(<App />);
+EOF
+
+# Simple ImagePicker
+cat > client/src/components/ImagePicker.tsx <<'EOF'
+import React, { useEffect, useState } from "react";
+type Props = { onChange: (file: File|null)=>void };
+export default function ImagePicker({ onChange }: Props){
+  const [preview, setPreview] = useState<string|null>(null);
+  function handle(e: React.ChangeEvent<HTMLInputElement>){
+    const f = e.target.files?.[0] ?? null;
+    onChange(f);
+    if (f) setPreview(URL.createObjectURL(f)); else setPreview(null);
+  }
+  useEffect(()=>()=>{ if(preview) URL.revokeObjectURL(preview); },[preview]);
+  return (
+    <div className="space-y-2">
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handle}
+        className="block w-full text-sm"
+      />
+      {preview && (
+        <img src={preview} alt="preview" className="w-32 h-32 object-cover rounded-lg border" />
+      )}
+      {preview && (
+        <button type="button" onClick={()=>{ setPreview(null); onChange(null); }}
+          className="px-3 py-2 rounded-lg border">
+          Remove
+        </button>
+      )}
+    </div>
+  );
+}
+EOF
+
+# Simple DynamicForm
+cat > client/src/components/DynamicForm.tsx <<'EOF'
+import React from "react";
+type Field =
+ | { id:string; type:'select'; label:string; options:string[]; required?:boolean }
+ | { id:string; type:'radio';  label:string; options:string[]; required?:boolean }
+ | { id:string; type:'yesno';  label:string; required?:boolean }
+ | { id:string; type:'text';   label:string; placeholder?:string; required?:boolean }
+ | { id:string; type:'number'; label:string; min?:number; max?:number; step?:number; required?:boolean };
+type Props = { schema: Field[]; value: Record<string,any>; onChange:(v:Record<string,any>)=>void };
+export default function DynamicForm({ schema, value, onChange }: Props){
+  function set(id:string, v:any){ onChange({ ...value, [id]: v }); }
+  return (
+    <div className="space-y-4">
+      {schema.map(f => (
+        <div key={f.id} className="space-y-1">
+          <label className="block text-sm font-medium">{f.label}{(f as any).required && ' *'}</label>
+          {f.type==='select' && (
+            <select className="w-full border rounded-lg h-12 px-3"
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)}>
+              <option value="" disabled>Select…</option>
+              {f.options.map(o=> <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {f.type==='radio' && (
+            <div className="flex gap-3 flex-wrap">
+              {f.options.map(o=>(
+                <label key={o} className="inline-flex items-center gap-2">
+                  <input type="radio" name={f.id} checked={value[f.id]===o}
+                    onChange={()=>set(f.id,o)} /> <span>{o}</span>
+                </label>
+              ))}
+            </div>
+          )}
+          {f.type==='yesno' && (
+            <div className="flex gap-3">
+              <button type="button" onClick={()=>set(f.id,true)}
+                className={`px-4 h-10 rounded-lg border ${value[f.id]===true?'bg-black text-white':''}`}>Yes</button>
+              <button type="button" onClick={()=>set(f.id,false)}
+                className={`px-4 h-10 rounded-lg border ${value[f.id]===false?'bg-black text-white':''}`}>No</button>
+            </div>
+          )}
+          {f.type==='text' && (
+            <input className="w-full border rounded-lg h-12 px-3"
+              placeholder={f.placeholder||''}
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)} />
+          )}
+          {f.type==='number' && (
+            <input type="number" className="w-full border rounded-lg h-12 px-3"
+              min={(f as any).min} max={(f as any).max} step={(f as any).step||1}
+              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.valueAsNumber)} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+EOF
+
+# Minimal App with tabs + Diagnose wired
+cat > client/src/App.tsx <<'EOF'
+import React, { useState } from "react";
+import ImagePicker from "./components/ImagePicker";
+import DynamicForm from "./components/DynamicForm";
+
+const tabs = ["Diagnose","History","Connect"] as const;
+type Tab = typeof tabs[number];
+
+function DiagnoseView(){
+  const [imageFile, setImageFile] = useState<File|null>(null);
+  const [formData, setFormData] = useState<Record<string,any>>({});
+  const [errors, setErrors] = useState<Record<string,string>>({});
+  const [showReview, setShowReview] = useState(false);
+
+  const schema = [
+    { id:'duration_days', type:'number', label:'How many days has this been happening?', min:0, max:30, step:1, required:true },
+    { id:'diet_change',   type:'select', label:'Recent diet change?', options:['Yes','No','Not sure'], required:true },
+    { id:'energy',        type:'radio',  label:'Energy level', options:['Normal','Slightly low','Very low'], required:true },
+    { id:'vomiting',      type:'yesno',  label:'Any vomiting?', required:true },
+    { id:'notes',         type:'text',   label:'Anything else to add?', placeholder:'Optional notes' }
+  ] as const;
+
+  function validate(){
+    const e: Record<string,string> = {};
+    if (!imageFile) e.image = "Please add a photo";
+    schema.forEach((f:any)=>{
+      if (f.required && (formData[f.id]===undefined || formData[f.id]==='')) e[f.id]='Required';
+    });
+    setErrors(e);
+    return Object.keys(e).length===0;
+  }
+
+  function onSubmit(e: React.FormEvent){
+    e.preventDefault();
+    if (validate()) setShowReview(true);
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border p-4">
+        <h2 className="font-semibold mb-2">Add photo</h2>
+        <ImagePicker onChange={setImageFile} />
+        {errors.image && <p className="text-red-600 text-sm mt-2">{errors.image}</p>}
+      </div>
+      <form onSubmit={onSubmit} className="rounded-2xl border p-4">
+        <h2 className="font-semibold mb-2">Questions</h2>
+        <DynamicForm schema={schema as any} value={formData} onChange={setFormData} />
+        {Object.entries(errors).filter(([k])=>k!=="image").length>0 &&
+          <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>}
+        <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">Review</button>
+      </form>
+      {showReview && (
+        <div className="rounded-2xl border p-4">
+          <h2 className="font-semibold mb-2">Review</h2>
+          <ul className="text-sm space-y-1">
+            <li><strong>Duration:</strong> {formData.duration_days} day(s)</li>
+            <li><strong>Diet change:</strong> {formData.diet_change}</li>
+            <li><strong>Energy:</strong> {formData.energy}</li>
+            <li><strong>Vomiting:</strong> {formData.vomiting ? "Yes" : "No"}</li>
+            {formData.notes && <li><strong>Notes:</strong> {formData.notes}</li>}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function App(){
+  const [tab, setTab] = useState<Tab>("Diagnose");
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <header className="p-4 text-center font-bold">Dogtor AI</header>
+      <main className="flex-1 p-4">
+        {tab==="Diagnose" && <DiagnoseView />}
+        {tab==="History" && <div>History (placeholder)</div>}
+        {tab==="Connect" && <div>Connect to Vet (placeholder)</div>}
+      </main>
+      <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
+        <div className="grid grid-cols-3 text-center">
+          {tabs.map(t=>(
+            <button key={t} onClick={()=>setTab(t)}
+              className={`py-3 ${t===tab?"font-semibold":"text-gray-500"}`}
+              aria-current={t===tab? "page":undefined}>
+              {t}
+            </button>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+}
+EOF
