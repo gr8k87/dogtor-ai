@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import ImagePicker from "./components/ImagePicker";
 import DynamicForm from "./components/DynamicForm";
 
@@ -10,14 +11,31 @@ function DiagnoseView(){
   const [formData, setFormData] = useState<Record<string,any>>({});
   const [errors, setErrors] = useState<Record<string,string>>({});
   const [showReview, setShowReview] = useState(false);
+  const [schema, setSchema] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string|null>(null);
+  const [triage, setTriage] = useState<any>(null);
+  const [triageLoading, setTriageLoading] = useState(false);
 
-  const schema = [
-    { id:'duration_days', type:'number', label:'How many days has this been happening?', min:0, max:30, step:1, required:true },
-    { id:'diet_change',   type:'select', label:'Recent diet change?', options:['Yes','No','Not sure'], required:true },
-    { id:'energy',        type:'radio',  label:'Energy level', options:['Normal','Slightly low','Very low'], required:true },
-    { id:'vomiting',      type:'yesno',  label:'Any vomiting?', required:true },
-    { id:'notes',         type:'text',   label:'Anything else to add?', placeholder:'Optional notes' }
-  ] as const;
+  useEffect(() => {
+    async function fetchSchema() {
+      try {
+        const response = await fetch('/api/diagnose/init', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setSchema(data.suggested_questions);
+      } catch (err) {
+        setError('Failed to load questions');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSchema();
+  }, []);
 
   function validate(){
     const e: Record<string,string> = {};
@@ -29,9 +47,37 @@ function DiagnoseView(){
     return Object.keys(e).length===0;
   }
 
-  function onSubmit(e: React.FormEvent){
+  async function onSubmit(e: React.FormEvent){
     e.preventDefault();
-    if (validate()) setShowReview(true);
+    if (!validate()) return;
+    
+    setTriageLoading(true);
+    try {
+      const response = await fetch('/api/diagnose/triage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imagePresent: !!imageFile,
+          answers: formData
+        })
+      });
+      if (!response.ok) throw new Error('Triage failed');
+      const triageData = await response.json();
+      setTriage(triageData);
+      setShowReview(true);
+    } catch (err) {
+      setError('Failed to get triage results');
+    } finally {
+      setTriageLoading(false);
+    }
+  }
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading questions...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-center text-red-600">{error}</div>;
   }
 
   return (
@@ -43,21 +89,44 @@ function DiagnoseView(){
       </div>
       <form onSubmit={onSubmit} className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Questions</h2>
-        <DynamicForm schema={schema as any} value={formData} onChange={setFormData} />
+        <DynamicForm schema={schema} value={formData} onChange={setFormData} />
         {Object.entries(errors).filter(([k])=>k!=="image").length>0 &&
           <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>}
-        <button type="submit" className="mt-4 w-full h-12 rounded-xl bg-black text-white">Review</button>
+        <button 
+          type="submit" 
+          disabled={triageLoading}
+          className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:bg-gray-400"
+        >
+          {triageLoading ? 'Analyzing...' : 'Review'}
+        </button>
       </form>
-      {showReview && (
+      {showReview && triage && (
         <div className="rounded-2xl border p-4">
-          <h2 className="font-semibold mb-2">Review</h2>
-          <ul className="text-sm space-y-1">
-            <li><strong>Duration:</strong> {formData.duration_days} day(s)</li>
-            <li><strong>Diet change:</strong> {formData.diet_change}</li>
-            <li><strong>Energy:</strong> {formData.energy}</li>
-            <li><strong>Vomiting:</strong> {formData.vomiting ? "Yes" : "No"}</li>
-            {formData.notes && <li><strong>Notes:</strong> {formData.notes}</li>}
-          </ul>
+          <h2 className="font-semibold mb-2">Triage Results</h2>
+          <div className="space-y-3 text-sm">
+            <div>
+              <strong>Summary:</strong> {triage.triage_summary}
+            </div>
+            <div>
+              <strong>Urgency Level:</strong> {triage.urgency_level}
+            </div>
+            <div>
+              <strong>Possible Causes:</strong>
+              <ul className="list-disc list-inside ml-2 mt-1">
+                {triage.possible_causes.map((cause: string, i: number) => (
+                  <li key={i}>{cause}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <strong>Recommended Actions:</strong>
+              <ul className="list-disc list-inside ml-2 mt-1">
+                {triage.recommended_actions.map((action: string, i: number) => (
+                  <li key={i}>{action}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       )}
     </div>

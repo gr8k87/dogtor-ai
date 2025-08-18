@@ -1,12 +1,16 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import diagnose from "./routes/diagnose.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
+
+// API routes
+app.use("/api/diagnose", diagnose);
 
 // Health check
 app.get("/health", (_req, res) => res.json({ ok: true }));
