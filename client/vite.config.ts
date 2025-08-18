@@ -10,18 +10,23 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}']
       },
-      includeAssets: ['favicon.ico', 'logo.svg', 'pwa-512.png'],
+      includeAssets: ['/logo.svg'],
       manifest: {
         name: 'Dogtor AI',
         short_name: 'Dogtor',
-        description: 'Not a vet, just your first step.',
-        theme_color: '#111111',
-        background_color: '#ffffff',
-        display: 'standalone',
         start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#111111',
         icons: [
           {
-            src: 'pwa-512.png',
+            src: '/pwa-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/pwa-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

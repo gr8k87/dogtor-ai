@@ -28,10 +28,12 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: React 18 with TypeScript using Vite as build tool
 - **Styling**: Tailwind CSS for styling
 - **Build Output**: `/server/static` (served by Express)
-- **Structure**: Single App component with three placeholder tabs:
-  - Diagnose (placeholder)
-  - History (placeholder) 
-  - Connect to Vet (placeholder)
+- **PWA**: vite-plugin-pwa with autoUpdate service worker
+- **Structure**: 
+  - Splash screen (`/client/src/Splash.tsx`) - shows on first visit
+  - Main App component with three placeholder tabs (Diagnose, History, Connect)
+  - Offline badge component for network status
+  - localStorage persistence for "hasStarted" state
 
 ### Build Process
 - **Client Build**: `cd client && npx vite build` → outputs to `/server/static`
@@ -43,6 +45,9 @@ Preferred communication style: Simple, everyday language.
 - Three-tab bottom navigation (Diagnose, History, Connect)
 - Responsive tab switching with active state styling
 - Health check endpoint for monitoring
+- PWA support with service worker for offline functionality
+- Splash screen with localStorage persistence
+- Offline indicator badge
 
 ## Current State
 
@@ -52,6 +57,9 @@ The project has been reset to a minimal scaffold with:
 - ✓ Tailwind CSS styling setup
 - ✓ Working health endpoint
 - ✓ Proper monorepo structure
+- ✓ PWA support with manifest and service worker
+- ✓ Splash screen with localStorage persistence
+- ✓ Offline detection and indicator badge
 
 ## Next Steps
 
@@ -70,4 +78,8 @@ Ready for feature development:
 - Created simple Express server in `/server/app.js`
 - Built minimal React app with three placeholder tabs
 - Configured Vite to build into `/server/static`
+- Added PWA support with vite-plugin-pwa
+- Created splash screen with "Get started" flow
+- Added offline detection badge
+- Configured PWA manifest with 192px and 512px icons
 - Verified single-port deployment working correctly
