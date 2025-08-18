@@ -1,1 +1,17 @@
-{"name":"Dogtor AI","short_name":"Dogtor","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#111111","lang":"en","scope":"/","icons":[{"src":"/pwa-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"/pwa-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "Dogtor AI",
+  "short_name": "Dogtor",
+  "description": "Not a vet, just your first step.",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

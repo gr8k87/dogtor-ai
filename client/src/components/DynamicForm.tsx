@@ -1,4 +1,3 @@
-
 import React from "react";
 type Field =
  | { id:string; type:'select'; label:string; options:string[]; required?:boolean }
@@ -8,7 +7,7 @@ type Field =
  | { id:string; type:'number'; label:string; min?:number; max?:number; step?:number; required?:boolean };
 type Props = { schema: Field[]; value: Record<string,any>; onChange:(v:Record<string,any>)=>void };
 export default function DynamicForm({ schema, value, onChange }: Props){
-  function set(id:string, v:any){ onChange({ ...value, [id]: v }); }
+  function setVal(id:string, v:any){ onChange({ ...value, [id]: v }); }
   return (
     <div className="space-y-4">
       {schema.map(f => (
@@ -16,7 +15,7 @@ export default function DynamicForm({ schema, value, onChange }: Props){
           <label className="block text-sm font-medium">{f.label}{(f as any).required && ' *'}</label>
           {f.type==='select' && (
             <select className="w-full border rounded-lg h-12 px-3"
-              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)}>
+              value={value[f.id] ?? ''} onChange={e=>setVal(f.id, e.target.value)}>
               <option value="" disabled>Select…</option>
               {f.options.map(o=> <option key={o} value={o}>{o}</option>)}
             </select>
@@ -26,28 +25,28 @@ export default function DynamicForm({ schema, value, onChange }: Props){
               {f.options.map(o=>(
                 <label key={o} className="inline-flex items-center gap-2">
                   <input type="radio" name={f.id} checked={value[f.id]===o}
-                    onChange={()=>set(f.id,o)} /> <span>{o}</span>
+                    onChange={()=>setVal(f.id,o)} /> <span>{o}</span>
                 </label>
               ))}
             </div>
           )}
           {f.type==='yesno' && (
             <div className="flex gap-3">
-              <button type="button" onClick={()=>set(f.id,true)}
+              <button type="button" onClick={()=>setVal(f.id,true)}
                 className={`px-4 h-10 rounded-lg border ${value[f.id]===true?'bg-black text-white':''}`}>Yes</button>
-              <button type="button" onClick={()=>set(f.id,false)}
+              <button type="button" onClick={()=>setVal(f.id,false)}
                 className={`px-4 h-10 rounded-lg border ${value[f.id]===false?'bg-black text-white':''}`}>No</button>
             </div>
           )}
           {f.type==='text' && (
             <input className="w-full border rounded-lg h-12 px-3"
               placeholder={f.placeholder||''}
-              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.value)} />
+              value={value[f.id] ?? ''} onChange={e=>setVal(f.id, e.target.value)} />
           )}
           {f.type==='number' && (
             <input type="number" className="w-full border rounded-lg h-12 px-3"
               min={(f as any).min} max={(f as any).max} step={(f as any).step||1}
-              value={value[f.id] ?? ''} onChange={e=>set(f.id, e.target.valueAsNumber)} />
+              value={value[f.id] ?? ''} onChange={e=>setVal(f.id, e.target.valueAsNumber)} />
           )}
         </div>
       ))}
