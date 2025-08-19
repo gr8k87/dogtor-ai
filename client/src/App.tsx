@@ -95,9 +95,11 @@ function DiagnoseView() {
       } catch (err) {
         console.error("❌ Failed to save history", err);
       }
-
-      setSubmitting(false);
     
+      setSubmitting(false);
+    }
+    catch (err) {
+      console.error("❌ ❌ ❌ On Submit Issue", err);
   }
 
   if (loading) return <div className="p-4">Loading questions…</div>;
