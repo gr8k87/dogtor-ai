@@ -1,5 +1,5 @@
-import { HistoryProvider } from "./state/historyContext.jsx";
-import React from "react";
+import { HistoryProvider } from "./state/historyContext";
+//import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";

@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import ImagePicker from "./components/ImagePicker";
 import DynamicForm from "./components/DynamicForm";
 import OfflineBadge from "./components/OfflineBadge";
-
 type Tab = "Diagnose" | "History" | "Connect";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
@@ -73,47 +72,44 @@ function DiagnoseView() {
     return Object.keys(e).length === 0;
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!validate()) return;
-
     setSubmitting(true);
+    setErrors({});
+
     try {
-      const res = await fetch("/api/diagnose/triage", {
+      // Build payload
+      const payload = { ...formData, imagePresent: !!imageFile };
+
+      // Call backend triage API
+      const resp = await fetch("/api/diagnose/triage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imagePresent: !!imageFile, answers: formData }),
+        body: JSON.stringify(payload),
       });
-      const j = await res.json();
-      setTriage(j);
-      try {
-        // Convert formData to symptoms string for display
-        const symptoms = Object.entries(formData)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(", ");
-        
-        addEntry({
-          form: { 
-            symptoms: symptoms,
-            answers: formData, 
-            imagePresent: !!imageFile 
-          },
-          triage: {
-            ...j,
-            advice: j.recommended_actions || [],
-            severity: j.urgency_level,
-            urgency: j.urgency_level,
-            urgency_level: j.urgency_level,
-            probableCategory: j.triage_summary || "General assessment"
-          },
-        });
-        console.log("✅ Saved to history");
-      } catch (err) {
-        console.error("❌ Failed to save history", err);
+
+      if (!resp.ok) {
+        throw new Error(`Triage request failed: ${resp.status}`);
       }
-    } catch (err) {
-      console.error("❌ Failed to analyze", err);
-      setErrMsg("Failed to analyze. Please try again.");
+
+      const j = await resp.json();
+
+      // Update local triage state
+      setTriage(j);
+
+      // Save into History (Phase 4)
+      try {
+        addEntry({ form: payload, triage: j });
+        console.log("✅ Saved to history", j);
+      } catch (err) {
+        console.error("❌ Failed to save to history", err);
+      }
+    } catch (err: any) {
+      console.error("❌ Diagnose submit error", err);
+      setErrors((prev) => ({
+        ...prev,
+        submit: err.message || "Something went wrong",
+      }));
     } finally {
       setSubmitting(false);
     }
@@ -140,7 +136,7 @@ function DiagnoseView() {
         />
         {Object.entries(errors).filter(([k]) => k !== "image").length > 0 && (
           <p className="text-red-600 text-sm mt-2">
-            Please complete required fields.
+            Pl ease complete required fields.
           </p>
         )}
         <button
