@@ -1,3 +1,4 @@
+import History from "./pages/history.jsx";
 
 import React, { useEffect, useState } from "react";
 import ImagePicker from "./components/ImagePicker";
@@ -11,11 +12,18 @@ function Splash({ onStart }: { onStart: () => void }) {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
       <h1 className="text-2xl font-bold">Dogtor AI</h1>
-      <p className="text-sm text-gray-500 mt-1">Not a vet, just your first step.</p>
-      <button onClick={onStart} className="mt-6 px-6 py-3 rounded-2xl bg-black text-white">
+      <p className="text-sm text-gray-500 mt-1">
+        Not a vet, just your first step.
+      </p>
+      <button
+        onClick={onStart}
+        className="mt-6 px-6 py-3 rounded-2xl bg-black text-white"
+      >
         Get started
       </button>
-      <p className="mt-4 text-xs text-gray-400">For guidance only. Not a veterinary service.</p>
+      <p className="mt-4 text-xs text-gray-400">
+        For guidance only. Not a veterinary service.
+      </p>
     </div>
   );
 }
@@ -32,19 +40,19 @@ function DiagnoseView() {
 
   useEffect(() => {
     setLoading(true);
-    fetch("/api/diagnose/init", { 
-      method: "POST", 
-      headers: { "Content-Type": "application/json" }, 
-      body: "{}" 
+    fetch("/api/diagnose/init", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
     })
-      .then(r => r.json())
-      .then(j => { 
-        setSchema(j.suggested_questions || []); 
-        setLoading(false); 
+      .then((r) => r.json())
+      .then((j) => {
+        setSchema(j.suggested_questions || []);
+        setLoading(false);
       })
-      .catch(e => { 
-        setErrMsg("Failed to load questions"); 
-        setLoading(false); 
+      .catch((e) => {
+        setErrMsg("Failed to load questions");
+        setLoading(false);
       });
   }, []);
 
@@ -52,8 +60,11 @@ function DiagnoseView() {
     const e: Record<string, string> = {};
     if (!imageFile) e.image = "Please add a photo";
     (schema || []).forEach((f: any) => {
-      if (f.required && (formData[f.id] === undefined || formData[f.id] === '')) {
-        e[f.id] = 'Required';
+      if (
+        f.required &&
+        (formData[f.id] === undefined || formData[f.id] === "")
+      ) {
+        e[f.id] = "Required";
       }
     });
     setErrors(e);
@@ -63,13 +74,13 @@ function DiagnoseView() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    
+
     setSubmitting(true);
     try {
       const res = await fetch("/api/diagnose/triage", {
-        method: "POST", 
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imagePresent: !!imageFile, answers: formData })
+        body: JSON.stringify({ imagePresent: !!imageFile, answers: formData }),
       });
       const j = await res.json();
       setTriage(j);
@@ -88,15 +99,24 @@ function DiagnoseView() {
       <div className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Add photo</h2>
         <ImagePicker onChange={setImageFile} />
-        {errors.image && <p className="text-red-600 text-sm mt-2">{errors.image}</p>}
+        {errors.image && (
+          <p className="text-red-600 text-sm mt-2">{errors.image}</p>
+        )}
       </div>
       <form onSubmit={onSubmit} className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Questions</h2>
-        <DynamicForm schema={schema || []} value={formData} onChange={setFormData} />
-        {Object.entries(errors).filter(([k]) => k !== "image").length > 0 &&
-          <p className="text-red-600 text-sm mt-2">Please complete required fields.</p>}
-        <button 
-          type="submit" 
+        <DynamicForm
+          schema={schema || []}
+          value={formData}
+          onChange={setFormData}
+        />
+        {Object.entries(errors).filter(([k]) => k !== "image").length > 0 && (
+          <p className="text-red-600 text-sm mt-2">
+            Please complete required fields.
+          </p>
+        )}
+        <button
+          type="submit"
           disabled={submitting}
           className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
         >
@@ -110,16 +130,22 @@ function DiagnoseView() {
           <div className="mt-2">
             <p className="font-medium">Possible causes</p>
             <ul className="list-disc pl-5 text-sm">
-              {(triage.possible_causes || []).map((c: string) => <li key={c}>{c}</li>)}
+              {(triage.possible_causes || []).map((c: string) => (
+                <li key={c}>{c}</li>
+              ))}
             </ul>
           </div>
           <div className="mt-2">
             <p className="font-medium">Recommended actions</p>
             <ul className="list-disc pl-5 text-sm">
-              {(triage.recommended_actions || []).map((a: string) => <li key={a}>{a}</li>)}
+              {(triage.recommended_actions || []).map((a: string) => (
+                <li key={a}>{a}</li>
+              ))}
             </ul>
           </div>
-          <p className="mt-2 text-sm"><strong>Urgency:</strong> {triage.urgency_level}</p>
+          <p className="mt-2 text-sm">
+            <strong>Urgency:</strong> {triage.urgency_level}
+          </p>
         </div>
       )}
     </div>
@@ -128,13 +154,13 @@ function DiagnoseView() {
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("Diagnose");
-  const [started, setStarted] = useState<boolean>(() => 
-    localStorage.getItem("hasStarted") === "1"
+  const [started, setStarted] = useState<boolean>(
+    () => localStorage.getItem("hasStarted") === "1",
   );
 
-  function begin() { 
-    localStorage.setItem("hasStarted", "1"); 
-    setStarted(true); 
+  function begin() {
+    localStorage.setItem("hasStarted", "1");
+    setStarted(true);
   }
 
   if (!started) return <Splash onStart={begin} />;
@@ -145,14 +171,14 @@ export default function App() {
       <header className="p-4 text-center font-bold">Dogtor AI</header>
       <main className="flex-1 p-4">
         {tab === "Diagnose" && <DiagnoseView />}
-        {tab === "History" && <div>History (placeholder)</div>}
+        {tab === "History" && <History />}
         {tab === "Connect" && <div>Connect to Vet (placeholder)</div>}
       </main>
       <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
         <div className="grid grid-cols-3 text-center">
-          {tabs.map(t => (
-            <button 
-              key={t} 
+          {tabs.map((t) => (
+            <button
+              key={t}
               onClick={() => setTab(t)}
               className={`py-3 ${t === tab ? "font-semibold" : "text-gray-500"}`}
               aria-current={t === tab ? "page" : undefined}

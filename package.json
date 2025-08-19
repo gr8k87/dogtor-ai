@@ -2,7 +2,12 @@
   "name": "dogtor-ai",
   "private": true,
   "scripts": {
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
     "build": "cd client && npm run build",
     "start": "node server/app.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10"
   }
 }

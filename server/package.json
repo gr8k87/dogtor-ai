@@ -6,6 +6,10 @@
     "express": "^4.19.2"
   },
   "scripts": {
+    "dev": "nodemon app.js",
     "start": "node app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
