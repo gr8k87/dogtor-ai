@@ -87,9 +87,25 @@ function DiagnoseView() {
       const j = await res.json();
       setTriage(j);
       try {
+        // Convert formData to symptoms string for display
+        const symptoms = Object.entries(formData)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ");
+        
         addEntry({
-          form: { answers: formData, imagePresent: !!imageFile },
-          triage: j,
+          form: { 
+            symptoms: symptoms,
+            answers: formData, 
+            imagePresent: !!imageFile 
+          },
+          triage: {
+            ...j,
+            advice: j.recommended_actions || [],
+            severity: j.urgency_level,
+            urgency: j.urgency_level,
+            urgency_level: j.urgency_level,
+            probableCategory: j.triage_summary || "General assessment"
+          },
         });
         console.log("✅ Saved to history");
       } catch (err) {
