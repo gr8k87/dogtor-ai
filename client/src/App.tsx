@@ -37,6 +37,7 @@ function DiagnoseView() {
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [triage, setTriage] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [debugMsg, setDebugMsg] = useState("");
   const { addEntry } = useHistory();
 
   useEffect(() => {
@@ -73,12 +74,10 @@ function DiagnoseView() {
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    const [debugMsg, setDebugMsg] = useState("");
     e.preventDefault();
     setDebugMsg("✅ TOP of onSubmit reached");
     setSubmitting(true);
     setErrors({});
-    debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>;
 
     try {
       // Build payload
@@ -167,6 +166,7 @@ function DiagnoseView() {
         >
           {submitting ? "Analyzing..." : "Review"}
         </button>
+        {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
       </form>
       {triage && (
         <div className="rounded-2xl border p-4">
