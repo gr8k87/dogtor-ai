@@ -82,6 +82,7 @@ function DiagnoseView() {
     try {
       // Build payload
       const payload = { ...formData, imagePresent: !!imageFile };
+      setDebugMsg("✅ Payload built, calling API...");
 
       // Call backend triage API
       const resp = await fetch("/api/diagnose/triage", {
@@ -95,6 +96,7 @@ function DiagnoseView() {
       }
 
       const j = await resp.json();
+      setDebugMsg("✅ API response received, showing triage");
 
       // Update local triage state
       setTriage(j);
@@ -120,12 +122,15 @@ function DiagnoseView() {
           },
         });
         console.log("✅ Saved to history", j);
+        setDebugMsg("✅ Complete! Saved to history");
       } catch (err) {
         console.error("❌ Failed to save to history", err);
+        setDebugMsg("⚠️ Triage shown but failed to save to history");
       }
     } catch (err: any) {
       console.error("❌ Diagnose submit error", err);
       alert("AddEntry failed: " + (err as Error).message);
+      setDebugMsg("❌ Error: " + err.message);
       setErrors((prev) => ({
         ...prev,
         submit: err.message || "Something went wrong",
