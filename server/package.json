@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "multer": "^2.0.2"
   },
   "scripts": {
     "dev": "nodemon app.js",

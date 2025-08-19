@@ -37,7 +37,6 @@ function DiagnoseView() {
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [triage, setTriage] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [debugMsg, setDebugMsg] = useState("");
   const { addEntry } = useHistory();
 
   useEffect(() => {
@@ -78,23 +77,34 @@ function DiagnoseView() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setDebugMsg("✅ TOP of onSubmit reached");
-    
-    // Check validation
-    if (!validate()) {
-      setDebugMsg("❌ Validation failed - check image and required fields");
-      return;
-    }
-    
     setSubmitting(true);
     setErrors({});
 
     try {
-      // Build payload
-      const payload = { ...formData, imagePresent: !!imageFile };
-      setDebugMsg("✅ Payload built, calling API...");
+      let imageUrl = "";
 
-      // Call backend triage API
+      // 1. If user selected an image → upload it first
+      if (imageFile) {
+        const formDataToSend = new FormData();
+        formDataToSend.append("image", imageFile);
+
+        const uploadResp = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataToSend,
+        });
+
+        if (!uploadResp.ok) {
+          throw new Error("Image upload failed");
+        }
+
+        const uploadJson = await uploadResp.json();
+        imageUrl = uploadJson.imageUrl; // e.g. "/uploads/12345.png"
+      }
+
+      // 2. Build payload for triage
+      const payload = { ...formData, imageUrl };
+
+      // 3. Call backend triage API
       const resp = await fetch("/api/diagnose/triage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -106,44 +116,14 @@ function DiagnoseView() {
       }
 
       const j = await resp.json();
-      setDebugMsg("✅ API response received, showing triage");
 
-      // Update local triage state
+      // 4. Update triage state
       setTriage(j);
-      // Save into History (Phase 4)
-      try {
-        // Convert formData to symptoms string for display
-        const symptoms = Object.entries(formData)
-          .filter(([key, value]) => value !== "" && value !== undefined)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(", ");
-
-        addEntry({
-          form: {
-            ...payload,
-            symptoms: symptoms || "No specific symptoms reported",
-          },
-          triage: {
-            ...j,
-            advice: j.recommended_actions || [],
-            severity: j.urgency_level,
-            urgency: j.urgency_level,
-            probableCategory: j.triage_summary || "General assessment",
-          },
-        });
-        console.log("✅ Saved to history", j);
-        setDebugMsg("✅ Complete! Saved to history");
-      } catch (err) {
-        console.error("❌ Failed to save to history", err);
-        setDebugMsg("⚠️ Triage shown but failed to save to history");
-      }
     } catch (err: any) {
       console.error("❌ Diagnose submit error", err);
-      alert("AddEntry failed: " + (err as Error).message);
-      setDebugMsg("❌ Error: " + err.message);
       setErrors((prev) => ({
         ...prev,
-        submit: err.message || "Something went wrong",
+        submit: err.message || "Someth  ing went wrong",
       }));
     } finally {
       setSubmitting(false);
