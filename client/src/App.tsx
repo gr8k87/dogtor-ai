@@ -38,6 +38,7 @@ function DiagnoseView() {
   const [triage, setTriage] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { addEntry } = useHistory();
+  const [debugMsg, setDebugMsg] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -77,6 +78,14 @@ function DiagnoseView() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setDebugMsg("✅ TOP of onSubmit reached");
+
+    // Check validation
+    if (!validate()) {
+      setDebugMsg("❌ Validation failed - check image and required fields");
+      return;
+    }
+
     setSubmitting(true);
     setErrors({});
 
