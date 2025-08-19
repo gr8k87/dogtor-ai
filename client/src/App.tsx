@@ -73,9 +73,12 @@ function DiagnoseView() {
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    const [debugMsg, setDebugMsg] = useState("");
     e.preventDefault();
+    setDebugMsg("✅ TOP of onSubmit reached");
     setSubmitting(true);
     setErrors({});
+    debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>;
 
     try {
       // Build payload
@@ -96,16 +99,34 @@ function DiagnoseView() {
 
       // Update local triage state
       setTriage(j);
-
       // Save into History (Phase 4)
       try {
-        addEntry({ form: payload, triage: j });
+        // Convert formData to symptoms string for display
+        const symptoms = Object.entries(formData)
+          .filter(([key, value]) => value !== "" && value !== undefined)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ");
+
+        addEntry({
+          form: {
+            ...payload,
+            symptoms: symptoms || "No specific symptoms reported",
+          },
+          triage: {
+            ...j,
+            advice: j.recommended_actions || [],
+            severity: j.urgency_level,
+            urgency: j.urgency_level,
+            probableCategory: j.triage_summary || "General assessment",
+          },
+        });
         console.log("✅ Saved to history", j);
       } catch (err) {
         console.error("❌ Failed to save to history", err);
       }
     } catch (err: any) {
       console.error("❌ Diagnose submit error", err);
+      alert("AddEntry failed: " + (err as Error).message);
       setErrors((prev) => ({
         ...prev,
         submit: err.message || "Something went wrong",
