@@ -1,4 +1,3 @@
-import { useHistory } from "./state/historyContext.jsx";
 import History from "./pages/history.jsx";
 
 import React, { useEffect, useState } from "react";
@@ -38,7 +37,6 @@ function DiagnoseView() {
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [triage, setTriage] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const { addEntry } = useHistory();
 
   useEffect(() => {
     setLoading(true);
@@ -86,18 +84,11 @@ function DiagnoseView() {
       });
       const j = await res.json();
       setTriage(j);
-      try {
-        addEntry({
-          form: { answers: formData, imagePresent: !!imageFile },
-          triage: j,
-        });
-        console.log("✅ Saved to history");
-      } catch (err) {
-        console.error("❌ Failed to save history", err);
-      }
-
+    } catch (error) {
+      setErrMsg("Failed to analyze. Please try again.");
+    } finally {
       setSubmitting(false);
-    
+    }
   }
 
   if (loading) return <div className="p-4">Loading questions…</div>;

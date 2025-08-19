@@ -34,7 +34,7 @@ export default function History() {
 function HistoryCard({ item }) {
   const triage = item.triage ?? {};
   const sev = String(
-    triage.severity || triage.urgency || "unknown",
+    triage.severity || triage.urgency || triage.urgency_level || "unknown",
   ).toLowerCase();
   const badge =
     sev === "high"
