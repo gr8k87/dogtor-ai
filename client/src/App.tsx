@@ -70,12 +70,22 @@ function DiagnoseView() {
       }
     });
     setErrors(e);
+    console.log("Validation errors:", e);
+    console.log("Has image:", !!imageFile);
+    console.log("Form data:", formData);
     return Object.keys(e).length === 0;
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setDebugMsg("✅ TOP of onSubmit reached");
+    
+    // Check validation
+    if (!validate()) {
+      setDebugMsg("❌ Validation failed - check image and required fields");
+      return;
+    }
+    
     setSubmitting(true);
     setErrors({});
 
