@@ -58,9 +58,9 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // serve client build
-app.use(express.static(path.join(__dirname, "static")));
+app.use(express.static(path.join(__dirname, "..", "client", "build")));
 app.get("*", (_req, res) =>
-  res.sendFile(path.join(__dirname, "static", "index.html")),
+  res.sendFile(path.join(__dirname, "..", "client", "build", "index.html")),
 );
 
 const PORT = process.env.PORT || 3000;

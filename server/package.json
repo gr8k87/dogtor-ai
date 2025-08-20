@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "build:watch": "cd ../client && npm run build -- --watch"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
