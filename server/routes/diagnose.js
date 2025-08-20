@@ -44,7 +44,10 @@ r.post("/init", async (_req, res) => {
 r.post("/triage", async (req, res) => {
   const { imagePresent, answers } = req.body || {};
 
+  console.log("🔍 Triage request received:", { imagePresent, answers });
+
   try {
+    console.log("🤖 Calling OpenAI API...");
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -63,11 +66,24 @@ r.post("/triage", async (req, res) => {
       temperature: 0.3,
     });
 
-    const parsed = JSON.parse(completion.choices[0].message.content);
+    console.log("✅ OpenAI API response received");
+    const rawContent = completion.choices[0].message.content;
+    console.log("📝 Raw AI response:", rawContent);
+
+    const parsed = JSON.parse(rawContent);
+    console.log("✅ Successfully parsed JSON:", parsed);
     res.json(parsed);
   } catch (err) {
-    console.error("AI error:", err);
-    res.status(500).json({ error: "AI triage failed" });
+    console.error("❌ AI error details:", err.message);
+    console.error("❌ Full error:", err);
+    
+    if (err.code === 'insufficient_quota') {
+      res.status(500).json({ error: "OpenAI API quota exceeded" });
+    } else if (err.code === 'invalid_api_key') {
+      res.status(500).json({ error: "Invalid OpenAI API key" });
+    } else {
+      res.status(500).json({ error: "AI triage failed: " + err.message });
+    }
   }
 });
 
