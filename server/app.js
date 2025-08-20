@@ -1,14 +1,16 @@
-
 import express from "express";
+import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
-import multer from "multer";
 import diagnose from "./routes/diagnose.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Storage config: save files in ./uploads/
+const app = express();
+app.use(express.json());
+
+// --- Multer storage setup ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "uploads"));
@@ -18,26 +20,21 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
-
 const upload = multer({ storage });
-const app = express();
-
-app.use(express.json());
 
 // health + api
 app.get("/health", (_req, res) => res.json({ ok: true }));
 app.use("/api/diagnose", diagnose);
 
-// Upload endpoint
+// --- Upload route ---
 app.post("/api/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-  // Return a relative URL so frontend can display later
   res.json({ imageUrl: `/uploads/${req.file.filename}` });
 });
 
-// Serve uploads directory
+// --- Serve uploaded files ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // serve client build
