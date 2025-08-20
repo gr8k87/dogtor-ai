@@ -1,7 +1,15 @@
 import { Router } from "express";
 import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
+
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const r = Router();
+
+// 🔹 Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY,
+);
 
 r.post("/init", async (_req, res) => {
   res.json({
@@ -72,14 +80,25 @@ r.post("/triage", async (req, res) => {
 
     const parsed = JSON.parse(rawContent);
     console.log("✅ Successfully parsed JSON:", parsed);
+
+    // 🔹 Save to Supabase history
+    const { error } = await supabase.from("histories").insert([
+      {
+        user_id: "demo-user", // placeholder until real auth
+        prompt: JSON.stringify(answers),
+        response: JSON.stringify(parsed),
+      },
+    ]);
+    if (error) console.error("❌ Supabase insert error:", error);
+
     res.json(parsed);
   } catch (err) {
     console.error("❌ AI error details:", err.message);
     console.error("❌ Full error:", err);
-    
-    if (err.code === 'insufficient_quota') {
+
+    if (err.code === "insufficient_quota") {
       res.status(500).json({ error: "OpenAI API quota exceeded" });
-    } else if (err.code === 'invalid_api_key') {
+    } else if (err.code === "invalid_api_key") {
       res.status(500).json({ error: "Invalid OpenAI API key" });
     } else {
       res.status(500).json({ error: "AI triage failed: " + err.message });
