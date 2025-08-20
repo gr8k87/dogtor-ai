@@ -1,5 +1,5 @@
-import { useHistory } from "./state/historyContext.jsx";
-import History from "./pages/history.jsx";
+import { useHistory } from "./state/historyContext";
+import History from "./pages/history";
 
 import React, { useEffect, useState } from "react";
 import ImagePicker from "./components/ImagePicker";
