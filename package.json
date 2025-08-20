@@ -1,9 +1,10 @@
+
 {
   "name": "dogtor-ai",
   "private": true,
   "scripts": {
     "dev": "npm run build:client && concurrently \"npm run build:watch --prefix client\" \"npm run dev --prefix server\"",
-    "build:client": "npm run build --prefix client",
+    "build:client": "cd client && npm run build",
     "build": "npm run build:client"
   },
   "devDependencies": {
