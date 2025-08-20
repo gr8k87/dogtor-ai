@@ -1,9 +1,8 @@
 import { useHistory } from "./state/historyContext";
 import History from "./pages/history";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ImagePicker from "./components/ImagePicker";
-import DynamicForm from "./components/DynamicForm";
 import OfflineBadge from "./components/OfflineBadge";
 type Tab = "Diagnose" | "History" | "Connect";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
@@ -30,61 +29,30 @@ function Splash({ onStart }: { onStart: () => void }) {
 
 function DiagnoseView() {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [schema, setSchema] = useState<any[] | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [notes, setNotes] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
-  const [errMsg, setErrMsg] = useState<string | null>(null);
   const [triage, setTriage] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { addEntry } = useHistory();
   const [debugMsg, setDebugMsg] = useState("");
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("/api/diagnose/init", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-    })
-      .then((r) => r.json())
-      .then((j) => {
-        setSchema(j.suggested_questions || []);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setErrMsg("Failed to load questions");
-        setLoading(false);
-      });
-  }, []);
-
   function validate() {
     const e: Record<string, string> = {};
     if (!imageFile) e.image = "Please add a photo";
-    (schema || []).forEach((f: any) => {
-      if (
-        f.required &&
-        (formData[f.id] === undefined ||
-          formData[f.id] === "" ||
-          formData[f.id] === null)
-      ) {
-        e[f.id] = "Required";
-      }
-    });
     setErrors(e);
     console.log("Validation errors:", e);
     console.log("Has image:", !!imageFile);
-    console.log("Form data:", formData);
+    console.log("Notes:", notes);
     return Object.keys(e).length === 0;
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setDebugMsg("✅ TOP of onSubmit reached");
+    setDebugMsg("✅ Starting analysis...");
 
     // Check validation
     if (!validate()) {
-      setDebugMsg("❌ Validation failed - check image and required fields");
+      setDebugMsg("❌ Please add a photo");
       return;
     }
 
@@ -94,18 +62,13 @@ function DiagnoseView() {
     try {
       let imageUrl = "";
 
-      // 1. If user selected an image → upload it first
+      // 1. Upload image first
       if (imageFile) {
-        setDebugMsg("📤 Uploading image to server...");
+        setDebugMsg("📤 Uploading image...");
         const formDataToSend = new FormData();
         formDataToSend.append("image", imageFile);
 
-        console.log(
-          "📤 Uploading image:",
-          imageFile.name,
-          "Size:",
-          imageFile.size,
-        );
+        console.log("📤 Uploading image:", imageFile.name, "Size:", imageFile.size);
 
         const uploadResp = await fetch("/api/upload", {
           method: "POST",
@@ -117,25 +80,23 @@ function DiagnoseView() {
         if (!uploadResp.ok) {
           const errorText = await uploadResp.text();
           console.error("❌ Upload failed:", errorText);
-          throw new Error(
-            `Image upload failed: ${uploadResp.status} - ${errorText}`,
-          );
+          throw new Error(`Image upload failed: ${uploadResp.status} - ${errorText}`);
         }
 
         const uploadJson = await uploadResp.json();
         imageUrl = uploadJson.imageUrl;
         console.log("✅ Image uploaded successfully to:", imageUrl);
-        setDebugMsg(`✅ Image uploaded: ${imageUrl}`);
+        setDebugMsg(`✅ Image uploaded, analyzing...`);
       }
 
       // 2. Build payload for triage
       const payload = {
-        imagePresent: !!imageFile,
-        answers: formData,
+        notes: notes,
+        imageUrl: imageUrl,
       };
 
       // 3. Call backend triage API
-      setDebugMsg("🔍 Sending to triage...");
+      setDebugMsg("🔍 AI analyzing image...");
       const resp = await fetch("/api/diagnose/triage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -155,7 +116,7 @@ function DiagnoseView() {
 
       // 5. Add to history
       addEntry({
-        form: formData,
+        form: { notes },
         triage: j,
       });
     } catch (err: any) {
@@ -170,9 +131,6 @@ function DiagnoseView() {
     }
   }
 
-  if (loading) return <div className="p-4">Loading questions…</div>;
-  if (errMsg) return <div className="p-4 text-red-600">{errMsg}</div>;
-
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border p-4">
@@ -182,30 +140,33 @@ function DiagnoseView() {
           <p className="text-red-600 text-sm mt-2">{errors.image}</p>
         )}
       </div>
+      
       <form onSubmit={onSubmit} className="rounded-2xl border p-4">
-        <h2 className="font-semibold mb-2">Questions</h2>
-        <DynamicForm
-          schema={schema || []}
-          value={formData}
-          onChange={setFormData}
+        <h2 className="font-semibold mb-2">Notes</h2>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Describe any symptoms, behaviors, or concerns about your pet (optional)..."
+          className="w-full h-24 p-3 border rounded-lg resize-none text-sm"
         />
-        {Object.entries(errors).filter(([k]) => k !== "image").length > 0 && (
-          <p className="text-red-600 text-sm mt-2">
-            Pl ease complete required fields.
-          </p>
+        
+        {errors.submit && (
+          <p className="text-red-600 text-sm mt-2">{errors.submit}</p>
         )}
+        
         <button
           type="submit"
           disabled={submitting}
           className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
         >
-          {submitting ? "Analyzing..." : "Review"}
+          {submitting ? "Analyzing..." : "Analyze"}
         </button>
         {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
       </form>
+      
       {triage && (
         <div className="rounded-2xl border p-4">
-          <h2 className="font-semibold mb-2">Triage</h2>
+          <h2 className="font-semibold mb-2">Analysis Results</h2>
           <p className="text-sm">{triage.triage_summary}</p>
           <div className="mt-2">
             <p className="font-medium">Possible causes</p>

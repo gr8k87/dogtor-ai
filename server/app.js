@@ -32,6 +32,28 @@ const upload = multer({ storage });
 app.get("/health", (_req, res) => res.json({ ok: true }));
 app.use("/api/diagnose", diagnose);
 
+// History API endpoints
+app.get("/api/history/list", async (_req, res) => {
+  try {
+    // For now, return empty array - will be populated by Supabase calls in diagnose route
+    res.json([]);
+  } catch (err) {
+    console.error("❌ History list error:", err);
+    res.status(500).json({ error: "Failed to load history" });
+  }
+});
+
+app.post("/api/history/save", async (req, res) => {
+  try {
+    const { prompt, response } = req.body;
+    // This endpoint exists for compatibility but actual saving happens in /triage
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ History save error:", err);
+    res.status(500).json({ error: "Failed to save history" });
+  }
+});
+
 // --- Upload route ---
 app.post("/api/upload", upload.single("image"), (req, res) => {
   console.log("📤 Upload request received");
