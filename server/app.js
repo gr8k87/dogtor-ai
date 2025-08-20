@@ -41,16 +41,16 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
     console.log("❌ No file in upload request");
     return res.status(400).json({ error: "No file uploaded" });
   }
-  
+
   const imageUrl = `/uploads/${req.file.filename}`;
   console.log("✅ File uploaded successfully:", {
     originalName: req.file.originalname,
     filename: req.file.filename,
     size: req.file.size,
     path: req.file.path,
-    imageUrl: imageUrl
+    imageUrl: imageUrl,
   });
-  
+
   res.json({ imageUrl });
 });
 

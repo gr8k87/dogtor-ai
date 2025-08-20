@@ -64,7 +64,9 @@ function DiagnoseView() {
     (schema || []).forEach((f: any) => {
       if (
         f.required &&
-        (formData[f.id] === undefined || formData[f.id] === "" || formData[f.id] === null)
+        (formData[f.id] === undefined ||
+          formData[f.id] === "" ||
+          formData[f.id] === null)
       ) {
         e[f.id] = "Required";
       }
@@ -98,7 +100,12 @@ function DiagnoseView() {
         const formDataToSend = new FormData();
         formDataToSend.append("image", imageFile);
 
-        console.log("📤 Uploading image:", imageFile.name, "Size:", imageFile.size);
+        console.log(
+          "📤 Uploading image:",
+          imageFile.name,
+          "Size:",
+          imageFile.size,
+        );
 
         const uploadResp = await fetch("/api/upload", {
           method: "POST",
@@ -110,7 +117,9 @@ function DiagnoseView() {
         if (!uploadResp.ok) {
           const errorText = await uploadResp.text();
           console.error("❌ Upload failed:", errorText);
-          throw new Error(`Image upload failed: ${uploadResp.status} - ${errorText}`);
+          throw new Error(
+            `Image upload failed: ${uploadResp.status} - ${errorText}`,
+          );
         }
 
         const uploadJson = await uploadResp.json();
@@ -140,7 +149,7 @@ function DiagnoseView() {
       // 4. Update triage state
       setTriage(j);
       setDebugMsg("✅ Analysis complete!");
-      
+
       // 5. Add to history
       addEntry({
         id: Date.now().toString(),
