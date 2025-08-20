@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import diagnose from "./routes/diagnose.js";
 
@@ -9,6 +10,13 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("✅ Created uploads directory:", uploadsDir);
+}
 
 // --- Multer storage setup ---
 const storage = multer.diskStorage({
@@ -28,10 +36,22 @@ app.use("/api/diagnose", diagnose);
 
 // --- Upload route ---
 app.post("/api/upload", upload.single("image"), (req, res) => {
+  console.log("📤 Upload request received");
   if (!req.file) {
+    console.log("❌ No file in upload request");
     return res.status(400).json({ error: "No file uploaded" });
   }
-  res.json({ imageUrl: `/uploads/${req.file.filename}` });
+  
+  const imageUrl = `/uploads/${req.file.filename}`;
+  console.log("✅ File uploaded successfully:", {
+    originalName: req.file.originalname,
+    filename: req.file.filename,
+    size: req.file.size,
+    path: req.file.path,
+    imageUrl: imageUrl
+  });
+  
+  res.json({ imageUrl });
 });
 
 // --- Serve uploaded files ---

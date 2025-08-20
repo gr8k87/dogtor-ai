@@ -64,7 +64,7 @@ function DiagnoseView() {
     (schema || []).forEach((f: any) => {
       if (
         f.required &&
-        (formData[f.id] === undefined || formData[f.id] === "")
+        (formData[f.id] === undefined || formData[f.id] === "" || formData[f.id] === null)
       ) {
         e[f.id] = "Required";
       }
@@ -94,26 +94,36 @@ function DiagnoseView() {
 
       // 1. If user selected an image → upload it first
       if (imageFile) {
+        setDebugMsg("📤 Uploading image to server...");
         const formDataToSend = new FormData();
         formDataToSend.append("image", imageFile);
+
+        console.log("📤 Uploading image:", imageFile.name, "Size:", imageFile.size);
 
         const uploadResp = await fetch("/api/upload", {
           method: "POST",
           body: formDataToSend,
         });
 
+        console.log("📤 Upload response status:", uploadResp.status);
+
         if (!uploadResp.ok) {
-          throw new Error("Image upload failed");
+          const errorText = await uploadResp.text();
+          console.error("❌ Upload failed:", errorText);
+          throw new Error(`Image upload failed: ${uploadResp.status} - ${errorText}`);
         }
 
         const uploadJson = await uploadResp.json();
-        imageUrl = uploadJson.imageUrl; // e.g. "/uploads/12345.png"
+        imageUrl = uploadJson.imageUrl;
+        console.log("✅ Image uploaded successfully to:", imageUrl);
+        setDebugMsg(`✅ Image uploaded: ${imageUrl}`);
       }
 
       // 2. Build payload for triage
-      const payload = { ...formData, imageUrl };
+      const payload = { ...formData, imageUrl, imagePresent: !!imageFile };
 
       // 3. Call backend triage API
+      setDebugMsg("🔍 Sending to triage...");
       const resp = await fetch("/api/diagnose/triage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,18 +131,30 @@ function DiagnoseView() {
       });
 
       if (!resp.ok) {
-        throw new Error(`Triage request failed: ${resp.status}`);
+        const errorText = await resp.text();
+        throw new Error(`Triage request failed: ${resp.status} - ${errorText}`);
       }
 
       const j = await resp.json();
 
       // 4. Update triage state
       setTriage(j);
+      setDebugMsg("✅ Analysis complete!");
+      
+      // 5. Add to history
+      addEntry({
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        imageUrl,
+        formData,
+        triage: j,
+      });
     } catch (err: any) {
       console.error("❌ Diagnose submit error", err);
+      setDebugMsg(`❌ Error: ${err.message}`);
       setErrors((prev) => ({
         ...prev,
-        submit: err.message || "Someth  ing went wrong",
+        submit: err.message || "Something went wrong",
       }));
     } finally {
       setSubmitting(false);
