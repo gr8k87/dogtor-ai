@@ -4,10 +4,8 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import diagnose from "./routes/diagnose.js";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const app = express();
 app.use(express.json());
 
