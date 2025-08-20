@@ -78,19 +78,19 @@ r.post("/triage", async (req, res) => {
     const rawContent = completion.choices[0].message.content;
     console.log("📝 Raw AI response:", rawContent);
 
-    const parsed = JSON.parse(rawContent);
+    // Clean the response by removing markdown code block formatting if present
+    let cleanedContent = rawContent.trim();
+    if (cleanedContent.startsWith('```json')) {
+      cleanedContent = cleanedContent.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+    } else if (cleanedContent.startsWith('```')) {
+      cleanedContent = cleanedContent.replace(/^```\n?/, '').replace(/\n?```$/, '');
+    }
+    cleanedContent = cleanedContent.trim();
+
+    console.log("🧹 Cleaned content:", cleanedContent);
+
+    const parsed = JSON.parse(cleanedContent);
     console.log("✅ Successfully parsed JSON:", parsed);
-
-    // 🔹 Save to Supabase history
-    const { error } = await supabase.from("histories").insert([
-      {
-        user_id: "demo-user", // placeholder until real auth
-        prompt: JSON.stringify(answers),
-        response: JSON.stringify(parsed),
-      },
-    ]);
-    if (error) console.error("❌ Supabase insert error:", error);
-
     res.json(parsed);
   } catch (err) {
     console.error("❌ AI error details:", err.message);
