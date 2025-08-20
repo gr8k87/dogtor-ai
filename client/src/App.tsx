@@ -129,7 +129,10 @@ function DiagnoseView() {
       }
 
       // 2. Build payload for triage
-      const payload = { ...formData, imageUrl, imagePresent: !!imageFile };
+      const payload = { 
+        imagePresent: !!imageFile,
+        answers: formData
+      };
 
       // 3. Call backend triage API
       setDebugMsg("🔍 Sending to triage...");
