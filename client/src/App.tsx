@@ -152,10 +152,7 @@ function DiagnoseView() {
 
       // 5. Add to history
       addEntry({
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        imageUrl,
-        formData,
+        form: formData,
         triage: j,
       });
     } catch (err: any) {

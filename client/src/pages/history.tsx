@@ -60,7 +60,7 @@ function HistoryCard({ item }: { item: HistoryEntry }) {
       <div className="mt-2 text-sm">
         <div>
           <span className="text-gray-500">Symptoms:</span>{" "}
-          {item?.form?.symptoms || "—"}
+          {item?.form?.symptoms || item?.form?.symptom_description || Object.values(item?.form || {}).join(", ") || "—"}
         </div>
         {Array.isArray(triage.advice) && triage.advice.length > 0 && (
           <ul className="list-disc ml-6 mt-2 space-y-1">
