@@ -79,70 +79,66 @@ r.post("/results", async (req, res) => {
       ? `Analyze this pet image for health concerns. Symptoms: ${symptoms}`
       : `Pet health analysis based on symptoms: ${symptoms}`;
 
-    // Call OpenAI for each card
+    // Call OpenAI
     const cards = {};
+    let messages = [prompt];
 
-    for (let i = 0; i < prompts.length; i++) {
-      let messages = [prompts[i]];
+      if (imageUrl) {
+      const imagePath = path.join(__dirname, "..", imageUrl);
 
-      if (imageUrl && i === 0) {
-        // Only add image to first prompt
-        const imagePath = path.join(__dirname, "..", imageUrl);
+      if (fs.existsSync(imagePath)) {
+        const imageBuffer = fs.readFileSync(imagePath);
+        const base64Image = imageBuffer.toString("base64");
+        const mimeType = imageUrl.toLowerCase().includes(".png")
+          ? "image/png"
+          : "image/jpeg";
 
-        if (fs.existsSync(imagePath)) {
-          const imageBuffer = fs.readFileSync(imagePath);
-          const base64Image = imageBuffer.toString("base64");
-          const mimeType = imageUrl.toLowerCase().includes(".png")
-            ? "image/png"
-            : "image/jpeg";
-
-          messages.push({
-            role: "user",
-            content: [
-              { type: "text", text: userPrompt },
-              {
-                type: "image_url",
-                image_url: { url: `data:${mimeType};base64,${base64Image}` },
-              },
-            ],
-          });
-        } else {
-          messages.push({ role: "user", content: userPrompt });
-        }
+        messages.push({
+          role: "user",
+          content: [
+            { type: "text", text: userPrompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${base64Image}` },
+            },
+          ],
+        });
       } else {
         messages.push({ role: "user", content: userPrompt });
       }
-
-      const completion = await client.chat.completions.create({
-        model: "gpt-4o",
-        messages,
-        temperature: 0.3,
-        max_tokens: 500,
-      });
-
-      let rawContent = completion.choices[0].message.content.trim();
-      if (rawContent.startsWith("```")) {
-        rawContent = rawContent
-          .replace(/```(json)?\n?/, "")
-          .replace(/\n?```$/, "");
-      }
-
-      const parsed = JSON.parse(rawContent);
-      
-      // Check if AI returned an error response
-      if (parsed.error) {
-        console.log("🚫 AI refused analysis:", parsed.error.reason);
-        return res.status(400).json({
-          error: "Analysis not possible",
-          details: {
-            reason: parsed.error.reason,
-            suggestions: parsed.error.suggestions || []
-          }
-        });
-      }
-      
-      Object.assign(cards, parsed);
+    } else {
+      messages.push({ role: "user", content: userPrompt });
     }
+
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages,
+      temperature: 0.3,
+      max_tokens: 500,
+    });
+
+    let rawContent = completion.choices[0].message.content.trim();
+    if (rawContent.startsWith("```")) {
+      rawContent = rawContent
+        .replace(/```(json)?\n?/, "")
+        .replace(/\n?```$/, "");
+    }
+
+    const parsed = JSON.parse(rawContent);
+    
+    // Check if AI returned an error response
+    if (parsed.error) {
+      console.log("🚫 AI refused analysis:", parsed.error.reason);
+      return res.status(400).json({
+        error: "Analysis not possible",
+        details: {
+          reason: parsed.error.reason,
+          suggestions: parsed.error.suggestions || []
+        }
+      });
+    }
+    
+    Object.assign(cards, parsed);
 
     // Save to history
     supabase
