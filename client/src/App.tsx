@@ -158,20 +158,21 @@ function DiagnoseView() {
         <div className="space-y-4">
           {/* Card 1: Diagnosis */}
           <div className="rounded-2xl border p-4">
-            <h2 className="font-semibold mb-2">{cards.diagnosis.title}</h2>
-            <p>
-              <b>Likely:</b> {cards.diagnosis.likely_condition}
+            <h2 className="font-semibold mb-2">{cards.diagnosis.title}:</h2>
+            <p className="mb-2">
+              <b>Likely condition:</b> {cards.diagnosis.likely_condition}
             </p>
-            <ul className="list-disc pl-5 text-sm mt-2">
+            <p className="mb-1"><b>Other possibilities:</b></p>
+            <ul className="text-sm mb-3">
               {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
-                <li key={i}>
-                  {p.name} – {p.likelihood}
+                <li key={i} className="ml-2">
+                  • {p.name} ({p.likelihood} likelihood)
                 </li>
               ))}
             </ul>
-            <p className="mt-2">
-              {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} –{" "}
-              {cards.diagnosis.urgency.note}
+            <p className="mb-1"><b>Urgency:</b></p>
+            <p className="text-sm">
+              {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
             </p>
           </div>
 
