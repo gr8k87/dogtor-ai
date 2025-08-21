@@ -139,7 +139,7 @@ r.post("/results", async (req, res) => {
     console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
     
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages,
       temperature: 0.3,
       max_tokens: 500,
