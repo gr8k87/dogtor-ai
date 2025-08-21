@@ -108,7 +108,13 @@ function DiagnoseView() {
       // Display timing information
       if (j.timings) {
         const t = j.timings;
-        setDebugMsg(`✅ Analysis complete! Total: ${t.total}ms (File: ${t.fileRead || 0}ms, OpenAI: ${t.openaiCall}ms, Processing: ${t.responseProcessing}ms)`);
+        const parts = [
+          `File: ${t.fileRead || 0}ms`,
+          t.imageOptimization ? `Optimization: ${t.imageOptimization}ms` : null,
+          `OpenAI: ${t.openaiCall}ms`,
+          `Processing: ${t.responseProcessing}ms`
+        ].filter(Boolean);
+        setDebugMsg(`✅ Analysis complete! Total: ${t.total}ms (${parts.join(', ')})`);
       } else {
         setDebugMsg("✅ Analysis complete!");
       }

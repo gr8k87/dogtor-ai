@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import sharp from "sharp";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -92,15 +93,30 @@ r.post("/results", async (req, res) => {
       const imagePath = path.join(__dirname, "..", imageUrl);
 
       if (fs.existsSync(imagePath)) {
-        const imageBuffer = fs.readFileSync(imagePath);
+        let imageBuffer = fs.readFileSync(imagePath);
+        
+        // Optimize image: convert to JPEG and resize to max 1024x1024
+        const optimizeStart = Date.now();
+        console.log("🖼️ Optimizing image...");
+        
+        imageBuffer = await sharp(imageBuffer)
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
+          })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+          
+        const optimizeEnd = Date.now();
+        timings.imageOptimization = optimizeEnd - optimizeStart;
+        console.log("⏱️ Image optimization completed:", timings.imageOptimization + "ms");
+        
         const base64Image = imageBuffer.toString("base64");
         const fileReadEnd = Date.now();
         timings.fileRead = fileReadEnd - fileReadStart;
         console.log("⏱️ File read completed:", timings.fileRead + "ms");
         
-        const mimeType = imageUrl.toLowerCase().includes(".png")
-          ? "image/png"
-          : "image/jpeg";
+        const mimeType = "image/jpeg"; // Always JPEG after optimization
 
         messages.push({
           role: "user",
@@ -123,7 +139,7 @@ r.post("/results", async (req, res) => {
     console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
     
     const completion = await client.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages,
       temperature: 0.3,
       max_tokens: 500,
@@ -166,6 +182,7 @@ r.post("/results", async (req, res) => {
     
     console.log("⏱️ === TIMING SUMMARY ===");
     console.log("⏱️ File Read:", (timings.fileRead || 0) + "ms");
+    console.log("⏱️ Image Optimization:", (timings.imageOptimization || 0) + "ms");
     console.log("⏱️ OpenAI API Call:", timings.openaiCall + "ms");
     console.log("⏱️ Response Processing:", timings.responseProcessing + "ms");
     console.log("⏱️ Total Request Time:", timings.total + "ms");
@@ -271,7 +288,7 @@ Return ONLY valid JSON structured as:
 
     // Call OpenAI
     const completion = await client.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages,
       temperature: 0.3,
       max_tokens: 1000,
