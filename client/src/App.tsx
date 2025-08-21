@@ -61,6 +61,7 @@ function DiagnoseView() {
 
       // Upload image
       if (imageFile) {
+        const uploadStart = Date.now();
         setDebugMsg("📤 Uploading image...");
         const formDataToSend = new FormData();
         formDataToSend.append("image", imageFile);
@@ -79,7 +80,8 @@ function DiagnoseView() {
 
         const uploadJson = await uploadResp.json();
         imageUrl = uploadJson.imageUrl;
-        setDebugMsg(`✅ Image uploaded, analyzing...`);
+        const uploadTime = Date.now() - uploadStart;
+        setDebugMsg(`✅ Image uploaded (${uploadTime}ms), analyzing...`);
       }
 
       // Call backend multi-prompt results API
@@ -102,7 +104,14 @@ function DiagnoseView() {
 
       const j = await resp.json();
       setCards(j.cards);
-      setDebugMsg("✅ Analysis complete!");
+      
+      // Display timing information
+      if (j.timings) {
+        const t = j.timings;
+        setDebugMsg(`✅ Analysis complete! Total: ${t.total}ms (File: ${t.fileRead || 0}ms, OpenAI: ${t.openaiCall}ms, Processing: ${t.responseProcessing}ms)`);
+      } else {
+        setDebugMsg("✅ Analysis complete!");
+      }
 
       // Save to history
       addEntry({

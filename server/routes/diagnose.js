@@ -19,7 +19,11 @@ const supabase = createClient(
 
 r.post("/results", async (req, res) => {
   const { symptoms, imageUrl } = req.body || {};
+  const timingStart = Date.now();
+  const timings = {};
+  
   console.log("🔍 Results request received:", { symptoms, imageUrl });
+  console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
   try {
     // Generate 3 separate prompts for the 3 cards
@@ -84,11 +88,16 @@ r.post("/results", async (req, res) => {
     let messages = [prompt];
 
       if (imageUrl) {
+      const fileReadStart = Date.now();
       const imagePath = path.join(__dirname, "..", imageUrl);
 
       if (fs.existsSync(imagePath)) {
         const imageBuffer = fs.readFileSync(imagePath);
         const base64Image = imageBuffer.toString("base64");
+        const fileReadEnd = Date.now();
+        timings.fileRead = fileReadEnd - fileReadStart;
+        console.log("⏱️ File read completed:", timings.fileRead + "ms");
+        
         const mimeType = imageUrl.toLowerCase().includes(".png")
           ? "image/png"
           : "image/jpeg";
@@ -110,6 +119,9 @@ r.post("/results", async (req, res) => {
       messages.push({ role: "user", content: userPrompt });
     }
 
+    const openaiStart = Date.now();
+    console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
+    
     const completion = await client.chat.completions.create({
       model: "gpt-4o",
       messages,
@@ -117,6 +129,11 @@ r.post("/results", async (req, res) => {
       max_tokens: 500,
     });
 
+    const openaiEnd = Date.now();
+    timings.openaiCall = openaiEnd - openaiStart;
+    console.log("⏱️ OpenAI API call completed:", timings.openaiCall + "ms");
+
+    const processingStart = Date.now();
     let rawContent = completion.choices[0].message.content.trim();
     if (rawContent.startsWith("```")) {
       rawContent = rawContent
@@ -125,6 +142,9 @@ r.post("/results", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
+    const processingEnd = Date.now();
+    timings.responseProcessing = processingEnd - processingStart;
+    console.log("⏱️ Response processing completed:", timings.responseProcessing + "ms");
     
     // Check if AI returned an error response
     if (parsed.error) {
@@ -140,7 +160,20 @@ r.post("/results", async (req, res) => {
     
     Object.assign(cards, parsed);
 
-    // Save to history
+    // Calculate total time and log summary
+    const totalTime = Date.now() - timingStart;
+    timings.total = totalTime;
+    
+    console.log("⏱️ === TIMING SUMMARY ===");
+    console.log("⏱️ File Read:", (timings.fileRead || 0) + "ms");
+    console.log("⏱️ OpenAI API Call:", timings.openaiCall + "ms");
+    console.log("⏱️ Response Processing:", timings.responseProcessing + "ms");
+    console.log("⏱️ Total Request Time:", timings.total + "ms");
+    console.log("⏱️ Request completed at:", new Date().toISOString());
+    console.log("⏱️ ==================");
+
+    // Save to history (non-blocking)
+    const historyStart = Date.now();
     supabase
       .from("history")
       .insert([
@@ -150,10 +183,13 @@ r.post("/results", async (req, res) => {
           created_at: new Date().toISOString(),
         },
       ])
-      .then(() => console.log("✅ Saved to history"))
+      .then(() => {
+        const historyTime = Date.now() - historyStart;
+        console.log("✅ Saved to history (" + historyTime + "ms)");
+      })
       .catch((err) => console.error("❌ Failed to save to history:", err));
 
-    res.json({ cards });
+    res.json({ cards, timings });
   } catch (err) {
     console.error("❌ Results error:", err.message, err);
     res.status(500).json({ error: "AI analysis failed: " + err.message });

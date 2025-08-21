@@ -89,22 +89,28 @@ app.post("/api/history/save", async (req, res) => {
 
 // --- Upload route ---
 app.post("/api/upload", upload.single("image"), (req, res) => {
-  console.log("📤 Upload request received");
+  const uploadStart = Date.now();
+  console.log("📤 Upload request received at:", new Date(uploadStart).toISOString());
+  
   if (!req.file) {
     console.log("❌ No file in upload request");
     return res.status(400).json({ error: "No file uploaded" });
   }
 
+  const uploadEnd = Date.now();
+  const uploadTime = uploadEnd - uploadStart;
   const imageUrl = `/uploads/${req.file.filename}`;
+  
   console.log("✅ File uploaded successfully:", {
     originalName: req.file.originalname,
     filename: req.file.filename,
     size: req.file.size,
     path: req.file.path,
     imageUrl: imageUrl,
+    uploadTime: uploadTime + "ms"
   });
 
-  res.json({ imageUrl });
+  res.json({ imageUrl, uploadTime });
 });
 
 // --- Serve uploaded files ---
