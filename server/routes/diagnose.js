@@ -28,12 +28,21 @@ r.post("/results", async (req, res) => {
       content: `
     You are a veterinary diagnostic assistant.
 
-    Your task:
-    - Analyze the provided dog photo (if present) and symptom notes (if provided).
-    - Return ONLY valid JSON. Do not include any extra text, explanations, or markdown.
+    Analyze the provided photo and notes.
 
-    If analysis is possible:
-    Return the following structure:
+    - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
+    - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
+      return a JSON object like this:
+      {
+        "error": {
+          "reason": "Explain why analysis could not be done",
+          "suggestions": ["Actionable fix 1", "Actionable fix 2"]
+        }
+      }
+
+    Return ONLY JSON. Do not include extra text or markdown.
+
+    If analysis is possible, return this structure:
     {
       "diagnosis": {
         "title": "Diagnosis",
@@ -60,18 +69,6 @@ r.post("/results", async (req, res) => {
         "disclaimer": "Prices are typical for GTA, Ontario clinics. Costs may vary.",
         "steps": [
           { "icon": "💉", "name": "Procedure", "likelihood": "high/medium/low", "desc": "short description", "cost": "$100–$300 CAD" }
-        ]
-      }
-    }
-
-    If you are unable to analyze the image for ANY reason (e.g., poor quality, unsupported format, content restrictions, missing info):
-    Return the following JSON instead:
-    {
-      "error": {
-        "reason": "short explanation of why analysis could not be done",
-        "suggestions": [
-          "Actionable step 1",
-          "Actionable step 2"
         ]
       }
     }
@@ -131,6 +128,19 @@ r.post("/results", async (req, res) => {
       }
 
       const parsed = JSON.parse(rawContent);
+      
+      // Check if AI returned an error response
+      if (parsed.error) {
+        console.log("🚫 AI refused analysis:", parsed.error.reason);
+        return res.status(400).json({
+          error: "Analysis not possible",
+          details: {
+            reason: parsed.error.reason,
+            suggestions: parsed.error.suggestions || []
+          }
+        });
+      }
+      
       Object.assign(cards, parsed);
     }
 
