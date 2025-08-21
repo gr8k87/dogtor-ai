@@ -46,7 +46,7 @@ r.post("/results", async (req, res) => {
     {
       "diagnosis": {
         "title": "Diagnosis",
-        "likely_condition": "...",
+        "likely_condition": "...", 
         "other_possibilities": [
           { "name": "...", "likelihood": "high/medium/low" }
         ],
