@@ -4,6 +4,7 @@ import History from "./pages/history";
 import React, { useState } from "react";
 import ImagePicker from "./components/ImagePicker";
 import OfflineBadge from "./components/OfflineBadge";
+
 type Tab = "Diagnose" | "History" | "Connect";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
@@ -11,7 +12,7 @@ function Splash({ onStart }: { onStart: () => void }) {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center">
       <h1 className="text-2xl font-bold">Dogtor AI</h1>
-      <p className="text-sm text-gray-500 mt-1">
+      <p className="text-sm  text-gray-500 mt-1">
         Not a vet, just your first step.
       </p>
       <button
@@ -31,7 +32,7 @@ function DiagnoseView() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [notes, setNotes] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [triage, setTriage] = useState<any | null>(null);
+  const [cards, setCards] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { addEntry } = useHistory();
   const [debugMsg, setDebugMsg] = useState("");
@@ -40,9 +41,6 @@ function DiagnoseView() {
     const e: Record<string, string> = {};
     if (!imageFile) e.image = "Please add a photo";
     setErrors(e);
-    console.log("Validation errors:", e);
-    console.log("Has image:", !!imageFile);
-    console.log("Notes:", notes);
     return Object.keys(e).length === 0;
   }
 
@@ -50,7 +48,6 @@ function DiagnoseView() {
     e.preventDefault();
     setDebugMsg("✅ Starting analysis...");
 
-    // Check validation
     if (!validate()) {
       setDebugMsg("❌ Please add a photo");
       return;
@@ -62,62 +59,55 @@ function DiagnoseView() {
     try {
       let imageUrl = "";
 
-      // 1. Upload image first
+      // Upload image
       if (imageFile) {
         setDebugMsg("📤 Uploading image...");
         const formDataToSend = new FormData();
         formDataToSend.append("image", imageFile);
-
-        console.log("📤 Uploading image:", imageFile.name, "Size:", imageFile.size);
 
         const uploadResp = await fetch("/api/upload", {
           method: "POST",
           body: formDataToSend,
         });
 
-        console.log("📤 Upload response status:", uploadResp.status);
-
         if (!uploadResp.ok) {
           const errorText = await uploadResp.text();
-          console.error("❌ Upload failed:", errorText);
-          throw new Error(`Image upload failed: ${uploadResp.status} - ${errorText}`);
+          throw new Error(
+            `Image upload failed: ${uploadResp.status} - ${errorText}`,
+          );
         }
 
         const uploadJson = await uploadResp.json();
         imageUrl = uploadJson.imageUrl;
-        console.log("✅ Image uploaded successfully to:", imageUrl);
         setDebugMsg(`✅ Image uploaded, analyzing...`);
       }
 
-      // 2. Build payload for triage
-      const payload = {
-        notes: notes,
-        imageUrl: imageUrl,
-      };
-
-      // 3. Call backend triage API
-      setDebugMsg("🔍 AI analyzing image...");
-      const resp = await fetch("/api/diagnose/triage", {
+      // Call backend multi-prompt results API
+      setDebugMsg("🔍 AI analyzing...");
+      const resp = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          symptoms: notes || "dog health issue",
+          imageUrl,
+        }),
       });
 
       if (!resp.ok) {
         const errorText = await resp.text();
-        throw new Error(`Triage request failed: ${resp.status} - ${errorText}`);
+        throw new Error(
+          `Results request failed: ${resp.status} - ${errorText}`,
+        );
       }
 
       const j = await resp.json();
-
-      // 4. Update triage state
-      setTriage(j);
+      setCards(j.cards);
       setDebugMsg("✅ Analysis complete!");
 
-      // 5. Add to history
+      // Save to history
       addEntry({
         form: { notes },
-        triage: j,
+        triage: j.cards,
       });
     } catch (err: any) {
       console.error("❌ Diagnose submit error", err);
@@ -140,7 +130,7 @@ function DiagnoseView() {
           <p className="text-red-600 text-sm mt-2">{errors.image}</p>
         )}
       </div>
-      
+
       <form onSubmit={onSubmit} className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Notes</h2>
         <textarea
@@ -149,11 +139,11 @@ function DiagnoseView() {
           placeholder="Describe any symptoms, behaviors, or concerns about your pet (optional)..."
           className="w-full h-24 p-3 border rounded-lg resize-none text-sm"
         />
-        
+
         {errors.submit && (
           <p className="text-red-600 text-sm mt-2">{errors.submit}</p>
         )}
-        
+
         <button
           type="submit"
           disabled={submitting}
@@ -163,30 +153,61 @@ function DiagnoseView() {
         </button>
         {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
       </form>
-      
-      {triage && (
-        <div className="rounded-2xl border p-4">
-          <h2 className="font-semibold mb-2">Analysis Results</h2>
-          <p className="text-sm">{triage.triage_summary}</p>
-          <div className="mt-2">
-            <p className="font-medium">Possible causes</p>
+
+      {cards && (
+        <div className="space-y-4">
+          {/* Card 1: Diagnosis */}
+          <div className="rounded-2xl border p-4">
+            <h2 className="font-semibold mb-2">{cards.diagnosis.title}</h2>
+            <p>
+              <b>Likely:</b> {cards.diagnosis.likely_condition}
+            </p>
+            <ul className="list-disc pl-5 text-sm mt-2">
+              {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
+                <li key={i}>
+                  {p.name} – {p.likelihood}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2">
+              {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} –{" "}
+              {cards.diagnosis.urgency.note}
+            </p>
+          </div>
+
+          {/* Card 2: General Care Tips */}
+          <div className="rounded-2xl border p-4">
+            <h2 className="font-semibold mb-2">{cards.care.title}</h2>
             <ul className="list-disc pl-5 text-sm">
-              {(triage.possible_causes || []).map((c: string) => (
-                <li key={c}>{c}</li>
+              {cards.care.tips.map((t: any, i: number) => (
+                <li key={i}>
+                  {t.icon} {t.text}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-gray-500 mt-2">
+              {cards.care.disclaimer}
+            </p>
+          </div>
+
+          {/* Card 3: Vet Procedures & Costs */}
+          <div className="rounded-2xl border p-4">
+            <h2 className="font-semibold mb-2">{cards.costs.title}</h2>
+            <p className="text-xs text-gray-500 mb-2">
+              {cards.costs.disclaimer}
+            </p>
+            <ul className="space-y-2 text-sm">
+              {cards.costs.steps.map((s: any, i: number) => (
+                <li key={i}>
+                  {s.icon} <b>{s.name}</b> – {s.likelihood}
+                  <br />
+                  <span className="text-gray-600">{s.desc}</span>
+                  <br />
+                  <span className="font-medium">{s.cost}</span>
+                </li>
               ))}
             </ul>
           </div>
-          <div className="mt-2">
-            <p className="font-medium">Recommended actions</p>
-            <ul className="list-disc pl-5 text-sm">
-              {(triage.recommended_actions || []).map((a: string) => (
-                <li key={a}>{a}</li>
-              ))}
-            </ul>
-          </div>
-          <p className="mt-2 text-sm">
-            <strong>Urgency:</strong> {triage.urgency_level}
-          </p>
         </div>
       )}
     </div>

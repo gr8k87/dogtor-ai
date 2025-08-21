@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "multer": "^2.0.2",
     "openai": "^5.13.1"
   },
@@ -12,6 +12,7 @@
     "build:watch": "cd ../client && npm run build -- --watch"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "nodemon": "^3.1.10"
   }
 }
