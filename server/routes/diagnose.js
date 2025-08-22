@@ -126,20 +126,26 @@ Return ONLY JSON in this exact format:
   "questions": [
     {
       "id": "q1",
-      "type": "select|radio|yesno|text|number",
+      "type": "select|radio|yesno",
       "label": "Question text here?",
-      "options": ["option1", "option2"],
+      "options": ["option1", "option2", "option3"],
       "required": true
     }
   ]
 }
 
-Question types:
-- "select": dropdown with options array
-- "radio": radio buttons with options array  
-- "yesno": yes/no buttons
-- "text": text input
-- "number": number input
+Question types (ONLY use these):
+- "select": dropdown with 3-5 options for single choice (breeds, age ranges, medications)
+- "radio": radio buttons with 2-4 options for single choice (severity levels, frequency, yes/no variations)  
+- "yesno": simple yes/no questions (automatically creates Yes/No options)
+
+IMPORTANT RULES:
+- Never use "text" or "number" types
+- Always provide an "options" array for "select" and "radio" types
+- Convert duration questions to ranges like "Less than 24 hours", "1-3 days", "1-2 weeks", "More than 2 weeks"
+- Convert severity to "Mild", "Moderate", "Severe"
+- Convert frequency to "Never", "Rarely", "Sometimes", "Often", "Always"
+- Make all questions clickable/selectable by the user
 
 Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.`;
 
