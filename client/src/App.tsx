@@ -104,7 +104,7 @@ function AppContent() {
                     ? "font-semibold" : "text-gray-500"
                 }`}
               >
-                {t}
+                {String(t)}
               </Button>
             ))}
           </div>

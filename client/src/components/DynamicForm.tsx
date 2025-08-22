@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -50,7 +49,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
 
   function toggleCheckboxValue(id: string, option: string) {
     const current = value[id] || [];
-    const newValue = current.includes(option) 
+    const newValue = current.includes(option)
       ? current.filter((item: string) => item !== option)
       : [...current, option];
     setVal(id, newValue);
@@ -73,7 +72,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
               <SelectContent>
                 {field.options.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option}
+                    {String(option)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -84,14 +83,14 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
             <div className="flex gap-4 flex-wrap">
               {field.options.map((option) => (
                 <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    name={field.id} 
+                  <input
+                    type="radio"
+                    name={field.id}
                     checked={value[field.id] === option}
                     onChange={() => setVal(field.id, option)}
                     className="w-4 h-4 text-primary border-input focus:ring-ring"
-                  /> 
-                  <span className="text-sm text-foreground">{option}</span>
+                  />
+                  <span className="text-sm text-foreground">{String(option)}</span>
                 </label>
               ))}
             </div>
@@ -101,13 +100,13 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
             <div className="space-y-3">
               {field.options.map((option) => (
                 <label key={option} className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={(value[field.id] || []).includes(option)}
                     onChange={() => toggleCheckboxValue(field.id, option)}
                     className="w-4 h-4 text-primary border-input focus:ring-ring rounded"
                   />
-                  <span className="text-sm text-foreground">{option}</span>
+                  <span className="text-sm text-foreground">{String(option)}</span>
                 </label>
               ))}
             </div>
@@ -117,14 +116,14 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
             <div className="flex gap-4">
               {['Yes', 'No'].map((option) => (
                 <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    name={field.id} 
+                  <input
+                    type="radio"
+                    name={field.id}
                     checked={value[field.id] === option}
                     onChange={() => setVal(field.id, option)}
                     className="w-4 h-4 text-primary border-input focus:ring-ring"
-                  /> 
-                  <span className="text-sm text-foreground">{option}</span>
+                  />
+                  <span className="text-sm text-foreground">{String(option)}</span>
                 </label>
               ))}
             </div>
