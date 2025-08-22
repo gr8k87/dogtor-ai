@@ -155,10 +155,11 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
         })
         .eq("id", caseId);
 
+      // Still return success with caseId so frontend can redirect
       res.json({ 
         caseId, 
-        error: "Failed to generate questions: " + aiError.message,
-        questions: []
+        questions: [],
+        warning: "Questions generation failed, but case created"
       });
     }
 

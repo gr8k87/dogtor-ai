@@ -60,10 +60,13 @@ export default function Questions() {
       })
       .then(data => {
         if (data) {
-          setQuestions(data.questions || []);
-          // If questions array is empty, treat as error
-          if (!data.questions || data.questions.length === 0) {
-            setError("Questions Generation Failed");
+          console.log("Questions data received:", data);
+          const questions = data.questions || [];
+          setQuestions(questions);
+          
+          // Only treat as error if backend explicitly failed
+          if (questions.length === 0) {
+            console.log("No questions found, but allowing skip to results");
           }
         }
         setLoading(false);
@@ -134,6 +137,43 @@ export default function Questions() {
     );
   }
 
+  // Show questions if available, or allow skipping if empty
+  if (questions.length === 0 && !loading) {
+    return (
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 2 of 3</div>
+        </header>
+
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+          <div className="rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
+            <h3 className="font-semibold text-yellow-800 mb-2">ℹ️ No Follow-up Questions</h3>
+            <p className="text-yellow-700 text-sm mb-3">
+              We couldn't generate specific follow-up questions, but we can still analyze your pet's image and symptoms.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate("/")}
+                className="flex-1 h-12 rounded-xl border border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+              >
+                ← Try Different Photo
+              </button>
+              <button
+                onClick={skipQuestions}
+                disabled={submitting}
+                className="flex-1 h-12 rounded-xl bg-yellow-600 text-white disabled:opacity-50 hover:bg-yellow-700"
+              >
+                {submitting ? "Analyzing..." : "Continue to Results"}
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col">
@@ -144,26 +184,15 @@ export default function Questions() {
 
         <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
-            <h3 className="font-semibold text-red-800 mb-2">⚠️ Questions Generation Failed</h3>
+            <h3 className="font-semibold text-red-800 mb-2">⚠️ Error Loading Questions</h3>
             <p className="text-red-700 text-sm mb-3">{error}</p>
-
-            <div className="bg-white rounded-lg p-3 border border-red-200 mb-4">
-              <h4 className="font-medium text-red-800 text-sm mb-2">Possible Solutions:</h4>
-              <ul className="text-red-700 text-sm space-y-1">
-                <li>• Check your OpenAI API key in Secrets tab</li>
-                <li>• Verify OpenAI account has available credits</li>
-                <li>• Try a clearer, well-lit photo of your pet</li>
-                <li>• Ensure your pet is clearly visible in the image</li>
-                <li>• Avoid photos with multiple pets or unclear subjects</li>
-              </ul>
-            </div>
 
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/")}
                 className="flex-1 h-12 rounded-xl border border-red-300 text-red-700 hover:bg-red-100"
               >
-                ← Try Different Photo
+                ← Start Over
               </button>
               <button
                 onClick={skipQuestions}
