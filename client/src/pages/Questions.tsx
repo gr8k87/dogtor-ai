@@ -53,18 +53,24 @@ export default function Questions() {
           navigate("/");
           return null;
         }
-        if (!res.ok) throw new Error("Failed to load questions");
+        if (!res.ok) {
+          throw new Error("Questions Generation Failed");
+        }
         return res.json();
       })
       .then(data => {
         if (data) {
           setQuestions(data.questions || []);
+          // If questions array is empty, treat as error
+          if (!data.questions || data.questions.length === 0) {
+            setError("Questions Generation Failed");
+          }
         }
         setLoading(false);
       })
       .catch(err => {
         console.error("Questions fetch error:", err);
-        setError(err.message);
+        setError("Questions Generation Failed");
         setLoading(false);
       });
   }, [caseId, navigate]);
@@ -128,7 +134,7 @@ export default function Questions() {
     );
   }
 
-  if (error && questions.length === 0) {
+  if (error) {
     return (
       <div className="min-h-dvh flex items-center justify-center p-4">
         <div className="max-w-md w-full">
