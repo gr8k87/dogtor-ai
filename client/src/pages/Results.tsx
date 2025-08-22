@@ -1,9 +1,13 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useHistory } from "../state/historyContext";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 
 interface DiagnosisCard {
   title: string;
@@ -66,67 +70,69 @@ export default function Results() {
     if (stateCards) {
       console.log("✅ Using results from navigation state");
       setCards(stateCards);
-      
+
       // Save to history
       const historyEntry = {
         form: { symptoms: "Analysis completed" },
         triage: {
-          diagnosis: stateCards.diagnosis?.likely_condition || "Analysis complete",
-          urgency: stateCards.diagnosis?.urgency?.level || "Unknown"
-        }
+          diagnosis:
+            stateCards.diagnosis?.likely_condition || "Analysis complete",
+          urgency: stateCards.diagnosis?.urgency?.level || "Unknown",
+        },
       };
       addEntry(historyEntry);
-      
+
       setLoading(false);
       return;
     }
 
     // Otherwise fetch results from API
     console.log("🔍 Fetching results for case:", caseId);
-    
+
     fetch(`/api/diagnose/results/${caseId}`)
-      .then(async res => {
+      .then(async (res) => {
         console.log("📡 Results API response status:", res.status);
-        
+
         if (res.status === 404) {
           console.log("❌ Results not found, redirecting home");
           navigate("/");
           return null;
         }
-        
+
         if (!res.ok) {
           const errorText = await res.text();
           console.log("❌ Results API error:", errorText);
           throw new Error(`Results API failed: ${res.status} - ${errorText}`);
         }
-        
+
         const data = await res.json();
         console.log("📋 Raw results response:", data);
         return data;
       })
-      .then(data => {
+      .then((data) => {
         if (data?.cards) {
           console.log("✅ Results data received:", data.cards);
           setCards(data.cards);
-          
+
           // Save to history
           const historyEntry = {
             form: { symptoms: "Analysis completed" },
             triage: {
-              diagnosis: data.cards.diagnosis?.likely_condition || "Analysis complete",
-              urgency: data.cards.diagnosis?.urgency?.level || "Unknown"
-            }
+              diagnosis:
+                data.cards.diagnosis?.likely_condition || "Analysis complete",
+              urgency: data.cards.diagnosis?.urgency?.level || "Unknown",
+            },
           };
           addEntry(historyEntry);
         }
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("❌ Results fetch error:", err);
         setError(err.message || "Failed to load results");
         setLoading(false);
       });
-  }, [caseId, location.state, navigate, addCase]);
+  }, [caseId, location.state, navigate, addEntry]);
 
   if (loading) {
     return (
@@ -150,7 +156,9 @@ export default function Results() {
         <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
           <Card className="border-red-200 bg-red-50">
             <CardHeader>
-              <CardTitle className="text-red-800">⚠️ Error Loading Results</CardTitle>
+              <CardTitle className="text-red-800">
+                ⚠️ Error Loading Results
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-red-700 text-sm mb-3">{error}</p>
@@ -219,22 +227,27 @@ export default function Results() {
           </CardHeader>
           <CardContent className="space-y-3">
             <p>
-              <strong>Likely condition:</strong> {String(cards.diagnosis.likely_condition)}
+              <strong>Likely condition:</strong>{" "}
+              {String(cards.diagnosis.likely_condition)}
             </p>
             <div>
               <p className="font-medium mb-1">Other possibilities:</p>
               <ul className="text-sm space-y-1">
-                {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
-                  <li key={i} className="ml-2">
-                    • {String(p.name)} ({String(p.likelihood)} likelihood)
-                  </li>
-                ))}
+                {cards.diagnosis.other_possibilities.map(
+                  (p: any, i: number) => (
+                    <li key={i} className="ml-2">
+                      • {String(p.name)} ({String(p.likelihood)} likelihood)
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
             <div>
               <p className="font-medium mb-1">Urgency:</p>
               <p className="text-sm">
-                {String(cards.diagnosis.urgency.badge)} {String(cards.diagnosis.urgency.level)} Urgency — {String(cards.diagnosis.urgency.note)}
+                {String(cards.diagnosis.urgency.badge)}{" "}
+                {String(cards.diagnosis.urgency.level)} Urgency —{" "}
+                {String(cards.diagnosis.urgency.note)}
               </p>
             </div>
           </CardContent>
@@ -272,7 +285,8 @@ export default function Results() {
               {cards.costs.steps.map((s: any, i: number) => (
                 <li key={i} className="space-y-1">
                   <div>
-                    {String(s.icon)} <strong>{String(s.name)}</strong> – {String(s.likelihood)}
+                    {String(s.icon)} <strong>{String(s.name)}</strong> –{" "}
+                    {String(s.likelihood)}
                   </div>
                   <div className="text-gray-600">{String(s.desc)}</div>
                   <div className="font-medium">{String(s.cost)}</div>
