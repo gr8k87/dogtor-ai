@@ -117,7 +117,15 @@ export default function DiagnoseTab() {
         />
 
         {errors.submit && (
-          <p className="text-red-600 text-sm mt-2">{errors.submit}</p>
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-sm font-medium">⚠️ Error</p>
+            <p className="text-red-600 text-sm mt-1">{errors.submit}</p>
+            {errors.submit.includes("OpenAI") && (
+              <p className="text-red-500 text-xs mt-2">
+                Check your OpenAI API key in the Secrets tab or verify your account has available credits.
+              </p>
+            )}
+          </div>
         )}
 
         <button

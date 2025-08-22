@@ -136,39 +136,45 @@ export default function Questions() {
 
   if (error) {
     return (
-      <div className="min-h-dvh flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 2 of 3</div>
+        </header>
+
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <h3 className="font-semibold text-red-800 mb-2">⚠️ Questions Generation Failed</h3>
             <p className="text-red-700 text-sm mb-3">{error}</p>
 
-            <div className="bg-white rounded-lg p-3 border border-red-200">
+            <div className="bg-white rounded-lg p-3 border border-red-200 mb-4">
               <h4 className="font-medium text-red-800 text-sm mb-2">Possible Solutions:</h4>
               <ul className="text-red-700 text-sm space-y-1">
+                <li>• Check your OpenAI API key in Secrets tab</li>
+                <li>• Verify OpenAI account has available credits</li>
                 <li>• Try a clearer, well-lit photo of your pet</li>
                 <li>• Ensure your pet is clearly visible in the image</li>
                 <li>• Avoid photos with multiple pets or unclear subjects</li>
-                <li>• Use a different photo if the current one violates content policies</li>
               </ul>
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => navigate("/")}
-                className="flex-1 h-10 rounded-lg border border-red-300 text-red-700 text-sm hover:bg-red-100"
+                className="flex-1 h-12 rounded-xl border border-red-300 text-red-700 hover:bg-red-100"
               >
                 ← Try Different Photo
               </button>
               <button
                 onClick={skipQuestions}
                 disabled={submitting}
-                className="flex-1 h-10 rounded-lg bg-red-600 text-white text-sm disabled:opacity-50 hover:bg-red-700"
+                className="flex-1 h-12 rounded-xl bg-red-600 text-white disabled:opacity-50 hover:bg-red-700"
               >
                 {submitting ? "Analyzing..." : "Skip to Results"}
               </button>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }

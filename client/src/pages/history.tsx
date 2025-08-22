@@ -127,66 +127,48 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div 
       className={`rounded-xl border p-4 shadow-sm transition-all ${cards ? 'cursor-pointer hover:shadow-md hover:border-gray-300' : ''}`}
       onClick={cards ? handleClick : undefined}
     >
-      <div className="text-xs text-gray-500 mb-2">
-        {new Date(item.created_at).toLocaleString()}
-      </div>
-      
       {cards ? (
-        <div className="space-y-3">
-          <div className="text-sm font-medium text-gray-700">
-            <strong>Symptoms:</strong> {item.prompt}
-          </div>
-          
-          {/* Diagnosis Card Preview */}
-          {cards.diagnosis && (
-            <div className="bg-gray-50 rounded-lg p-3">
-              <h3 className="font-semibold text-sm mb-1">Diagnosis</h3>
-              <p className="text-sm text-gray-700">
-                <strong>Likely condition:</strong> {cards.diagnosis.likely_condition || "Analysis complete"}
-              </p>
-              {cards.diagnosis.urgency && (
-                <p className="text-xs text-gray-600 mt-1">
-                  {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency
-                </p>
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs text-gray-500">{formatDate(item.created_at)}</span>
+              {cards.diagnosis?.urgency && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                  {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}
+                </span>
               )}
             </div>
-          )}
-
-          {/* Care Tips Preview */}
-          {cards.care && cards.care.tips && (
-            <div className="bg-blue-50 rounded-lg p-3">
-              <h3 className="font-semibold text-sm mb-1">{cards.care.title || "Care Tips"}</h3>
-              <p className="text-xs text-gray-600">
-                {cards.care.tips.length} care recommendations available
-              </p>
-            </div>
-          )}
-
-          {/* Costs Preview */}
-          {cards.costs && cards.costs.steps && (
-            <div className="bg-green-50 rounded-lg p-3">
-              <h3 className="font-semibold text-sm mb-1">{cards.costs.title || "Treatment Costs"}</h3>
-              <p className="text-xs text-gray-600">
-                {cards.costs.steps.length} cost estimates available
-              </p>
-            </div>
-          )}
-
-          <div className="text-xs text-blue-600 font-medium">Click to view full results →</div>
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {cards.diagnosis?.likely_condition || "Analysis complete"}
+            </p>
+            <p className="text-xs text-gray-500 truncate mt-0.5">
+              {item.prompt}
+            </p>
+          </div>
+          <div className="text-gray-400 ml-2">
+            →
+          </div>
         </div>
       ) : (
         <div className="space-y-2">
-          <div className="text-gray-500 text-sm">Prompt:</div>
-          <div className="text-sm">{item.prompt}</div>
-          <div className="text-gray-500 text-sm">Response:</div>
-          <pre className="bg-gray-50 p-2 rounded mt-1 overflow-x-auto text-xs">
-            {item.response}
-          </pre>
+          <div className="text-xs text-gray-500">{formatDate(item.created_at)}</div>
+          <div className="text-sm font-medium">Raw Data</div>
+          <div className="text-xs text-gray-600 truncate">{item.prompt}</div>
         </div>
       )}
     </div>
