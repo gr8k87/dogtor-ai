@@ -83,7 +83,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
       const imagePath = path.join(__dirname, "..", imageUrl);
       if (fs.existsSync(imagePath)) {
         let imageBuffer = fs.readFileSync(imagePath);
-        
+
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
           .resize(1024, 1024, { 
@@ -92,7 +92,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
           })
           .jpeg({ quality: 85 })
           .toBuffer();
-          
+
         const base64Image = imageBuffer.toString("base64");
         const mimeType = "image/jpeg";
 
@@ -129,7 +129,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
       }
 
       const parsed = JSON.parse(rawContent);
-      
+
       // Store questions in case
       const { error: updateError } = await supabase
         .from("cases")
@@ -142,10 +142,10 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 
       console.log("✅ Questions generated and stored for case:", caseId);
       res.json({ caseId, questions: parsed.questions });
-      
+
     } catch (aiError) {
       console.error("❌ AI Questions generation error:", aiError.message);
-      
+
       // Store error in case
       const { error: updateError } = await supabase
         .from("cases")
@@ -244,7 +244,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
       const imagePath = path.join(__dirname, "..", imageUrl);
       if (fs.existsSync(imagePath)) {
         let imageBuffer = fs.readFileSync(imagePath);
-        
+
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
           .resize(1024, 1024, { 
@@ -253,7 +253,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
           })
           .jpeg({ quality: 85 })
           .toBuffer();
-          
+
         const base64Image = imageBuffer.toString("base64");
         const mimeType = "image/jpeg";
 
@@ -305,7 +305,7 @@ r.post("/results", async (req, res) => {
   const { caseId, answers, symptoms, imageUrl } = req.body || {};
   const timingStart = Date.now();
   const timings = {};
-  
+
   console.log("🔍 Results request received:", { caseId, answers, symptoms, imageUrl });
   console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
@@ -396,7 +396,7 @@ r.post("/results", async (req, res) => {
     let userPrompt = finalImageUrl
       ? `Analyze this pet image for health concerns. Symptoms: ${finalSymptoms || "none provided"}`
       : `Pet health analysis based on symptoms: ${finalSymptoms || "none provided"}`;
-    
+
     if (answers && Object.keys(answers).length > 0) {
       const answerText = Object.entries(answers)
         .map(([key, value]) => `${key}: ${value}`)
@@ -414,11 +414,11 @@ r.post("/results", async (req, res) => {
 
       if (fs.existsSync(imagePath)) {
         let imageBuffer = fs.readFileSync(imagePath);
-        
+
         // Optimize image: convert to JPEG and resize to max 1024x1024
         const optimizeStart = Date.now();
         console.log("🖼️ Optimizing image...");
-        
+
         imageBuffer = await sharp(imageBuffer)
           .resize(1024, 1024, { 
             fit: 'inside', 
@@ -426,16 +426,16 @@ r.post("/results", async (req, res) => {
           })
           .jpeg({ quality: 85 })
           .toBuffer();
-          
+
         const optimizeEnd = Date.now();
         timings.imageOptimization = optimizeEnd - optimizeStart;
         console.log("⏱️ Image optimization completed:", timings.imageOptimization + "ms");
-        
+
         const base64Image = imageBuffer.toString("base64");
         const fileReadEnd = Date.now();
         timings.fileRead = fileReadEnd - fileReadStart;
         console.log("⏱️ File read completed:", timings.fileRead + "ms");
-        
+
         const mimeType = "image/jpeg"; // Always JPEG after optimization
 
         messages.push({
@@ -457,7 +457,7 @@ r.post("/results", async (req, res) => {
 
     const openaiStart = Date.now();
     console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
-    
+
     const completion = await client.chat.completions.create({
       model: "gpt-4o",
       messages,
@@ -481,7 +481,7 @@ r.post("/results", async (req, res) => {
     const processingEnd = Date.now();
     timings.responseProcessing = processingEnd - processingStart;
     console.log("⏱️ Response processing completed:", timings.responseProcessing + "ms");
-    
+
     // Check if AI returned an error response
     if (parsed.error) {
       console.log("🚫 AI refused analysis:", parsed.error.reason);
@@ -493,13 +493,13 @@ r.post("/results", async (req, res) => {
         }
       });
     }
-    
+
     Object.assign(cards, parsed);
 
     // Calculate total time and log summary
     const totalTime = Date.now() - timingStart;
     timings.total = totalTime;
-    
+
     console.log("⏱️ === TIMING SUMMARY ===");
     console.log("⏱️ File Read:", (timings.fileRead || 0) + "ms");
     console.log("⏱️ Image Optimization:", (timings.imageOptimization || 0) + "ms");

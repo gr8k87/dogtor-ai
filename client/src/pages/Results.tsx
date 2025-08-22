@@ -33,7 +33,7 @@ export default function Results({}: ResultsProps) {
         <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
       </header>
 
-      <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
         <div className="flex items-center mb-4">
           <button
             onClick={() => navigate("/")}
@@ -124,6 +124,38 @@ export default function Results({}: ResultsProps) {
           )}
         </div>
       </main>
+
+      {/* Bottom Navigation Tabs */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div className="flex">
+          <button
+            onClick={() => navigate("/")}
+            className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          >
+            <div className="flex flex-col items-center gap-1">
+              <span>🏠</span>
+              <span>Diagnose</span>
+            </div>
+          </button>
+          <button
+            onClick={() => navigate("/history")}
+            className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          >
+            <div className="flex flex-col items-center gap-1">
+              <span>📋</span>
+              <span>History</span>
+            </div>
+          </button>
+          <button
+            className="flex-1 py-3 px-4 text-center text-sm font-medium text-blue-600 bg-blue-50"
+          >
+            <div className="flex flex-col items-center gap-1">
+              <span>📊</span>
+              <span>Results</span>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

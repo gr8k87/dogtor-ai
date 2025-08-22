@@ -7,8 +7,7 @@ type Question =
  | { id: string; type: 'select'; label: string; options: string[]; required?: boolean }
  | { id: string; type: 'radio';  label: string; options: string[]; required?: boolean }
  | { id: string; type: 'yesno';  label: string; required?: boolean }
- | { id: string; type: 'text';   label: string; placeholder?: string; required?: boolean }
- | { id: string; type: 'number'; label: string; min?: number; max?: number; step?: number; required?: boolean };
+ | { id: string; type: 'checkbox'; label: string; options: string[]; required?: boolean };
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
