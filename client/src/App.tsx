@@ -1,6 +1,7 @@
 import { useHistory } from "./state/historyContext";
 import History from "./pages/history";
 import DiagnoseTab from "./pages/DiagnoseTab";
+import ConnectTab from "./pages/ConnectTab";
 import Questions from "./pages/Questions";
 import Results from "./pages/Results";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
