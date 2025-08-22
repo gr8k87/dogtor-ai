@@ -18,6 +18,189 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY,
 );
 
+// Create a new case and generate questions
+r.post("/cases", async (req, res) => {
+  const { symptoms, imageUrl } = req.body || {};
+  console.log("📝 Case creation request:", { symptoms, imageUrl });
+
+  try {
+    // Create draft case in database
+    const { data: caseData, error: caseError } = await supabase
+      .from("cases")
+      .insert([{
+        symptoms: symptoms || "general health check",
+        image_url: imageUrl,
+        status: "draft",
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (caseError) {
+      console.error("❌ Case creation error:", caseError);
+      return res.status(500).json({ error: "Failed to create case: " + caseError.message });
+    }
+
+    const caseId = caseData.id;
+    console.log("✅ Case created with ID:", caseId);
+
+    // Generate questions using existing logic
+    const prompt = {
+      role: "system",
+      content: `
+You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
+
+Return ONLY JSON in this exact format:
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "select|radio|yesno|text|number",
+      "label": "Question text here?",
+      "options": ["option1", "option2"] // only for select/radio types
+      "required": true
+    }
+  ]
+}
+
+Question types:
+- "select": dropdown with options array
+- "radio": radio buttons with options array  
+- "yesno": yes/no buttons
+- "text": text input
+- "number": number input
+
+Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.
+      `
+    };
+
+    let messages = [prompt];
+    const userPrompt = imageUrl
+      ? `Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`
+      : `Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
+
+    if (imageUrl) {
+      const imagePath = path.join(__dirname, "..", imageUrl);
+      if (fs.existsSync(imagePath)) {
+        let imageBuffer = fs.readFileSync(imagePath);
+        
+        // Optimize image
+        imageBuffer = await sharp(imageBuffer)
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
+          })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+          
+        const base64Image = imageBuffer.toString("base64");
+        const mimeType = "image/jpeg";
+
+        messages.push({
+          role: "user",
+          content: [
+            { type: "text", text: userPrompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${base64Image}` },
+            },
+          ],
+        });
+      } else {
+        messages.push({ role: "user", content: userPrompt });
+      }
+    } else {
+      messages.push({ role: "user", content: userPrompt });
+    }
+
+    try {
+      const completion = await client.chat.completions.create({
+        model: "gpt-4o",
+        messages,
+        temperature: 0.3,
+        max_tokens: 800,
+      });
+
+      let rawContent = completion.choices[0].message.content.trim();
+      if (rawContent.startsWith("```")) {
+        rawContent = rawContent
+          .replace(/```(json)?\n?/, "")
+          .replace(/\n?```$/, "");
+      }
+
+      const parsed = JSON.parse(rawContent);
+      
+      // Store questions in case
+      const { error: updateError } = await supabase
+        .from("cases")
+        .update({ questions: parsed.questions })
+        .eq("id", caseId);
+
+      if (updateError) {
+        console.error("❌ Questions storage error:", updateError);
+      }
+
+      console.log("✅ Questions generated and stored for case:", caseId);
+      res.json({ caseId, questions: parsed.questions });
+      
+    } catch (aiError) {
+      console.error("❌ AI Questions generation error:", aiError.message);
+      
+      // Store error in case
+      const { error: updateError } = await supabase
+        .from("cases")
+        .update({ 
+          error_message: aiError.message,
+          status: "error" 
+        })
+        .eq("id", caseId);
+
+      res.json({ 
+        caseId, 
+        error: "Failed to generate questions: " + aiError.message,
+        questions: []
+      });
+    }
+
+  } catch (err) {
+    console.error("❌ Case creation error:", err.message);
+    res.status(500).json({ 
+      error: "Failed to create case: " + err.message
+    });
+  }
+});
+
+// Get questions for a case
+r.get("/questions/:caseId", async (req, res) => {
+  const { caseId } = req.params;
+  console.log("❓ Questions fetch request for case:", caseId);
+
+  try {
+    const { data: caseData, error } = await supabase
+      .from("cases")
+      .select("questions, error_message, status")
+      .eq("id", caseId)
+      .single();
+
+    if (error || !caseData) {
+      console.log("❌ Case not found:", caseId);
+      return res.status(404).json({ error: "Case not found" });
+    }
+
+    if (caseData.status === "error") {
+      return res.status(400).json({ 
+        error: caseData.error_message || "Questions generation failed",
+        questions: []
+      });
+    }
+
+    res.json({ questions: caseData.questions || [] });
+  } catch (err) {
+    console.error("❌ Questions fetch error:", err.message);
+    res.status(500).json({ error: "Failed to fetch questions: " + err.message });
+  }
+});
+
 r.post("/questions", async (req, res) => {
   const { symptoms, imageUrl } = req.body || {};
   console.log("❓ Questions request received:", { symptoms, imageUrl });
@@ -119,14 +302,44 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 });
 
 r.post("/results", async (req, res) => {
-  const { symptoms, imageUrl, answers } = req.body || {};
+  const { caseId, answers, symptoms, imageUrl } = req.body || {};
   const timingStart = Date.now();
   const timings = {};
   
-  console.log("🔍 Results request received:", { symptoms, imageUrl, answers });
+  console.log("🔍 Results request received:", { caseId, answers, symptoms, imageUrl });
   console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
   try {
+    let caseData = null;
+    let finalSymptoms = symptoms;
+    let finalImageUrl = imageUrl;
+
+    // If caseId provided, get case data
+    if (caseId) {
+      const { data, error } = await supabase
+        .from("cases")
+        .select("*")
+        .eq("id", caseId)
+        .single();
+
+      if (error) {
+        console.error("❌ Case fetch error:", error);
+        return res.status(404).json({ error: "Case not found" });
+      }
+
+      caseData = data;
+      finalSymptoms = caseData.symptoms;
+      finalImageUrl = caseData.image_url;
+
+      // Update case with answers if provided
+      if (answers && Object.keys(answers).length > 0) {
+        await supabase
+          .from("cases")
+          .update({ answers })
+          .eq("id", caseId);
+      }
+    }
+
     // Generate 3 separate prompts for the 3 cards
     const prompt = {
       role: "system",
@@ -180,9 +393,9 @@ r.post("/results", async (req, res) => {
     `,
     };
 
-    let userPrompt = imageUrl
-      ? `Analyze this pet image for health concerns. Symptoms: ${symptoms || "none provided"}`
-      : `Pet health analysis based on symptoms: ${symptoms || "none provided"}`;
+    let userPrompt = finalImageUrl
+      ? `Analyze this pet image for health concerns. Symptoms: ${finalSymptoms || "none provided"}`
+      : `Pet health analysis based on symptoms: ${finalSymptoms || "none provided"}`;
     
     if (answers && Object.keys(answers).length > 0) {
       const answerText = Object.entries(answers)
@@ -195,9 +408,9 @@ r.post("/results", async (req, res) => {
     const cards = {};
     let messages = [prompt];
 
-      if (imageUrl) {
+      if (finalImageUrl) {
       const fileReadStart = Date.now();
-      const imagePath = path.join(__dirname, "..", imageUrl);
+      const imagePath = path.join(__dirname, "..", finalImageUrl);
 
       if (fs.existsSync(imagePath)) {
         let imageBuffer = fs.readFileSync(imagePath);
@@ -296,13 +509,25 @@ r.post("/results", async (req, res) => {
     console.log("⏱️ Request completed at:", new Date().toISOString());
     console.log("⏱️ ==================");
 
+    // Update case status to completed if caseId provided
+    if (caseId) {
+      await supabase
+        .from("cases")
+        .update({ 
+          status: "completed",
+          diagnosis: cards,
+          completed_at: new Date().toISOString()
+        })
+        .eq("id", caseId);
+    }
+
     // Save to history (non-blocking)
     const historyStart = Date.now();
     supabase
       .from("history")
       .insert([
         {
-          prompt: symptoms || "Image analysis",
+          prompt: finalSymptoms || "Image analysis",
           response: JSON.stringify(cards),
           created_at: new Date().toISOString(),
         },
