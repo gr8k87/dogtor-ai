@@ -5,7 +5,7 @@ import DynamicForm from "../components/DynamicForm";
 
 interface Question {
   id: string;
-  type: string;
+  type: "select" | "radio" | "yesno" | "text" | "number";
   label: string;
   options?: string[];
   required: boolean;
