@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useHistory } from "../state/historyContext";
@@ -9,7 +8,44 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { sanitize } from "../utils/sanitize";
+
+// Force everything into a safe string
+function toSafeString(val: any): string {
+  if (val === null || val === undefined) return "";
+  if (typeof val === "string" || typeof val === "number") return String(val);
+
+  if (React.isValidElement(val)) {
+    const element = val as React.ReactElement<any>;
+    const child = element.props?.children;
+    if (typeof child === "string" || typeof child === "number") {
+      return String(child);
+    }
+    return "[react-element]";
+  }
+
+  if (Array.isArray(val)) {
+    return val.map((v) => toSafeString(v)).join(", ");
+  }
+
+  try {
+    return JSON.stringify(val);
+  } catch {
+    return String(val);
+  }
+}
+
+// Recursively sanitize an object or array
+function sanitize(obj: any): any {
+  if (Array.isArray(obj)) return obj.map((o) => sanitize(o));
+  if (obj && typeof obj === "object" && !React.isValidElement(obj)) {
+    const out: any = {};
+    for (const key of Object.keys(obj)) {
+      out[key] = sanitize(obj[key]);
+    }
+    return out;
+  }
+  return toSafeString(obj);
+}
 
 export default function Results() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -28,14 +64,14 @@ export default function Results() {
 
     const stateCards = location.state?.cards;
     if (stateCards) {
-      const cleanCards = sanitize(stateCards);
-      setCards(cleanCards);
+      const clean = sanitize(stateCards);
+      setCards(clean);
 
       addEntry({
         form: { symptoms: "Analysis completed" },
         triage: {
-          diagnosis: cleanCards.diagnosis?.likely_condition || "Analysis complete",
-          urgency: cleanCards.diagnosis?.urgency?.level || "Unknown",
+          diagnosis: clean.diagnosis?.likely_condition || "Analysis complete",
+          urgency: clean.diagnosis?.urgency?.level || "Unknown",
         },
       });
 
@@ -57,14 +93,14 @@ export default function Results() {
       })
       .then((data) => {
         if (data?.cards) {
-          const cleanCards = sanitize(data.cards);
-          setCards(cleanCards);
+          const clean = sanitize(data.cards);
+          setCards(clean);
           addEntry({
             form: { symptoms: "Analysis completed" },
             triage: {
               diagnosis:
-                cleanCards.diagnosis?.likely_condition || "Analysis complete",
-              urgency: cleanCards.diagnosis?.urgency?.level || "Unknown",
+                clean.diagnosis?.likely_condition || "Analysis complete",
+              urgency: clean.diagnosis?.urgency?.level || "Unknown",
             },
           });
         }
