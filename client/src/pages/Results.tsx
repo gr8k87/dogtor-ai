@@ -50,7 +50,7 @@ export default function Results() {
   const { caseId } = useParams<{ caseId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const { addCase } = useHistory();
+  const { addEntry } = useHistory();
   const [cards, setCards] = useState<ResultCards | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
@@ -69,12 +69,13 @@ export default function Results() {
       
       // Save to history
       const historyEntry = {
-        id: caseId,
-        timestamp: new Date().toISOString(),
-        diagnosis: stateCards.diagnosis?.likely_condition || "Analysis complete",
-        urgency: stateCards.diagnosis?.urgency?.level || "Unknown"
+        form: { symptoms: "Analysis completed" },
+        triage: {
+          diagnosis: stateCards.diagnosis?.likely_condition || "Analysis complete",
+          urgency: stateCards.diagnosis?.urgency?.level || "Unknown"
+        }
       };
-      addCase(historyEntry);
+      addEntry(historyEntry);
       
       setLoading(false);
       return;
@@ -110,12 +111,13 @@ export default function Results() {
           
           // Save to history
           const historyEntry = {
-            id: caseId,
-            timestamp: new Date().toISOString(),
-            diagnosis: data.cards.diagnosis?.likely_condition || "Analysis complete",
-            urgency: data.cards.diagnosis?.urgency?.level || "Unknown"
+            form: { symptoms: "Analysis completed" },
+            triage: {
+              diagnosis: data.cards.diagnosis?.likely_condition || "Analysis complete",
+              urgency: data.cards.diagnosis?.urgency?.level || "Unknown"
+            }
           };
-          addCase(historyEntry);
+          addEntry(historyEntry);
         }
         setLoading(false);
       })
@@ -213,18 +215,18 @@ export default function Results() {
         {/* Card 1: Diagnosis */}
         <Card>
           <CardHeader>
-            <CardTitle>{cards.diagnosis.title}</CardTitle>
+            <CardTitle>{String(cards.diagnosis.title)}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <p>
-              <strong>Likely condition:</strong> {cards.diagnosis.likely_condition}
+              <strong>Likely condition:</strong> {String(cards.diagnosis.likely_condition)}
             </p>
             <div>
               <p className="font-medium mb-1">Other possibilities:</p>
               <ul className="text-sm space-y-1">
                 {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
                   <li key={i} className="ml-2">
-                    • {p.name} ({p.likelihood} likelihood)
+                    • {String(p.name)} ({String(p.likelihood)} likelihood)
                   </li>
                 ))}
               </ul>
@@ -232,7 +234,7 @@ export default function Results() {
             <div>
               <p className="font-medium mb-1">Urgency:</p>
               <p className="text-sm">
-                {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
+                {String(cards.diagnosis.urgency.badge)} {String(cards.diagnosis.urgency.level)} Urgency — {String(cards.diagnosis.urgency.note)}
               </p>
             </div>
           </CardContent>
@@ -241,18 +243,18 @@ export default function Results() {
         {/* Card 2: General Care Tips */}
         <Card>
           <CardHeader>
-            <CardTitle>{cards.care.title}</CardTitle>
+            <CardTitle>{String(cards.care.title)}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc pl-5 text-sm space-y-1">
               {cards.care.tips.map((t: any, i: number) => (
                 <li key={i}>
-                  {t.icon} {t.text}
+                  {String(t.icon)} {String(t.text)}
                 </li>
               ))}
             </ul>
             <p className="text-xs text-gray-500 mt-3">
-              {cards.care.disclaimer}
+              {String(cards.care.disclaimer)}
             </p>
           </CardContent>
         </Card>
@@ -260,20 +262,20 @@ export default function Results() {
         {/* Card 3: Vet Procedures & Costs */}
         <Card>
           <CardHeader>
-            <CardTitle>{cards.costs.title}</CardTitle>
+            <CardTitle>{String(cards.costs.title)}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-gray-500 mb-3">
-              {cards.costs.disclaimer}
+              {String(cards.costs.disclaimer)}
             </p>
             <ul className="space-y-3 text-sm">
               {cards.costs.steps.map((s: any, i: number) => (
                 <li key={i} className="space-y-1">
                   <div>
-                    {s.icon} <strong>{s.name}</strong> – {s.likelihood}
+                    {String(s.icon)} <strong>{String(s.name)}</strong> – {String(s.likelihood)}
                   </div>
-                  <div className="text-gray-600">{s.desc}</div>
-                  <div className="font-medium">{s.cost}</div>
+                  <div className="text-gray-600">{String(s.desc)}</div>
+                  <div className="font-medium">{String(s.cost)}</div>
                 </li>
               ))}
             </ul>
