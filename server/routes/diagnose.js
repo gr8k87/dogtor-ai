@@ -1,5 +1,6 @@
 import { Router } from "express";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs";
 import path from "path";
@@ -9,7 +10,8 @@ import sharp from "sharp";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const r = Router();
 
 // Supabase client
@@ -114,14 +116,75 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
     }
 
     try {
-      const completion = await client.chat.completions.create({
-        model: "gpt-4o",
-        messages,
-        temperature: 0.3,
-        max_tokens: 800,
-      });
+      // Use Gemini for questions generation
+      const model = geminiClient.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
 
-      let rawContent = completion.choices[0].message.content.trim();
+Return ONLY JSON in this exact format:
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "select|radio|yesno|text|number",
+      "label": "Question text here?",
+      "options": ["option1", "option2"],
+      "required": true
+    }
+  ]
+}
+
+Question types:
+- "select": dropdown with options array
+- "radio": radio buttons with options array  
+- "yesno": yes/no buttons
+- "text": text input
+- "number": number input
+
+Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.`;
+
+      let result;
+
+      if (imageUrl) {
+        const imagePath = path.join(__dirname, "..", imageUrl);
+        if (fs.existsSync(imagePath)) {
+          let imageBuffer = fs.readFileSync(imagePath);
+          
+          // Optimize image for Gemini
+          imageBuffer = await sharp(imageBuffer)
+            .resize(1024, 1024, { 
+              fit: 'inside', 
+              withoutEnlargement: true 
+            })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+
+          const imageParts = [{
+            inlineData: {
+              data: imageBuffer.toString("base64"),
+              mimeType: "image/jpeg"
+            }
+          }];
+
+          const promptWithImage = `${systemPrompt}
+
+Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`;
+
+          result = await model.generateContent([promptWithImage, ...imageParts]);
+        } else {
+          const textPrompt = `${systemPrompt}
+
+Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
+          result = await model.generateContent(textPrompt);
+        }
+      } else {
+        const textPrompt = `${systemPrompt}
+
+Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
+        result = await model.generateContent(textPrompt);
+      }
+
+      let rawContent = result.response.text().trim();
       if (rawContent.startsWith("```")) {
         rawContent = rawContent
           .replace(/```(json)?\n?/, "")
@@ -286,7 +349,7 @@ r.post("/questions", async (req, res) => {
       messages.push({ role: "user", content: userPrompt });
     }
 
-    const completion = await client.chat.completions.create({
+    const completion = await openaiClient.chat.completions.create({
       model: "gpt-4o",
       messages,
       temperature: 0.3,
@@ -470,7 +533,7 @@ r.post("/results", async (req, res) => {
     const openaiStart = Date.now();
     console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
 
-    const completion = await client.chat.completions.create({
+    const completion = await openaiClient.chat.completions.create({
       model: "gpt-4o",
       messages,
       temperature: 0.3,
@@ -631,7 +694,7 @@ Return ONLY valid JSON structured as:
     }
 
     // Call OpenAI
-    const completion = await client.chat.completions.create({
+    const completion = await openaiClient.chat.completions.create({
       model: "gpt-4o-mini",
       messages,
       temperature: 0.3,
