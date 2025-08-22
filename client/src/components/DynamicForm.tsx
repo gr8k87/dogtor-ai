@@ -3,7 +3,8 @@ import React from "react";
 
 interface BaseField {
   id: string;
-  question: string;
+  question?: string;
+  label?: string;
   required?: boolean;
 }
 
@@ -26,7 +27,16 @@ interface TextboxField extends BaseField {
   type: 'text';
 }
 
-type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField;
+interface YesNoField extends BaseField {
+  type: 'yesno';
+}
+
+interface SelectField extends BaseField {
+  type: 'select';
+  options: string[];
+}
+
+type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField | YesNoField | SelectField;
 
 interface DynamicFormProps {
   schema: FormQuestion[];
@@ -52,7 +62,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
       {schema.map((field) => (
         <div key={field.id} className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            {field.question}
+            {field.question || field.label}
             {field.required && <span className="text-red-500 ml-1">*</span>}
           </label>
 
@@ -110,6 +120,36 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
               onChange={(e) => setVal(field.id, e.target.value)}
               placeholder="Enter your answer..."
             />
+          )}
+
+          {field.type === 'yesno' && (
+            <div className="flex gap-3">
+              {['Yes', 'No'].map((option) => (
+                <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name={field.id} 
+                    checked={value[field.id] === option}
+                    onChange={() => setVal(field.id, option)}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  /> 
+                  <span className="text-sm">{option}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {field.type === 'select' && (
+            <select 
+              className="w-full border border-gray-300 rounded-lg h-12 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={value[field.id] ?? ''} 
+              onChange={(e) => setVal(field.id, e.target.value)}
+            >
+              <option value="" disabled>Select an option...</option>
+              {field.options?.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
           )}
         </div>
       ))}

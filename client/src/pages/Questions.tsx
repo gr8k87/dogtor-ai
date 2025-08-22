@@ -5,7 +5,8 @@ import DynamicForm from "../components/DynamicForm";
 
 interface BaseField {
   id: string;
-  question: string;
+  question?: string;
+  label?: string;
   required?: boolean;
 }
 
@@ -28,7 +29,16 @@ interface TextboxField extends BaseField {
   type: 'text';
 }
 
-type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField;
+interface YesNoField extends BaseField {
+  type: 'yesno';
+}
+
+interface SelectField extends BaseField {
+  type: 'select';
+  options: string[];
+}
+
+type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField | YesNoField | SelectField;
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
