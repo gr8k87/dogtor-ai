@@ -179,20 +179,41 @@ r.get("/questions/:caseId", async (req, res) => {
   try {
     const { data: caseData, error } = await supabase
       .from("cases")
-      .select("questions")
+      .select("*")
       .eq("id", caseId)
       .single();
 
     if (error) {
       console.error("❌ Case fetch error:", error);
+      return res.status(404).json({ error: "Case not found: " + error.message });
+    }
+
+    if (!caseData) {
+      console.error("❌ No case data returned for ID:", caseId);
       return res.status(404).json({ error: "Case not found" });
     }
 
-    console.log("✅ Questions found for case:", caseId, "Questions count:", caseData.questions?.length || 0);
-    res.json({ questions: caseData.questions || [] });
+    console.log("📋 Case data retrieved:", {
+      id: caseData.id,
+      hasQuestions: !!caseData.questions,
+      questionsCount: caseData.questions?.length || 0,
+      status: caseData.status
+    });
+
+    const questions = caseData.questions || [];
+    console.log("✅ Returning questions:", questions);
+    
+    res.json({ 
+      questions,
+      caseStatus: caseData.status,
+      debug: {
+        caseId: caseData.id,
+        questionsFound: questions.length > 0
+      }
+    });
   } catch (err) {
     console.error("❌ Questions fetch error:", err);
-    res.status(500).json({ error: "Failed to fetch questions" });
+    res.status(500).json({ error: "Failed to fetch questions: " + err.message });
   }
 });
 

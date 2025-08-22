@@ -46,34 +46,44 @@ export default function Questions() {
     }
 
     // Fetch questions for this case
+    console.log("🔍 Fetching questions for case:", caseId);
+    
     fetch(`/api/diagnose/questions/${caseId}`)
-      .then(res => {
+      .then(async res => {
+        console.log("📡 Questions API response status:", res.status);
+        
         if (res.status === 404) {
-          // Questions not found, redirect back
+          console.log("❌ Questions not found, redirecting home");
           navigate("/");
           return null;
         }
+        
         if (!res.ok) {
-          throw new Error("Questions Generation Failed");
+          const errorText = await res.text();
+          console.log("❌ Questions API error:", errorText);
+          throw new Error(`Questions API failed: ${res.status} - ${errorText}`);
         }
-        return res.json();
+        
+        const data = await res.json();
+        console.log("📋 Raw questions response:", data);
+        return data;
       })
       .then(data => {
         if (data) {
-          console.log("Questions data received:", data);
+          console.log("✅ Questions data received:", data);
           const questions = data.questions || [];
           setQuestions(questions);
           
-          // Only treat as error if backend explicitly failed
+          console.log(`📊 Found ${questions.length} questions`);
           if (questions.length === 0) {
-            console.log("No questions found, but allowing skip to results");
+            console.log("ℹ️ No questions found, allowing skip to results");
           }
         }
         setLoading(false);
       })
       .catch(err => {
-        console.error("Questions fetch error:", err);
-        setError("Questions Generation Failed");
+        console.error("❌ Questions fetch error:", err);
+        setError(err.message || "Failed to load questions");
         setLoading(false);
       });
   }, [caseId, navigate]);
