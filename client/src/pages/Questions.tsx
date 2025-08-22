@@ -1,14 +1,34 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
 
-interface FormQuestion {
-    id: string;
-    type: 'radio' | 'checkbox' | 'text' | 'dropdown';
-    question: string;
-    options?: string[];
-    required?: boolean;
-  }
+interface BaseField {
+  id: string;
+  question: string;
+  required?: boolean;
+}
+
+interface RadioField extends BaseField {
+  type: 'radio';
+  options: string[];
+}
+
+interface CheckboxField extends BaseField {
+  type: 'checkbox';
+  options: string[];
+}
+
+interface DropdownField extends BaseField {
+  type: 'dropdown';
+  options: string[];
+}
+
+interface TextboxField extends BaseField {
+  type: 'text';
+}
+
+type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField;
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -43,6 +63,7 @@ export default function Questions() {
         setLoading(false);
       })
       .catch(err => {
+        console.error("Questions fetch error:", err);
         setError(err.message);
         setLoading(false);
       });
@@ -67,6 +88,7 @@ export default function Questions() {
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
+      console.error("Results submission error:", err);
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -88,6 +110,7 @@ export default function Questions() {
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
+      console.error("Skip questions error:", err);
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -126,14 +149,14 @@ export default function Questions() {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => navigate("/")}
-                className="flex-1 h-10 rounded-lg border border-red-300 text-red-700 text-sm"
+                className="flex-1 h-10 rounded-lg border border-red-300 text-red-700 text-sm hover:bg-red-100"
               >
                 ← Try Different Photo
               </button>
               <button
                 onClick={skipQuestions}
                 disabled={submitting}
-                className="flex-1 h-10 rounded-lg bg-red-600 text-white text-sm disabled:opacity-50"
+                className="flex-1 h-10 rounded-lg bg-red-600 text-white text-sm disabled:opacity-50 hover:bg-red-700"
               >
                 {submitting ? "Analyzing..." : "Skip to Results"}
               </button>
@@ -173,7 +196,7 @@ export default function Questions() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50"
+                className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50 hover:bg-gray-800"
               >
                 {submitting ? "Analyzing..." : "Get Results"}
               </button>
@@ -181,7 +204,7 @@ export default function Questions() {
                 type="button"
                 onClick={skipQuestions}
                 disabled={submitting}
-                className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50"
+                className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50 hover:bg-gray-50"
               >
                 Skip Questions
               </button>

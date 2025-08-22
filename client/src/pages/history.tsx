@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // shape coming back from /api/history/list
@@ -36,35 +36,78 @@ export default function History() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto p-6 text-sm text-gray-500">
-        Loading…
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+        </header>
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
+          <div className="text-sm text-gray-500">Loading...</div>
+        </main>
+        <BottomTabs navigate={navigate} activeTab="history" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto p-6 text-sm text-red-600">{error}</div>
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+        </header>
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
+          <div className="text-sm text-red-600">{error}</div>
+        </main>
+        <BottomTabs navigate={navigate} activeTab="history" />
+      </div>
     );
   }
 
   if (!items.length) {
     return (
-      <div className="max-w-2xl mx-auto p-6 text-sm text-gray-500">
-        No cases yet. Run a diagnosis first and it will appear here.
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+        </header>
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📋</div>
+            <h2 className="text-lg font-semibold mb-2">No History Yet</h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Run a diagnosis first and it will appear here.
+            </p>
+            <button
+              onClick={() => navigate("/")}
+              className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800"
+            >
+              Start Diagnosis
+            </button>
+          </div>
+        </main>
+        <BottomTabs navigate={navigate} activeTab="history" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">History</h1>
-      </div>
+    <div className="min-h-dvh flex flex-col">
+      <header className="p-4 text-center">
+        <h1 className="font-bold">Dogtor AI</h1>
+      </header>
 
-      {items.map((item) => (
-        <HistoryCard key={item.id} item={item} navigate={navigate} />
-      ))}
+      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">History</h2>
+          <span className="text-sm text-gray-500">{items.length} cases</span>
+        </div>
+
+        <div className="space-y-3">
+          {items.map((item) => (
+            <HistoryCard key={item.id} item={item} navigate={navigate} />
+          ))}
+        </div>
+      </main>
+
+      <BottomTabs navigate={navigate} activeTab="history" />
     </div>
   );
 }
@@ -74,6 +117,7 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
   try {
     cards = JSON.parse(item.response);
   } catch (e) {
+    console.error("Failed to parse history response:", e);
     cards = null;
   }
 
@@ -85,7 +129,7 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
 
   return (
     <div 
-      className={`rounded-xl border p-4 shadow-sm ${cards ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+      className={`rounded-xl border p-4 shadow-sm transition-all ${cards ? 'cursor-pointer hover:shadow-md hover:border-gray-300' : ''}`}
       onClick={cards ? handleClick : undefined}
     >
       <div className="text-xs text-gray-500 mb-2">
@@ -94,7 +138,9 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
       
       {cards ? (
         <div className="space-y-3">
-          <div className="text-sm font-medium text-gray-700">Symptoms: {item.prompt}</div>
+          <div className="text-sm font-medium text-gray-700">
+            <strong>Symptoms:</strong> {item.prompt}
+          </div>
           
           {/* Diagnosis Card Preview */}
           {cards.diagnosis && (
@@ -143,6 +189,50 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
           </pre>
         </div>
       )}
+    </div>
+  );
+}
+
+function BottomTabs({ navigate, activeTab }: { navigate: any; activeTab: string }) {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+      <div className="flex">
+        <button
+          onClick={() => navigate("/")}
+          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
+            activeTab === "diagnose" 
+              ? "text-blue-600 bg-blue-50" 
+              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          }`}
+        >
+          <div className="flex flex-col items-center gap-1">
+            <span>🏠</span>
+            <span>Diagnose</span>
+          </div>
+        </button>
+        <button
+          onClick={() => navigate("/history")}
+          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
+            activeTab === "history" 
+              ? "text-blue-600 bg-blue-50" 
+              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          }`}
+        >
+          <div className="flex flex-col items-center gap-1">
+            <span>📋</span>
+            <span>History</span>
+          </div>
+        </button>
+        <button
+          className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-400"
+          disabled
+        >
+          <div className="flex flex-col items-center gap-1">
+            <span>🔗</span>
+            <span>Connect</span>
+          </div>
+        </button>
+      </div>
     </div>
   );
 }

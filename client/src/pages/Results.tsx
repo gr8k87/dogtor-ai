@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
@@ -41,7 +40,7 @@ export default function Results({}: ResultsProps) {
           >
             ← New Diagnosis
           </button>
-        </div>v>
+        </div>
 
         <div className="space-y-4">
           {/* Card 1: Diagnosis */}
@@ -123,29 +122,7 @@ export default function Results({}: ResultsProps) {
             </div>
           )}
         </div>
-
-        {/* Bottom Navigation Tabs */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
-          <div className="flex">
-            <button
-              onClick={() => navigate("/")}
-              className="flex-1 py-3 px-4 text-center text-blue-600 font-medium"
-            >
-              Diagnose
-            </button>
-            <button
-              onClick={() => navigate("/history")}
-              className="flex-1 py-3 px-4 text-center text-gray-600"
-            >
-              History
-            </button>
-            <button className="flex-1 py-3 px-4 text-center text-gray-400">
-              Connect
-            </button>
-          </div>
-        </div>
       </main>
-    </div>/main>
 
       {/* Bottom Navigation Tabs */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
