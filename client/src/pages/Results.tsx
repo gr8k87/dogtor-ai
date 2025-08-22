@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import BottomTabs from "../components/BottomTabs";
 
 interface ResultsProps {}
 
@@ -124,37 +125,7 @@ export default function Results({}: ResultsProps) {
         </div>
       </main>
 
-      {/* Bottom Navigation Tabs */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="flex">
-          <button
-            onClick={() => navigate("/")}
-            className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <span>🏠</span>
-              <span>Diagnose</span>
-            </div>
-          </button>
-          <button
-            onClick={() => navigate("/history")}
-            className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <span>📋</span>
-              <span>History</span>
-            </div>
-          </button>
-          <button
-            className="flex-1 py-3 px-4 text-center text-sm font-medium text-blue-600 bg-blue-50"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <span>📊</span>
-              <span>Results</span>
-            </div>
-          </button>
-        </div>
-      </div>
+      <BottomTabs navigate={navigate} activeTab="results" />
     </div>
   );
 }

@@ -87,6 +87,29 @@ app.post("/api/history/save", async (req, res) => {
   }
 });
 
+app.delete("/api/history/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("🗑️ Deleting history entry:", id);
+
+    const { error } = await supabase
+      .from("history")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("❌ Supabase history delete error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    console.log("✅ Deleted history entry:", id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ History delete error:", err);
+    res.status(500).json({ error: "Failed to delete history entry" });
+  }
+});
+
 // --- Upload route ---
 app.post("/api/upload", upload.single("image"), (req, res) => {
   const uploadStart = Date.now();

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
+import BottomTabs from "../components/BottomTabs";
 
 interface BaseField {
   id: string;
@@ -25,9 +26,7 @@ interface DropdownField extends BaseField {
   options: string[];
 }
 
-interface TextboxField extends BaseField {
-  type: 'text';
-}
+
 
 interface YesNoField extends BaseField {
   type: 'yesno';
@@ -38,7 +37,7 @@ interface SelectField extends BaseField {
   options: string[];
 }
 
-type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField | YesNoField | SelectField;
+type FormQuestion = RadioField | CheckboxField | DropdownField | YesNoField | SelectField;
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -273,6 +272,8 @@ export default function Questions() {
           </form>
         </div>
       </main>
+      
+      <BottomTabs navigate={navigate} activeTab="diagnose" />
     </div>
   );
 }

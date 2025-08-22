@@ -23,9 +23,7 @@ interface DropdownField extends BaseField {
   options: string[];
 }
 
-interface TextboxField extends BaseField {
-  type: 'text';
-}
+
 
 interface YesNoField extends BaseField {
   type: 'yesno';
@@ -36,7 +34,7 @@ interface SelectField extends BaseField {
   options: string[];
 }
 
-type FormQuestion = RadioField | CheckboxField | DropdownField | TextboxField | YesNoField | SelectField;
+type FormQuestion = RadioField | CheckboxField | DropdownField | YesNoField | SelectField;
 
 interface DynamicFormProps {
   schema: FormQuestion[];
@@ -112,15 +110,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
             </div>
           )}
 
-          {field.type === 'text' && (
-            <input
-              type="text"
-              className="w-full border border-gray-300 rounded-lg h-12 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={value[field.id] ?? ''}
-              onChange={(e) => setVal(field.id, e.target.value)}
-              placeholder="Enter your answer..."
-            />
-          )}
+          
 
           {field.type === 'yesno' && (
             <div className="flex gap-3">

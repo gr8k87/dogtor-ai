@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -33,6 +32,20 @@ export default function History() {
         setLoading(false);
       });
   }, []);
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this history record?")) {
+      fetch(`/api/history/delete/${id}`, { method: "DELETE" })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to delete history");
+          setItems(items.filter((item) => item.id !== id));
+        })
+        .catch((err) => {
+          console.error("History delete error:", err);
+          setError("Could not delete history");
+        });
+    }
+  };
 
   if (loading) {
     return (
@@ -102,7 +115,7 @@ export default function History() {
 
         <div className="space-y-3">
           {items.map((item) => (
-            <HistoryCard key={item.id} item={item} navigate={navigate} />
+            <HistoryCard key={item.id} item={item} navigate={navigate} onDelete={handleDelete} />
           ))}
         </div>
       </main>
@@ -112,7 +125,7 @@ export default function History() {
   );
 }
 
-function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) {
+function HistoryCard({ item, navigate, onDelete }: { item: HistoryEntry; navigate: any; onDelete: (id: string) => void }) {
   let cards: any = null;
   try {
     cards = JSON.parse(item.response);
@@ -160,8 +173,13 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
               {item.prompt}
             </p>
           </div>
-          <div className="text-gray-400 ml-2">
-            →
+          <div className="flex items-center gap-2">
+            <div className="text-gray-400 ml-2">
+              →
+            </div>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
+              🗑️
+            </button>
           </div>
         </div>
       ) : (
@@ -169,6 +187,9 @@ function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) 
           <div className="text-xs text-gray-500">{formatDate(item.created_at)}</div>
           <div className="text-sm font-medium">Raw Data</div>
           <div className="text-xs text-gray-600 truncate">{item.prompt}</div>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
+            Delete
+          </button>
         </div>
       )}
     </div>
@@ -206,8 +227,12 @@ function BottomTabs({ navigate, activeTab }: { navigate: any; activeTab: string 
           </div>
         </button>
         <button
-          className="flex-1 py-3 px-4 text-center text-sm font-medium text-gray-400"
-          disabled
+          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
+            activeTab === "connect" 
+              ? "text-blue-600 bg-blue-50" 
+              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          }`}
+          onClick={() => navigate("/connect")}
         >
           <div className="flex flex-col items-center gap-1">
             <span>🔗</span>
