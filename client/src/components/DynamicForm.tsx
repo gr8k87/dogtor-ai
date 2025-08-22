@@ -1,4 +1,3 @@
-
 import React from "react";
 type Field =
  | { id:string; type:'select'; label:string; options:string[]; required?:boolean }
@@ -10,7 +9,7 @@ type Props = { schema: Field[]; value: Record<string,any>; onChange:(v:Record<st
 
 export default function DynamicForm({ schema, value, onChange }: Props){
   function setVal(id:string, v:any){ onChange({ ...value, [id]: v }); }
-  
+
   function toggleCheckboxValue(id: string, option: string) {
     const current = value[id] || [];
     const newValue = current.includes(option) 
@@ -24,7 +23,7 @@ export default function DynamicForm({ schema, value, onChange }: Props){
       {schema.map(f => (
         <div key={f.id} className="space-y-1">
           <label className="block text-sm font-medium">{f.label}{(f as any).required && ' *'}</label>
-          
+
           {f.type==='select' && (
             <select className="w-full border rounded-lg h-12 px-3"
               value={value[f.id] ?? ''} onChange={e=>setVal(f.id, e.target.value)}>
@@ -32,7 +31,7 @@ export default function DynamicForm({ schema, value, onChange }: Props){
               {f.options.map(o=> <option key={o} value={o}>{o}</option>)}
             </select>
           )}
-          
+
           {f.type==='radio' && (
             <div className="flex gap-3 flex-wrap">
               {f.options.map(o=>(
@@ -44,7 +43,7 @@ export default function DynamicForm({ schema, value, onChange }: Props){
               ))}
             </div>
           )}
-          
+
           {f.type==='yesno' && (
             <div className="flex gap-3">
               <button type="button" onClick={()=>setVal(f.id,true)}
@@ -57,7 +56,7 @@ export default function DynamicForm({ schema, value, onChange }: Props){
               </button>
             </div>
           )}
-          
+
           {f.type==='checkbox' && (
             <div className="space-y-2">
               {f.options.map(o=>(

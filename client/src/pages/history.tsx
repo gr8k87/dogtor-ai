@@ -70,7 +70,7 @@ export default function History() {
 }
 
 function HistoryCard({ item, navigate }: { item: HistoryEntry; navigate: any }) {
-  let cards;
+  let cards: any = null;
   try {
     cards = JSON.parse(item.response);
   } catch (e) {

@@ -1,18 +1,19 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
 
-type Question =
- | { id: string; type: 'select'; label: string; options: string[]; required?: boolean }
- | { id: string; type: 'radio';  label: string; options: string[]; required?: boolean }
- | { id: string; type: 'yesno';  label: string; required?: boolean }
- | { id: string; type: 'checkbox'; label: string; options: string[]; required?: boolean };
+interface FormQuestion {
+    id: string;
+    type: 'radio' | 'checkbox' | 'text' | 'dropdown';
+    question: string;
+    options?: string[];
+    required?: boolean;
+  }
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<FormQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -62,7 +63,7 @@ export default function Questions() {
       });
 
       if (!response.ok) throw new Error("Failed to get results");
-      
+
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
@@ -83,7 +84,7 @@ export default function Questions() {
       });
 
       if (!response.ok) throw new Error("Failed to get results");
-      
+
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
@@ -111,7 +112,7 @@ export default function Questions() {
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <h3 className="font-semibold text-red-800 mb-2">⚠️ Questions Generation Failed</h3>
             <p className="text-red-700 text-sm mb-3">{error}</p>
-            
+
             <div className="bg-white rounded-lg p-3 border border-red-200">
               <h4 className="font-medium text-red-800 text-sm mb-2">Possible Solutions:</h4>
               <ul className="text-red-700 text-sm space-y-1">
@@ -121,7 +122,7 @@ export default function Questions() {
                 <li>• Use a different photo if the current one violates content policies</li>
               </ul>
             </div>
-            
+
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => navigate("/")}
@@ -156,7 +157,7 @@ export default function Questions() {
           <p className="text-sm text-gray-600 mb-4">
             Please answer these questions to help improve the diagnosis:
           </p>
-          
+
           <form onSubmit={handleSubmit}>
             <DynamicForm 
               schema={questions} 

@@ -209,29 +209,25 @@ r.post("/questions", async (req, res) => {
     const prompt = {
       role: "system",
       content: `
-You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
+        Generate 3-5 follow-up questions based on the symptoms: ${symptoms}. 
+        Return ONLY a JSON array of question objects with this exact structure:
+        [
+          {
+            "id": "question_1", 
+            "type": "radio",
+            "question": "Question text?",
+            "options": ["Option 1", "Option 2", "Option 3"],
+            "required": true
+          }
+        ]
 
-Return ONLY JSON in this exact format:
-{
-  "questions": [
-    {
-      "id": "q1",
-      "type": "select|radio|yesno|text|number",
-      "label": "Question text here?",
-      "options": ["option1", "option2"] // only for select/radio types
-      "required": true
-    }
-  ]
-}
+        Question types to use:
+        - "radio": single choice (use for yes/no, severity levels, duration, frequency)
+        - "checkbox": multiple choice (use for multiple symptoms selection)  
+        - "dropdown": single choice from longer lists (use for breeds, age ranges, medications)
 
-Question types:
-- "select": dropdown with options array
-- "radio": radio buttons with options array  
-- "yesno": yes/no buttons
-- "text": text input
-- "number": number input
-
-Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.
+        Do NOT include "text" input questions. Only use "radio", "checkbox", or "dropdown" types.
+        Ensure all questions have the "options" array populated with relevant choices.
       `
     };
 
