@@ -51,7 +51,7 @@ function AppContent() {
   return (
     <div className="min-h-dvh flex flex-col">
       <OfflineBadge />
-      
+
       <Routes>
         <Route path="/" element={
           <>
@@ -73,7 +73,7 @@ function AppContent() {
           <>
             <header className="p-4 text-center font-bold">Dogtor AI</header>
             <main className="flex-1 p-4">
-              <div>Connect to Vet (placeholder)</div>
+              <ConnectTab />
             </main>
           </>
         } />
