@@ -4,7 +4,12 @@ import DiagnoseTab from "./pages/DiagnoseTab";
 import ConnectTab from "./pages/ConnectTab";
 import Questions from "./pages/Questions";
 import Results from "./pages/Results";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 
 import React, { useState } from "react";
 import OfflineBadge from "./components/OfflineBadge";
@@ -46,8 +51,9 @@ function AppContent() {
     setStarted(true);
   }
 
-  // Hide navigation on question and result pages
-  const hideNav = location.pathname.includes("/questions/") || location.pathname.includes("/results/");
+  const hideNav =
+    location.pathname.includes("/questions/") ||
+    location.pathname.includes("/results/");
 
   if (!started) return <Splash onStart={begin} />;
 
@@ -56,30 +62,39 @@ function AppContent() {
       <OfflineBadge />
 
       <Routes>
-        <Route path="/" element={
-          <>
-            <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
-              <DiagnoseTab />
-            </main>
-          </>
-        } />
-        <Route path="/history" element={
-          <>
-            <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
-              <History />
-            </main>
-          </>
-        } />
-        <Route path="/connect" element={
-          <>
-            <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
-              <ConnectTab />
-            </main>
-          </>
-        } />
+        <Route
+          path="/"
+          element={
+            <>
+              <header className="p-4 text-center font-bold">Dogtor AI</header>
+              <main className="flex-1 p-4">
+                <DiagnoseTab />
+              </main>
+            </>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <>
+              <header className="p-4 text-center font-bold">Dogtor AI</header>
+              <main className="flex-1 p-4">
+                <History />
+              </main>
+            </>
+          }
+        />
+        <Route
+          path="/connect"
+          element={
+            <>
+              <header className="p-4 text-center font-bold">Dogtor AI</header>
+              <main className="flex-1 p-4">
+                <ConnectTab />
+              </main>
+            </>
+          }
+        />
         <Route path="/questions/:caseId" element={<Questions />} />
         <Route path="/results/:caseId" element={<Results />} />
       </Routes>
@@ -101,10 +116,11 @@ function AppContent() {
                   (t === "Diagnose" && location.pathname === "/") ||
                   (t === "History" && location.pathname === "/history") ||
                   (t === "Connect" && location.pathname === "/connect")
-                    ? "font-semibold" : "text-gray-500"
+                    ? "font-semibold"
+                    : "text-gray-500"
                 }`}
               >
-                {String(t)}
+                {t}
               </Button>
             ))}
           </div>

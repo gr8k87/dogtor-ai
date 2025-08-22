@@ -98,8 +98,7 @@ export default function Results() {
           addEntry({
             form: { symptoms: "Analysis completed" },
             triage: {
-              diagnosis:
-                clean.diagnosis?.likely_condition || "Analysis complete",
+              diagnosis: clean.diagnosis?.likely_condition || "Analysis complete",
               urgency: clean.diagnosis?.urgency?.level || "Unknown",
             },
           });
@@ -114,8 +113,7 @@ export default function Results() {
 
   if (loading) return <div className="p-6 text-center">Analyzing results…</div>;
   if (error) return <div className="p-6 text-center text-red-600">{error}</div>;
-  if (!cards)
-    return <div className="p-6 text-center">No results to display</div>;
+  if (!cards) return <div className="p-6 text-center">No results to display</div>;
 
   return (
     <div className="min-h-dvh flex flex-col bg-background">
@@ -148,20 +146,18 @@ export default function Results() {
             <div>
               <p className="font-medium mb-1">Other possibilities:</p>
               <ul className="text-sm space-y-1">
-                {cards.diagnosis.other_possibilities.map(
-                  (p: any, i: number) => (
-                    <li key={i} className="ml-2">
-                      • {p.name} ({p.likelihood} likelihood)
-                    </li>
-                  ),
-                )}
+                {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
+                  <li key={i} className="ml-2">
+                    • {p.name} ({p.likelihood} likelihood)
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               <p className="font-medium mb-1">Urgency:</p>
               <p className="text-sm">
-                {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}{" "}
-                — {cards.diagnosis.urgency.note}
+                {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} —{" "}
+                {cards.diagnosis.urgency.note}
               </p>
             </div>
           </CardContent>
@@ -180,9 +176,7 @@ export default function Results() {
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-gray-500 mt-3">
-              {cards.care.disclaimer}
-            </p>
+            <p className="text-xs text-gray-500 mt-3">{cards.care.disclaimer}</p>
           </CardContent>
         </Card>
 
