@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagePicker from "../components/ImagePicker";
@@ -79,10 +78,10 @@ export default function DiagnoseTab() {
 
       const caseJson = await caseResp.json();
       const caseId = caseJson.caseId;
-      
+
       setDebugMsg("✅ Case created! Redirecting to questions...");
       navigate(`/questions/${caseId}`);
-      
+
     } catch (err: any) {
       console.error("❌ Case creation error", err);
       setDebugMsg(`❌ Error: ${err.message}`);
@@ -95,10 +94,15 @@ export default function DiagnoseTab() {
     }
   }
 
-  
+
 
   return (
-    <div className="space-y-4">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="p-4 space-y-4">
+        <div className="pt-4">
+          <h1 className="text-2xl font-bold text-foreground mb-6">Pet Health Diagnosis</h1>
+        </div>
+
       <div className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Add photo</h2>
         <ImagePicker onChange={setImageFile} />
@@ -137,6 +141,7 @@ export default function DiagnoseTab() {
         </button>
         {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
       </form>
+    </div>
     </div>
   );
 }

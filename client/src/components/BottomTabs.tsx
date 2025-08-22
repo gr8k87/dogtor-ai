@@ -1,4 +1,3 @@
-
 import React from "react";
 
 interface BottomTabsProps {
@@ -8,14 +7,14 @@ interface BottomTabsProps {
 
 export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-      <div className="flex">
+    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-4 py-2 safe-area-pb">
+      <div className="flex justify-around">
         <button
           onClick={() => navigate("/")}
-          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
-            activeTab === "diagnose" 
-              ? "text-blue-600 bg-blue-50" 
-              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+            activeTab === "diagnose"
+              ? "text-primary bg-accent"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
         >
           <div className="flex flex-col items-center gap-1">
@@ -25,10 +24,10 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
         </button>
         <button
           onClick={() => navigate("/history")}
-          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
-            activeTab === "history" 
-              ? "text-blue-600 bg-blue-50" 
-              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+            activeTab === "history"
+              ? "text-primary bg-accent"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
         >
           <div className="flex flex-col items-center gap-1">
@@ -37,12 +36,12 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
           </div>
         </button>
         <button
-          className={`flex-1 py-3 px-4 text-center text-sm font-medium ${
-            activeTab === "results" 
-              ? "text-blue-600 bg-blue-50" 
-              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+          onClick={() => navigate("/results")}
+          className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+            activeTab === "results"
+              ? "text-primary bg-accent"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
-          disabled={activeTab !== "results"}
         >
           <div className="flex flex-col items-center gap-1">
             <span>📊</span>

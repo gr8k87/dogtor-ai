@@ -1,4 +1,3 @@
-
 import React from "react";
 
 interface BaseField {
@@ -59,14 +58,14 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
     <div className="space-y-4">
       {schema.map((field) => (
         <div key={field.id} className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             {field.question || field.label}
-            {field.required && <span className="text-red-500 ml-1">*</span>}
+            {field.required && <span className="text-destructive">*</span>}
           </label>
 
           {field.type === 'dropdown' && (
             <select 
-              className="w-full border border-gray-300 rounded-lg h-12 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="input w-full"
               value={value[field.id] ?? ''} 
               onChange={(e) => setVal(field.id, e.target.value)}
             >
@@ -86,9 +85,9 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
                     name={field.id} 
                     checked={value[field.id] === option}
                     onChange={() => setVal(field.id, option)}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 text-primary border-input focus:ring-ring"
                   /> 
-                  <span className="text-sm">{option}</span>
+                  <span className="text-sm text-foreground">{option}</span>
                 </label>
               ))}
             </div>
@@ -102,15 +101,15 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
                     type="checkbox" 
                     checked={(value[field.id] || []).includes(option)}
                     onChange={() => toggleCheckboxValue(field.id, option)}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded"
+                    className="w-4 h-4 text-primary border-input focus:ring-ring rounded"
                   />
-                  <span className="text-sm">{option}</span>
+                  <span className="text-sm text-foreground">{option}</span>
                 </label>
               ))}
             </div>
           )}
 
-          
+
 
           {field.type === 'yesno' && (
             <div className="flex gap-3">
@@ -121,9 +120,9 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
                     name={field.id} 
                     checked={value[field.id] === option}
                     onChange={() => setVal(field.id, option)}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 text-primary border-input focus:ring-ring"
                   /> 
-                  <span className="text-sm">{option}</span>
+                  <span className="text-sm text-foreground">{option}</span>
                 </label>
               ))}
             </div>
@@ -131,7 +130,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
 
           {field.type === 'select' && (
             <select 
-              className="w-full border border-gray-300 rounded-lg h-12 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="input w-full"
               value={value[field.id] ?? ''} 
               onChange={(e) => setVal(field.id, e.target.value)}
             >
