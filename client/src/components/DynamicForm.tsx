@@ -66,7 +66,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
           </Label>
 
           {(field.type === 'dropdown' || field.type === 'select') && (
-            <Select value={value[field.id] ?? ''} onValueChange={(val) => setVal(field.id, val)}>
+            <Select value={value[field.id] ?? ''} onValueChange={(val: string) => setVal(field.id, val)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an option..." />
               </SelectTrigger>
