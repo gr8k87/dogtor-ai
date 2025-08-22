@@ -178,26 +178,20 @@ r.get("/questions/:caseId", async (req, res) => {
   try {
     const { data: caseData, error } = await supabase
       .from("cases")
-      .select("questions, error_message, status")
+      .select("questions")
       .eq("id", caseId)
       .single();
 
-    if (error || !caseData) {
-      console.log("❌ Case not found:", caseId);
+    if (error) {
+      console.error("❌ Case fetch error:", error);
       return res.status(404).json({ error: "Case not found" });
     }
 
-    if (caseData.status === "error") {
-      return res.status(400).json({ 
-        error: caseData.error_message || "Questions generation failed",
-        questions: []
-      });
-    }
-
+    console.log("✅ Questions found for case:", caseId, "Questions count:", caseData.questions?.length || 0);
     res.json({ questions: caseData.questions || [] });
   } catch (err) {
-    console.error("❌ Questions fetch error:", err.message);
-    res.status(500).json({ error: "Failed to fetch questions: " + err.message });
+    console.error("❌ Questions fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch questions" });
   }
 });
 
