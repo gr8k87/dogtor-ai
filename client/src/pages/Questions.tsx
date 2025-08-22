@@ -3,13 +3,12 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
 
-interface Question {
-  id: string;
-  type: "select" | "radio" | "yesno" | "text" | "number";
-  label: string;
-  options?: string[];
-  required: boolean;
-}
+type Question =
+ | { id: string; type: 'select'; label: string; options: string[]; required?: boolean }
+ | { id: string; type: 'radio';  label: string; options: string[]; required?: boolean }
+ | { id: string; type: 'yesno';  label: string; required?: boolean }
+ | { id: string; type: 'text';   label: string; placeholder?: string; required?: boolean }
+ | { id: string; type: 'number'; label: string; min?: number; max?: number; step?: number; required?: boolean };
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
