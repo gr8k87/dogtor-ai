@@ -1,146 +1,285 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import BottomTabs from "../components/BottomTabs";
+import { useHistory } from "../state/historyContext";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
-interface ResultsProps {}
+interface DiagnosisCard {
+  title: string;
+  likely_condition: string;
+  other_possibilities: Array<{
+    name: string;
+    likelihood: string;
+  }>;
+  urgency: {
+    badge: string;
+    level: string;
+    note: string;
+  };
+}
 
-export default function Results({}: ResultsProps) {
+interface CareCard {
+  title: string;
+  tips: Array<{
+    icon: string;
+    text: string;
+  }>;
+  disclaimer: string;
+}
+
+interface CostsCard {
+  title: string;
+  disclaimer: string;
+  steps: Array<{
+    icon: string;
+    name: string;
+    likelihood: string;
+    desc: string;
+    cost: string;
+  }>;
+}
+
+interface ResultCards {
+  diagnosis: DiagnosisCard;
+  care: CareCard;
+  costs: CostsCard;
+}
+
+export default function Results() {
   const { caseId } = useParams<{ caseId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const cards = location.state?.cards;
+  const { addCase } = useHistory();
+  const [cards, setCards] = useState<ResultCards | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
-  const handleNewDiagnosis = () => {
-    navigate("/");
-  };
+  useEffect(() => {
+    if (!caseId) {
+      navigate("/");
+      return;
+    }
 
-  if (!cards) {
+    // Check if we have results passed via navigation state
+    const stateCards = location.state?.cards;
+    if (stateCards) {
+      console.log("✅ Using results from navigation state");
+      setCards(stateCards);
+      
+      // Save to history
+      const historyEntry = {
+        id: caseId,
+        timestamp: new Date().toISOString(),
+        diagnosis: stateCards.diagnosis?.likely_condition || "Analysis complete",
+        urgency: stateCards.diagnosis?.urgency?.level || "Unknown"
+      };
+      addCase(historyEntry);
+      
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise fetch results from API
+    console.log("🔍 Fetching results for case:", caseId);
+    
+    fetch(`/api/diagnose/results/${caseId}`)
+      .then(async res => {
+        console.log("📡 Results API response status:", res.status);
+        
+        if (res.status === 404) {
+          console.log("❌ Results not found, redirecting home");
+          navigate("/");
+          return null;
+        }
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.log("❌ Results API error:", errorText);
+          throw new Error(`Results API failed: ${res.status} - ${errorText}`);
+        }
+        
+        const data = await res.json();
+        console.log("📋 Raw results response:", data);
+        return data;
+      })
+      .then(data => {
+        if (data?.cards) {
+          console.log("✅ Results data received:", data.cards);
+          setCards(data.cards);
+          
+          // Save to history
+          const historyEntry = {
+            id: caseId,
+            timestamp: new Date().toISOString(),
+            diagnosis: data.cards.diagnosis?.likely_condition || "Analysis complete",
+            urgency: data.cards.diagnosis?.urgency?.level || "Unknown"
+          };
+          addCase(historyEntry);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("❌ Results fetch error:", err);
+        setError(err.message || "Failed to load results");
+        setLoading(false);
+      });
+  }, [caseId, location.state, navigate, addCase]);
+
+  if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center p-4">
+      <div className="min-h-dvh flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground mb-4">No results to display</p>
-          <button
-            onClick={handleNewDiagnosis}
-            className="btn btn-secondary"
-          >
-            Back to Diagnose
-          </button>
+          <h2 className="text-lg font-semibold mb-2">Analyzing Results...</h2>
+          <div className="text-sm text-gray-500">Step 3 of 3</div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-foreground">Diagnosis Results</h1>
-            <button
-              onClick={handleNewDiagnosis}
-              className="btn btn-primary text-sm px-4 py-2"
-            >
-              New Diagnosis
-            </button>
-          </div>
+  if (error) {
+    return (
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+        </header>
 
-          <div className="space-y-4">
-            {/* Card 1: Diagnosis */}
-            <div className="card p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">{cards.diagnosis?.title || "Diagnosis"}:</h2>
-              <p className="mb-2">
-                <b>Likely condition:</b> {cards.diagnosis?.likely_condition || "Analysis complete"}
-              </p>
-              {cards.diagnosis?.other_possibilities && (
-                <>
-                  <p className="mb-1"><b>Other possibilities:</b></p>
-                  <ul className="text-sm mb-3">
-                    {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
-                      <li key={i} className="ml-2">
-                        • {p.name} ({p.likelihood} likelihood)
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {cards.diagnosis?.urgency && (
-                <>
-                  <p className="mb-1"><b>Urgency:</b></p>
-                  <p className="text-sm">
-                    {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
-                  </p>
-                </>
-              )}
-            </div>
-
-            {/* Card 2: Care Tips */}
-            {cards.care && (
-              <div className="card p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{cards.care.title}:</h2>
-                {cards.care.tips && (
-                  <ul className="space-y-2 mb-3">
-                    {cards.care.tips.map((tip: any, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <span>{tip.icon}</span>
-                        <span>{tip.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {cards.care.disclaimer && (
-                  <p className="text-xs text-muted-foreground italic">{cards.care.disclaimer}</p>
-                )}
-              </div>
-            )}
-
-            {/* Card 3: Costs */}
-            {cards.costs && (
-              <div className="card p-6">
-                <h2 className="text-xl font-semibold text-foreground mb-4">{cards.costs.title}:</h2>
-                {cards.costs.disclaimer && (
-                  <p className="text-xs text-muted-foreground mb-3">{cards.costs.disclaimer}</p>
-                )}
-                {cards.costs.steps && (
-                  <ul className="space-y-3">
-                    {cards.costs.steps.map((step: any, i: number) => (
-                      <li key={i} className="border border-border rounded-lg p-3">
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg">{step.icon}</span>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                              <h3 className="font-medium text-foreground">{step.name}</h3>
-                              <span className="text-sm font-medium text-green-600">{step.cost}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1">{step.desc}</p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Likelihood: {step.likelihood}
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-          <div className="flex items-start space-x-3">
-            <span className="text-orange-500 text-lg">⚠️</span>
-            <div>
-              <h3 className="font-medium text-orange-800 mb-1">Important Disclaimer</h3>
-              <p className="text-orange-700 text-sm">
-                This AI diagnosis is for informational purposes only and should not replace professional veterinary care.
-                Always consult with a qualified veterinarian for accurate diagnosis and treatment.
-              </p>
-            </div>
-          </div>
-        </div>
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-800">⚠️ Error Loading Results</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-700 text-sm mb-3">{error}</p>
+              <Button
+                onClick={() => navigate("/")}
+                variant="outline"
+                className="border-red-300 text-red-700 hover:bg-red-100"
+              >
+                ← Start Over
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
       </div>
+    );
+  }
 
-      <BottomTabs navigate={navigate} activeTab="results" />
+  if (!cards) {
+    return (
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+        </header>
+
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+          <Card>
+            <CardContent className="text-center p-6">
+              <p className="text-gray-500">No results to display</p>
+              <Button
+                onClick={() => navigate("/")}
+                className="mt-4"
+                variant="outline"
+              >
+                Back to Diagnose
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-dvh flex flex-col bg-background">
+      <header className="p-4 text-center">
+        <h1 className="font-bold">Dogtor AI</h1>
+        <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+      </header>
+
+      <main className="flex-1 p-4 max-w-2xl mx-auto w-full space-y-4">
+        <div className="flex items-center mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="text-blue-600 hover:text-blue-800 p-0"
+          >
+            ← Back to Diagnose
+          </Button>
+        </div>
+
+        {/* Card 1: Diagnosis */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{cards.diagnosis.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p>
+              <strong>Likely condition:</strong> {cards.diagnosis.likely_condition}
+            </p>
+            <div>
+              <p className="font-medium mb-1">Other possibilities:</p>
+              <ul className="text-sm space-y-1">
+                {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
+                  <li key={i} className="ml-2">
+                    • {p.name} ({p.likelihood} likelihood)
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-medium mb-1">Urgency:</p>
+              <p className="text-sm">
+                {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 2: General Care Tips */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{cards.care.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc pl-5 text-sm space-y-1">
+              {cards.care.tips.map((t: any, i: number) => (
+                <li key={i}>
+                  {t.icon} {t.text}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-gray-500 mt-3">
+              {cards.care.disclaimer}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card 3: Vet Procedures & Costs */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{cards.costs.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-gray-500 mb-3">
+              {cards.costs.disclaimer}
+            </p>
+            <ul className="space-y-3 text-sm">
+              {cards.costs.steps.map((s: any, i: number) => (
+                <li key={i} className="space-y-1">
+                  <div>
+                    {s.icon} <strong>{s.name}</strong> – {s.likelihood}
+                  </div>
+                  <div className="text-gray-600">{s.desc}</div>
+                  <div className="font-medium">{s.cost}</div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }

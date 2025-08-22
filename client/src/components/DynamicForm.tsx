@@ -1,4 +1,8 @@
+
 import React from "react";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface BaseField {
   id: string;
@@ -21,8 +25,6 @@ interface DropdownField extends BaseField {
   type: 'dropdown';
   options: string[];
 }
-
-
 
 interface YesNoField extends BaseField {
   type: 'yesno';
@@ -55,29 +57,31 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {schema.map((field) => (
-        <div key={field.id} className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+        <div key={field.id} className="space-y-3">
+          <Label className="text-sm font-medium text-foreground">
             {field.question || field.label}
-            {field.required && <span className="text-destructive">*</span>}
-          </label>
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </Label>
 
-          {field.type === 'dropdown' && (
-            <select 
-              className="input w-full"
-              value={value[field.id] ?? ''} 
-              onChange={(e) => setVal(field.id, e.target.value)}
-            >
-              <option value="" disabled>Select an option...</option>
-              {field.options.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
+          {(field.type === 'dropdown' || field.type === 'select') && (
+            <Select value={value[field.id] ?? ''} onValueChange={(val) => setVal(field.id, val)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an option..." />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
 
           {field.type === 'radio' && (
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-4 flex-wrap">
               {field.options.map((option) => (
                 <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
                   <input 
@@ -94,9 +98,9 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
           )}
 
           {field.type === 'checkbox' && (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {field.options.map((option) => (
-                <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
+                <label key={option} className="flex items-center gap-2 cursor-pointer">
                   <input 
                     type="checkbox" 
                     checked={(value[field.id] || []).includes(option)}
@@ -109,10 +113,8 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
             </div>
           )}
 
-
-
           {field.type === 'yesno' && (
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               {['Yes', 'No'].map((option) => (
                 <label key={option} className="inline-flex items-center gap-2 cursor-pointer">
                   <input 
@@ -126,19 +128,6 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
                 </label>
               ))}
             </div>
-          )}
-
-          {field.type === 'select' && (
-            <select 
-              className="input w-full"
-              value={value[field.id] ?? ''} 
-              onChange={(e) => setVal(field.id, e.target.value)}
-            >
-              <option value="" disabled>Select an option...</option>
-              {field.options?.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
           )}
         </div>
       ))}

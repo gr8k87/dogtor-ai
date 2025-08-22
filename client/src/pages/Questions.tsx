@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
 import BottomTabs from "../components/BottomTabs";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 
 interface BaseField {
   id: string;
@@ -25,8 +27,6 @@ interface DropdownField extends BaseField {
   type: 'dropdown';
   options: string[];
 }
-
-
 
 interface YesNoField extends BaseField {
   type: 'yesno';
@@ -166,28 +166,32 @@ export default function Questions() {
         </header>
 
         <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
-          <div className="rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
-            <h3 className="font-semibold text-yellow-800 mb-2">ℹ️ No Follow-up Questions</h3>
-            <p className="text-yellow-700 text-sm mb-3">
-              We couldn't generate specific follow-up questions, but we can still analyze your pet's image and symptoms.
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => navigate("/")}
-                className="flex-1 h-12 rounded-xl border border-yellow-300 text-yellow-700 hover:bg-yellow-100"
-              >
-                ← Try Different Photo
-              </button>
-              <button
-                onClick={skipQuestions}
-                disabled={submitting}
-                className="flex-1 h-12 rounded-xl bg-yellow-600 text-white disabled:opacity-50 hover:bg-yellow-700"
-              >
-                {submitting ? "Analyzing..." : "Continue to Results"}
-              </button>
-            </div>
-          </div>
+          <Card className="border-yellow-200 bg-yellow-50">
+            <CardHeader>
+              <CardTitle className="text-yellow-800">ℹ️ No Follow-up Questions</CardTitle>
+              <CardDescription className="text-yellow-700">
+                We couldn't generate specific follow-up questions, but we can still analyze your pet's image and symptoms.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/")}
+                  className="flex-1 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                >
+                  ← Try Different Photo
+                </Button>
+                <Button
+                  onClick={skipQuestions}
+                  disabled={submitting}
+                  className="flex-1 bg-yellow-600 text-white hover:bg-yellow-700"
+                >
+                  {submitting ? "Analyzing..." : "Continue to Results"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </main>
       </div>
     );
@@ -202,26 +206,30 @@ export default function Questions() {
         </header>
 
         <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
-            <h3 className="font-semibold text-red-800 mb-2">⚠️ Error Loading Questions</h3>
-            <p className="text-red-700 text-sm mb-3">{error}</p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => navigate("/")}
-                className="flex-1 h-12 rounded-xl border border-red-300 text-red-700 hover:bg-red-100"
-              >
-                ← Start Over
-              </button>
-              <button
-                onClick={skipQuestions}
-                disabled={submitting}
-                className="flex-1 h-12 rounded-xl bg-red-600 text-white disabled:opacity-50 hover:bg-red-700"
-              >
-                {submitting ? "Analyzing..." : "Skip to Results"}
-              </button>
-            </div>
-          </div>
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-800">⚠️ Error Loading Questions</CardTitle>
+              <CardDescription className="text-red-700">{error}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/")}
+                  className="flex-1 border-red-300 text-red-700 hover:bg-red-100"
+                >
+                  ← Start Over
+                </Button>
+                <Button
+                  onClick={skipQuestions}
+                  disabled={submitting}
+                  className="flex-1 bg-red-600 text-white hover:bg-red-700"
+                >
+                  {submitting ? "Analyzing..." : "Skip to Results"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </main>
       </div>
     );
@@ -235,42 +243,47 @@ export default function Questions() {
       </header>
 
       <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
-        <div className="rounded-2xl border p-4">
-          <h2 className="font-semibold mb-2">Follow-up Questions</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Please answer these questions to help improve the diagnosis:
-          </p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Follow-up Questions</CardTitle>
+            <CardDescription>
+              Please answer these questions to help improve the diagnosis:
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <DynamicForm 
+                schema={questions} 
+                value={answers} 
+                onChange={setAnswers} 
+              />
 
-          <form onSubmit={handleSubmit}>
-            <DynamicForm 
-              schema={questions} 
-              value={answers} 
-              onChange={setAnswers} 
-            />
+              {error && (
+                <p className="text-red-600 text-sm mt-2">{error}</p>
+              )}
 
-            {error && (
-              <p className="text-red-600 text-sm mt-2">{error}</p>
-            )}
-
-            <div className="flex gap-3 mt-6">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50 hover:bg-gray-800"
-              >
-                {submitting ? "Analyzing..." : "Get Results"}
-              </button>
-              <button
-                type="button"
-                onClick={skipQuestions}
-                disabled={submitting}
-                className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50 hover:bg-gray-50"
-              >
-                Skip Questions
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="flex gap-3">
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1"
+                  size="lg"
+                >
+                  {submitting ? "Analyzing..." : "Get Results"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={skipQuestions}
+                  disabled={submitting}
+                  size="lg"
+                >
+                  Skip Questions
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </main>
       
       <BottomTabs navigate={navigate} activeTab="diagnose" />

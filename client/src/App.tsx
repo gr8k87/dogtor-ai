@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 
 import React, { useState } from "react";
 import OfflineBadge from "./components/OfflineBadge";
+import { Button } from "./components/ui/button";
 
 type Tab = "Diagnose" | "History" | "Connect" | "Results";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
@@ -19,12 +20,13 @@ function Splash({ onStart }: { onStart: () => void }) {
       <p className="text-sm  text-gray-500 mt-1">
         Not a vet, just your first step.
       </p>
-      <button
+      <Button
         onClick={onStart}
-        className="mt-6 px-6 py-3 rounded-2xl bg-black text-white"
+        className="mt-6 px-6 py-3 rounded-2xl"
+        size="lg"
       >
         Get started
-      </button>
+      </Button>
       <p className="mt-4 text-xs text-gray-400">
         For guidance only. Not a veterinary service.
       </p>
@@ -86,15 +88,16 @@ function AppContent() {
         <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
           <div className="grid grid-cols-3 text-center">
             {tabs.map((t) => (
-              <button
+              <Button
                 key={t}
+                variant="ghost"
                 onClick={() => {
                   setTab(t);
                   if (t === "Diagnose") window.location.href = "/";
                   else if (t === "History") window.location.href = "/history";
                   else if (t === "Connect") window.location.href = "/connect";
                 }}
-                className={`py-3 ${
+                className={`py-3 rounded-none ${
                   (t === "Diagnose" && location.pathname === "/") ||
                   (t === "History" && location.pathname === "/history") ||
                   (t === "Connect" && location.pathname === "/connect")
@@ -102,7 +105,7 @@ function AppContent() {
                 }`}
               >
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
         </nav>
