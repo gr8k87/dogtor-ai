@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import ImagePicker from "../components/ImagePicker";
+import DynamicForm from "../components/DynamicForm";
 import { useHistory } from "../state/historyContext";
 
 interface DiagnoseTabProps {
@@ -12,6 +13,10 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
   const [notes, setNotes] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [step, setStep] = useState<"initial" | "questions" | "results">("initial");
+  const [imageUrl, setImageUrl] = useState<string>("");
   const { addEntry } = useHistory();
   const [debugMsg, setDebugMsg] = useState("");
 
@@ -22,7 +27,7 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
     return Object.keys(e).length === 0;
   }
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onInitialSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setDebugMsg("✅ Starting analysis...");
 
@@ -35,7 +40,7 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
     setErrors({});
 
     try {
-      let imageUrl = "";
+      let uploadedImageUrl = "";
 
       // Upload image
       if (imageFile) {
@@ -57,19 +62,60 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
         }
 
         const uploadJson = await uploadResp.json();
-        imageUrl = uploadJson.imageUrl;
+        uploadedImageUrl = uploadJson.imageUrl;
+        setImageUrl(uploadedImageUrl);
         const uploadTime = Date.now() - uploadStart;
-        setDebugMsg(`✅ Image uploaded (${uploadTime}ms), analyzing...`);
+        setDebugMsg(`✅ Image uploaded (${uploadTime}ms), generating questions...`);
       }
 
-      // Call backend multi-prompt results API
-      setDebugMsg("🔍 AI analyzing...");
+      // Generate questions
+      setDebugMsg("❓ Generating questions...");
+      const questionsResp = await fetch("/api/diagnose/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          symptoms: notes || "general health check",
+          imageUrl: uploadedImageUrl,
+        }),
+      });
+
+      if (!questionsResp.ok) {
+        const errorText = await questionsResp.text();
+        throw new Error(
+          `Questions generation failed: ${questionsResp.status} - ${errorText}`,
+        );
+      }
+
+      const questionsJson = await questionsResp.json();
+      setQuestions(questionsJson.questions || []);
+      setStep("questions");
+      setDebugMsg("✅ Questions generated! Please answer to continue.");
+      
+    } catch (err: any) {
+      console.error("❌ Questions generation error", err);
+      setDebugMsg(`❌ Questions error: ${err.message}`);
+      setErrors((prev) => ({
+        ...prev,
+        submit: err.message || "Failed to generate questions",
+      }));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function onQuestionsSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    setDebugMsg("🔍 Final analysis...");
+
+    try {
       const resp = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          symptoms: notes || "dog health issue",
+          symptoms: notes || "general health check",
           imageUrl,
+          answers,
         }),
       });
 
@@ -82,7 +128,6 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
 
       const j = await resp.json();
       
-      // Display timing information
       if (j.timings) {
         const t = j.timings;
         const parts = [
@@ -96,17 +141,15 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
         setDebugMsg("✅ Analysis complete!");
       }
 
-      // Save to history
       addEntry({
-        form: { notes },
+        form: { notes, answers },
         triage: j.cards,
       });
 
-      // Navigate to results
       onResultsReady(j.cards);
       
     } catch (err: any) {
-      console.error("❌ Diagnose submit error", err);
+      console.error("❌ Final analysis error", err);
       setDebugMsg(`❌ Error: ${err.message}`);
       setErrors((prev) => ({
         ...prev,
@@ -115,6 +158,90 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function skipToResults() {
+    setSubmitting(true);
+    setDebugMsg("⏭️ Skipping to results...");
+
+    try {
+      const resp = await fetch("/api/diagnose/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          symptoms: notes || "general health check",
+          imageUrl,
+        }),
+      });
+
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(
+          `Results request failed: ${resp.status} - ${errorText}`,
+        );
+      }
+
+      const j = await resp.json();
+      setDebugMsg("✅ Analysis complete!");
+
+      addEntry({
+        form: { notes },
+        triage: j.cards,
+      });
+
+      onResultsReady(j.cards);
+      
+    } catch (err: any) {
+      console.error("❌ Skip to results error", err);
+      setDebugMsg(`❌ Error: ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (step === "questions") {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-2xl border p-4">
+          <h2 className="font-semibold mb-2">Follow-up Questions</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Please answer these questions to help improve the diagnosis:
+          </p>
+          
+          <form onSubmit={onQuestionsSubmit}>
+            <DynamicForm 
+              schema={questions} 
+              value={answers} 
+              onChange={setAnswers} 
+            />
+            
+            {errors.submit && (
+              <p className="text-red-600 text-sm mt-2">{errors.submit}</p>
+            )}
+
+            <div className="flex gap-3 mt-4">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50"
+              >
+                {submitting ? "Analyzing..." : "Get Results"}
+              </button>
+              <button
+                type="button"
+                onClick={skipToResults}
+                disabled={submitting}
+                className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50"
+              >
+                Skip Questions
+              </button>
+            </div>
+          </form>
+          
+          {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -127,7 +254,7 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
         )}
       </div>
 
-      <form onSubmit={onSubmit} className="rounded-2xl border p-4">
+      <form onSubmit={onInitialSubmit} className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">Notes</h2>
         <textarea
           value={notes}
@@ -145,7 +272,7 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
           disabled={submitting}
           className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
         >
-          {submitting ? "Analyzing..." : "Analyze"}
+          {submitting ? "Generating Questions..." : "Continue"}
         </button>
         {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
       </form>

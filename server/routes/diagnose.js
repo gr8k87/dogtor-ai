@@ -18,12 +18,112 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY,
 );
 
-r.post("/results", async (req, res) => {
+r.post("/questions", async (req, res) => {
   const { symptoms, imageUrl } = req.body || {};
+  console.log("❓ Questions request received:", { symptoms, imageUrl });
+
+  try {
+    const prompt = {
+      role: "system",
+      content: `
+You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
+
+Return ONLY JSON in this exact format:
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "select|radio|yesno|text|number",
+      "label": "Question text here?",
+      "options": ["option1", "option2"] // only for select/radio types
+      "required": true
+    }
+  ]
+}
+
+Question types:
+- "select": dropdown with options array
+- "radio": radio buttons with options array  
+- "yesno": yes/no buttons
+- "text": text input
+- "number": number input
+
+Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.
+      `
+    };
+
+    let messages = [prompt];
+    const userPrompt = imageUrl
+      ? `Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`
+      : `Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
+
+    if (imageUrl) {
+      const imagePath = path.join(__dirname, "..", imageUrl);
+      if (fs.existsSync(imagePath)) {
+        let imageBuffer = fs.readFileSync(imagePath);
+        
+        // Optimize image
+        imageBuffer = await sharp(imageBuffer)
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
+          })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+          
+        const base64Image = imageBuffer.toString("base64");
+        const mimeType = "image/jpeg";
+
+        messages.push({
+          role: "user",
+          content: [
+            { type: "text", text: userPrompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${base64Image}` },
+            },
+          ],
+        });
+      } else {
+        messages.push({ role: "user", content: userPrompt });
+      }
+    } else {
+      messages.push({ role: "user", content: userPrompt });
+    }
+
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages,
+      temperature: 0.3,
+      max_tokens: 800,
+    });
+
+    let rawContent = completion.choices[0].message.content.trim();
+    if (rawContent.startsWith("```")) {
+      rawContent = rawContent
+        .replace(/```(json)?\n?/, "")
+        .replace(/\n?```$/, "");
+    }
+
+    const parsed = JSON.parse(rawContent);
+    console.log("✅ Generated questions:", parsed);
+
+    res.json(parsed);
+  } catch (err) {
+    console.error("❌ Questions generation error:", err.message);
+    res.status(500).json({ 
+      error: "Failed to generate questions: " + err.message,
+      details: err.message 
+    });
+  }
+});
+
+r.post("/results", async (req, res) => {
+  const { symptoms, imageUrl, answers } = req.body || {};
   const timingStart = Date.now();
   const timings = {};
   
-  console.log("🔍 Results request received:", { symptoms, imageUrl });
+  console.log("🔍 Results request received:", { symptoms, imageUrl, answers });
   console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
   try {
@@ -80,9 +180,16 @@ r.post("/results", async (req, res) => {
     `,
     };
 
-    const userPrompt = imageUrl
-      ? `Analyze this pet image for health concerns. Symptoms: ${symptoms}`
-      : `Pet health analysis based on symptoms: ${symptoms}`;
+    let userPrompt = imageUrl
+      ? `Analyze this pet image for health concerns. Symptoms: ${symptoms || "none provided"}`
+      : `Pet health analysis based on symptoms: ${symptoms || "none provided"}`;
+    
+    if (answers && Object.keys(answers).length > 0) {
+      const answerText = Object.entries(answers)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ");
+      userPrompt += `. Additional information from follow-up questions: ${answerText}`;
+    }
 
     // Call OpenAI
     const cards = {};
