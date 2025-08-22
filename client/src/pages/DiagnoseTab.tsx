@@ -98,6 +98,8 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
         ...prev,
         submit: err.message || "Failed to generate questions",
       }));
+      // Still go to questions step to show error and skip option
+      setStep("questions");
     } finally {
       setSubmitting(false);
     }
@@ -202,44 +204,77 @@ export default function DiagnoseTab({ onResultsReady }: DiagnoseTabProps) {
   if (step === "questions") {
     return (
       <div className="space-y-4">
-        <div className="rounded-2xl border p-4">
-          <h2 className="font-semibold mb-2">Follow-up Questions</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Please answer these questions to help improve the diagnosis:
-          </p>
-          
-          <form onSubmit={onQuestionsSubmit}>
-            <DynamicForm 
-              schema={questions} 
-              value={answers} 
-              onChange={setAnswers} 
-            />
+        {/* Error Display */}
+        {errors.submit && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
+            <h3 className="font-semibold text-red-800 mb-2">⚠️ Questions Generation Failed</h3>
+            <p className="text-red-700 text-sm mb-3">{errors.submit}</p>
             
-            {errors.submit && (
-              <p className="text-red-600 text-sm mt-2">{errors.submit}</p>
-            )}
-
+            <div className="bg-white rounded-lg p-3 border border-red-200">
+              <h4 className="font-medium text-red-800 text-sm mb-2">Possible Solutions:</h4>
+              <ul className="text-red-700 text-sm space-y-1">
+                <li>• Try a clearer, well-lit photo of your pet</li>
+                <li>• Ensure your pet is clearly visible in the image</li>
+                <li>• Avoid photos with multiple pets or unclear subjects</li>
+                <li>• Use a different photo if the current one violates content policies</li>
+              </ul>
+            </div>
+            
             <div className="flex gap-3 mt-4">
               <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50"
+                onClick={() => setStep("initial")}
+                className="flex-1 h-10 rounded-lg border border-red-300 text-red-700 text-sm"
               >
-                {submitting ? "Analyzing..." : "Get Results"}
+                ← Try Different Photo
               </button>
               <button
-                type="button"
                 onClick={skipToResults}
                 disabled={submitting}
-                className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50"
+                className="flex-1 h-10 rounded-lg bg-red-600 text-white text-sm disabled:opacity-50"
               >
-                Skip Questions
+                {submitting ? "Analyzing..." : "Skip to Results"}
               </button>
             </div>
-          </form>
-          
-          {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
-        </div>
+          </div>
+        )}
+
+        {/* Normal Questions Flow */}
+        {!errors.submit && (
+          <div className="rounded-2xl border p-4">
+            <h2 className="font-semibold mb-2">Follow-up Questions</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Please answer these questions to help improve the diagnosis:
+            </p>
+            
+            <form onSubmit={onQuestionsSubmit}>
+              <DynamicForm 
+                schema={questions} 
+                value={answers} 
+                onChange={setAnswers} 
+              />
+
+              <div className="flex gap-3 mt-4">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 h-12 rounded-xl bg-black text-white disabled:opacity-50"
+                >
+                  {submitting ? "Analyzing..." : "Get Results"}
+                </button>
+                <button
+                  type="button"
+                  onClick={skipToResults}
+                  disabled={submitting}
+                  className="px-6 h-12 rounded-xl border border-gray-300 text-gray-700 disabled:opacity-50"
+                >
+                  Skip Questions
+                </button>
+              </div>
+            </form>
+            
+            {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
+          </div>
+        )}
       </div>
     );
   }
