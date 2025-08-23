@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "../components/ui/card";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -151,48 +152,50 @@ function HistoryCard({ item, navigate, onDelete }: { item: HistoryEntry; navigat
   };
 
   return (
-    <div 
-      className={`rounded-xl border p-4 shadow-sm transition-all ${cards ? 'cursor-pointer hover:shadow-md hover:border-gray-300' : ''}`}
+    <Card 
+      className={`transition-all ${cards ? 'cursor-pointer hover:shadow-md hover:border-gray-300' : ''}`}
       onClick={cards ? handleClick : undefined}
     >
-      {cards ? (
-        <div className="flex items-center justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs text-gray-500">{formatDate(item.created_at)}</span>
-              {cards.diagnosis?.urgency && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                  {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}
-                </span>
-              )}
+      <CardContent>
+        {cards ? (
+          <div className="flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-gray-500">{formatDate(item.created_at)}</span>
+                {cards.diagnosis?.urgency && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                    {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {cards.diagnosis?.likely_condition || "Analysis complete"}
+              </p>
+              <p className="text-xs text-gray-500 truncate mt-0.5">
+                {item.prompt}
+              </p>
             </div>
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {cards.diagnosis?.likely_condition || "Analysis complete"}
-            </p>
-            <p className="text-xs text-gray-500 truncate mt-0.5">
-              {item.prompt}
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="text-gray-400 ml-2">
+                →
+              </div>
+              <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
+                🗑️
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="text-gray-400 ml-2">
-              →
-            </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="text-xs text-gray-500">{formatDate(item.created_at)}</div>
+            <div className="text-sm font-medium text-gray-700">Raw Data</div>
+            <div className="text-xs text-gray-600 truncate">{item.prompt}</div>
             <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
-              🗑️
+              Delete
             </button>
           </div>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="text-xs text-gray-500">{formatDate(item.created_at)}</div>
-          <div className="text-sm font-medium">Raw Data</div>
-          <div className="text-xs text-gray-600 truncate">{item.prompt}</div>
-          <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
-            Delete
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
