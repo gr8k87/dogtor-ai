@@ -1,3 +1,4 @@
+
 import React from "react";
 
 interface BottomTabsProps {
@@ -40,14 +41,6 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
           className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
             activeTab === "connect"
               ? "text-primary bg-accent"
-              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-          }`}
-        >
-          <div className="flex flex-col items-center gap-1">
-            <span>🔗</span>
-            <span>Connect</span>
-          </div>
-        </button>Accent"
               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
         >
