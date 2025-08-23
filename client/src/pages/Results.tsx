@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
 import BottomTabs from "../components/BottomTabs";
 
 interface ResultsProps {}
@@ -19,12 +20,12 @@ export default function Results({}: ResultsProps) {
       <div className="min-h-dvh flex items-center justify-center p-4">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">No results to display</p>
-          <button
+          <Button
             onClick={handleNewDiagnosis}
-            className="btn btn-secondary"
+            variant="secondary"
           >
             Back to Diagnose
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -36,12 +37,14 @@ export default function Results({}: ResultsProps) {
         <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-foreground">Diagnosis Results</h1>
-            <button
+            <Button
               onClick={handleNewDiagnosis}
-              className="btn btn-primary text-sm px-4 py-2"
+              variant="default"
+              size="sm"
+              className="px-4 py-2"
             >
               New Diagnosis
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-4">
