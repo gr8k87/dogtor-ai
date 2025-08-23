@@ -35,20 +35,34 @@ function isReactElementLike(value: unknown): value is { props?: any } {
 }
 
 /**
- * Recursively convert an arbitrary value into a form that React can render safely.
- *
- * - Strings, numbers and booleans are returned as strings.
- * - React elements (or objects with $$typeof) are flattened to the text of
- *   their children if possible; otherwise a placeholder string is returned.
- * - Arrays are sanitized item-by-item (preserving their structure).
- * - Plain objects are sanitized field-by-field (preserving their structure).
- * - Any other type is coerced to a string via JSON.stringify or String().
- *
- * This ensures that nested values like `p.name`, `t.text`, `s.desc`, etc., cannot
- * accidentally contain React element objects, preventing the "Objects are not
- * valid as a React child" error.【207238956757809†L214-L230】【358190641072674†L228-L275】
+ * Enhanced sanitization with multi-pass recursive React element detection.
+ * Runs multiple passes until the data structure is stable, ensuring deeply
+ * nested React elements are completely removed.
  */
 function sanitize(value: any): any {
+  let current = value;
+  let previous = null;
+  let passCount = 0;
+  const maxPasses = 10; // Prevent infinite loops
+
+  // Keep sanitizing until no more changes occur or max passes reached
+  while (passCount < maxPasses && JSON.stringify(current) !== JSON.stringify(previous)) {
+    previous = JSON.parse(JSON.stringify(current)); // Deep clone for comparison
+    current = sanitizeSinglePass(current);
+    passCount++;
+  }
+
+  if (passCount >= maxPasses) {
+    console.warn("🚨 Sanitization hit max passes, may contain unclean data");
+  }
+
+  return current;
+}
+
+/**
+ * Single pass sanitization with enhanced React element detection.
+ */
+function sanitizeSinglePass(value: any): any {
   // Nullish values become empty strings
   if (value === null || value === undefined) return "";
 
@@ -58,41 +72,46 @@ function sanitize(value: any): any {
     typeof value === "number" ||
     typeof value === "boolean"
   ) {
-    return String(value);
+    // Clean any JSX-like syntax that might be in strings
+    return String(value)
+      .replace(/<[^>]*>/g, "") // Remove HTML/JSX tags
+      .replace(/\{[^}]*\}/g, "") // Remove JSX expressions
+      .trim();
   }
 
-  // React element (or element-like): attempt to extract simple textual children
-  if (isReactElementLike(value) || React.isValidElement(value)) {
-    const element = value as any;
-    const child = element.props?.children;
-    // If the child is a primitive, use it directly
-    if (typeof child === "string" || typeof child === "number") {
-      return String(child);
-    }
-    // If the child is an array, sanitize each item and join with spaces
-    if (Array.isArray(child)) {
-      return child
-        .map((v: any) => sanitize(v))
-        .filter((v) => v)
-        .join(" ");
-    }
-    // For other cases, try to extract meaningful text from element type or return placeholder
-    if (element.type && typeof element.type === "string") {
-      return `[${element.type}]`;
-    }
-    return "[react-element]";
+  // Enhanced React element detection - check at every level
+  if (isReactElementDetected(value)) {
+    return extractTextFromReactElement(value);
   }
 
-  // Arrays: sanitize each element recursively, preserving array structure
+  // Arrays: sanitize each element recursively, checking for React elements at each step
   if (Array.isArray(value)) {
-    return value.map((item) => sanitize(item));
+    return value.map((item) => {
+      // Check for React elements before recursion
+      if (isReactElementDetected(item)) {
+        return extractTextFromReactElement(item);
+      }
+      return sanitizeSinglePass(item);
+    }).filter(item => item !== "" && item !== null && item !== undefined);
   }
 
-  // Plain objects: sanitize each property recursively, preserving object keys
+  // Plain objects: sanitize each property recursively
   if (typeof value === "object") {
+    // Check if this object itself is a React element before processing properties
+    if (isReactElementDetected(value)) {
+      return extractTextFromReactElement(value);
+    }
+
     const result: any = {};
     for (const key of Object.keys(value)) {
-      result[key] = sanitize(value[key]);
+      const propertyValue = value[key];
+      
+      // Check for React elements before recursion
+      if (isReactElementDetected(propertyValue)) {
+        result[key] = extractTextFromReactElement(propertyValue);
+      } else {
+        result[key] = sanitizeSinglePass(propertyValue);
+      }
     }
     return result;
   }
@@ -103,6 +122,80 @@ function sanitize(value: any): any {
   } catch {
     return String(value);
   }
+}
+
+/**
+ * Enhanced React element detection - checks for all possible React element properties.
+ */
+function isReactElementDetected(value: unknown): boolean {
+  if (typeof value !== "object" || value === null) return false;
+  
+  const obj = value as any;
+  
+  // Check for React.isValidElement first
+  if (React.isValidElement(value)) return true;
+  
+  // Check for React element-like properties (more comprehensive)
+  const hasReactProps = (
+    obj.$$typeof ||
+    obj.type !== undefined ||
+    obj.key !== undefined ||
+    obj.ref !== undefined ||
+    (obj.props && typeof obj.props === "object") ||
+    obj._owner !== undefined ||
+    obj._store !== undefined
+  );
+  
+  return hasReactProps;
+}
+
+/**
+ * Extract text content from React elements recursively.
+ */
+function extractTextFromReactElement(element: any): string {
+  if (!element) return "";
+  
+  // If it has props.children, recursively extract text
+  if (element.props?.children) {
+    const children = element.props.children;
+    
+    if (typeof children === "string" || typeof children === "number") {
+      return String(children);
+    }
+    
+    if (Array.isArray(children)) {
+      return children
+        .map((child) => {
+          if (typeof child === "string" || typeof child === "number") {
+            return String(child);
+          }
+          if (isReactElementDetected(child)) {
+            return extractTextFromReactElement(child);
+          }
+          return sanitizeSinglePass(child);
+        })
+        .filter(text => text && text.trim())
+        .join(" ");
+    }
+    
+    if (isReactElementDetected(children)) {
+      return extractTextFromReactElement(children);
+    }
+    
+    return sanitizeSinglePass(children);
+  }
+  
+  // Try to extract meaningful text from element type
+  if (element.type && typeof element.type === "string") {
+    return `[${element.type}]`;
+  }
+  
+  // Check if there's any text content in other properties
+  if (element.children) {
+    return extractTextFromReactElement({ props: { children: element.children } });
+  }
+  
+  return "[element]";
 }
 
 interface DiagnosisCard {
