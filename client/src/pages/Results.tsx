@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useHistory } from "../state/historyContext";
@@ -19,7 +18,11 @@ function sanitize(value: any): any {
   if (value === null || value === undefined) return "";
 
   // Primitive types: convert to clean strings
-  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return String(value)
       .replace(/<[^>]*>/g, "") // Remove HTML/JSX tags
       .replace(/\{[^}]*\}/g, "") // Remove JSX expressions
@@ -28,34 +31,49 @@ function sanitize(value: any): any {
 
   // Arrays: flatten to simple string arrays
   if (Array.isArray(value)) {
-    return value.map(item => {
-      if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
-        return String(item).replace(/<[^>]*>/g, "").replace(/\{[^}]*\}/g, "").trim();
-      }
-
-      // For objects in arrays, flatten to descriptive strings
-      if (typeof item === "object" && item !== null) {
-        // Common patterns for our data structure
-        if (item.name && item.likelihood) {
-          return `${sanitize(item.name)} (${sanitize(item.likelihood)} likelihood)`;
-        }
-        if (item.icon && item.text) {
-          return `${sanitize(item.icon)} ${sanitize(item.text)}`;
-        }
-        if (item.icon && item.name && item.likelihood && item.desc && item.cost) {
-          return `${sanitize(item.icon)} ${sanitize(item.name)} - ${sanitize(item.likelihood)} | ${sanitize(item.desc)} | ${sanitize(item.cost)}`;
+    return value
+      .map((item) => {
+        if (
+          typeof item === "string" ||
+          typeof item === "number" ||
+          typeof item === "boolean"
+        ) {
+          return String(item)
+            .replace(/<[^>]*>/g, "")
+            .replace(/\{[^}]*\}/g, "")
+            .trim();
         }
 
-        // Generic object flattening - concatenate all string values
-        const values = Object.values(item)
-          .filter(v => v !== null && v !== undefined)
-          .map(v => sanitize(v))
-          .filter(v => v && v.trim());
-        return values.join(" ");
-      }
+        // For objects in arrays, flatten to descriptive strings
+        if (typeof item === "object" && item !== null) {
+          // Common patterns for our data structure
+          if (item.name && item.likelihood) {
+            return `${sanitize(item.name)} (${sanitize(item.likelihood)} likelihood)`;
+          }
+          if (item.icon && item.text) {
+            return `${sanitize(item.icon)} ${sanitize(item.text)}`;
+          }
+          if (
+            item.icon &&
+            item.name &&
+            item.likelihood &&
+            item.desc &&
+            item.cost
+          ) {
+            return `${sanitize(item.icon)} ${sanitize(item.name)} - ${sanitize(item.likelihood)} | ${sanitize(item.desc)} | ${sanitize(item.cost)}`;
+          }
 
-      return String(item);
-    }).filter(item => item && item.trim());
+          // Generic object flattening - concatenate all string values
+          const values = Object.values(item)
+            .filter((v) => v !== null && v !== undefined)
+            .map((v) => sanitize(v))
+            .filter((v) => v && v.trim());
+          return values.join(" ");
+        }
+
+        return String(item);
+      })
+      .filter((item) => item && item.trim());
   }
 
   // Objects: sanitize each property, but flatten arrays within objects
@@ -69,7 +87,10 @@ function sanitize(value: any): any {
   }
 
   // Fallback: convert to string
-  return String(value).replace(/<[^>]*>/g, "").replace(/\{[^}]*\}/g, "").trim();
+  return String(value)
+    .replace(/<[^>]*>/g, "")
+    .replace(/\{[^}]*\}/g, "")
+    .trim();
 }
 
 interface DiagnosisCard {
@@ -127,7 +148,8 @@ export default function Results() {
       const historyEntry = {
         form: { symptoms: "Analysis completed" },
         triage: {
-          diagnosis: cleanCards.diagnosis?.likely_condition || "Analysis complete",
+          diagnosis:
+            cleanCards.diagnosis?.likely_condition || "Analysis complete",
           urgency: cleanCards.diagnosis?.urgency?.level || "Unknown",
         },
       };
@@ -170,7 +192,8 @@ export default function Results() {
           const historyEntry = {
             form: { symptoms: "Analysis completed" },
             triage: {
-              diagnosis: clean.diagnosis?.likely_condition || "Analysis complete",
+              diagnosis:
+                clean.diagnosis?.likely_condition || "Analysis complete",
               urgency: clean.diagnosis?.urgency?.level || "Unknown",
             },
           };
@@ -253,21 +276,6 @@ export default function Results() {
     );
   }
 
-  // Safely render arrays of strings
-  const renderStringArray = (items: any[], className = "") => {
-    if (!Array.isArray(items)) return null;
-    
-    return items.map((item, index) => {
-      // Ensure item is a string
-      const displayText = typeof item === "string" ? item : String(item);
-      return (
-        <li key={index} className={className}>
-          {displayText}
-        </li>
-      );
-    });
-  };
-
   return (
     <div className="min-h-dvh flex flex-col bg-background">
       <header className="p-4 text-center">
@@ -289,22 +297,30 @@ export default function Results() {
         {/* Card 1: Diagnosis */}
         <Card>
           <CardHeader>
-            <CardTitle>{String(cards.diagnosis?.title || "Diagnosis")}</CardTitle>
+            <CardTitle>{cards.diagnosis.title}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <p>
-              <strong>Likely condition:</strong> {String(cards.diagnosis?.likely_condition || "")}
+              <strong>Likely condition:</strong>{" "}
+              {cards.diagnosis.likely_condition}
             </p>
             <div>
               <p className="font-medium mb-1">Other possibilities:</p>
               <ul className="text-sm space-y-1">
-                {renderStringArray(cards.diagnosis?.other_possibilities || [], "ml-2")}
+                {cards.diagnosis.other_possibilities.map(
+                  (possibility: string, i: number) => (
+                    <li key={i} className="ml-2">
+                      • {possibility}
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
             <div>
               <p className="font-medium mb-1">Urgency:</p>
               <p className="text-sm">
-                {String(cards.diagnosis?.urgency?.badge || "")} {String(cards.diagnosis?.urgency?.level || "")} — {String(cards.diagnosis?.urgency?.note || "")}
+                {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}{" "}
+                — {cards.diagnosis.urgency.note}
               </p>
             </div>
           </CardContent>
@@ -313,14 +329,16 @@ export default function Results() {
         {/* Card 2: General Care Tips */}
         <Card>
           <CardHeader>
-            <CardTitle>{String(cards.care?.title || "Care Tips")}</CardTitle>
+            <CardTitle>{cards.care.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc pl-5 text-sm space-y-1">
-              {renderStringArray(cards.care?.tips || [])}
+              {cards.care.tips.map((tip: string, i: number) => (
+                <li key={i}>{tip}</li>
+              ))}
             </ul>
             <p className="text-xs text-gray-500 mt-3">
-              {String(cards.care?.disclaimer || "")}
+              {cards.care.disclaimer}
             </p>
           </CardContent>
         </Card>
@@ -328,14 +346,16 @@ export default function Results() {
         {/* Card 3: Vet Procedures & Costs */}
         <Card>
           <CardHeader>
-            <CardTitle>{String(cards.costs?.title || "Procedures & Costs")}</CardTitle>
+            <CardTitle>{cards.costs.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-gray-500 mb-3">
-              {String(cards.costs?.disclaimer || "")}
+              {cards.costs.disclaimer}
             </p>
             <ul className="space-y-3 text-sm">
-              {renderStringArray(cards.costs?.steps || [])}
+              {cards.costs.steps.map((step: string, i: number) => (
+                <li key={i}>{step}</li>
+              ))}
             </ul>
           </CardContent>
         </Card>
