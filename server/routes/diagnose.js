@@ -472,12 +472,28 @@ r.post("/results", async (req, res) => {
 
     Analyze the provided photo and notes.
 
-    CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
-    - All property values MUST be plain text strings
-    - Do NOT use angle brackets < > in any values
-    - Do NOT use React-like syntax or HTML tags
-    - Do NOT include any formatting markup in string values
-    - Format all text as simple readable strings without any tags
+    CRITICAL FORMATTING RULES - FOLLOW EXACTLY:
+    - Return ONLY valid JSON with PRIMITIVE STRING VALUES
+    - NEVER use HTML tags like <div>, <p>, <span>, <br>, <strong>, <em> in ANY value
+    - NEVER use JSX syntax or React-like elements in ANY value  
+    - NEVER use angle brackets < > anywhere in your response
+    - NEVER use curly braces {} except for JSON structure
+    - NEVER format text with markup - use ONLY plain readable text
+    - ALL object property values MUST be simple strings, numbers, or arrays of strings
+    - Use emoji symbols directly in strings: 🟢 🟡 🔴 not as HTML entities
+    - Use plain text formatting: "Important" not "<strong>Important</strong>"
+
+    EXAMPLES OF FORBIDDEN VALUES:
+    - "<div>text</div>" ❌
+    - "{component: text}" ❌  
+    - "$$typeof" objects ❌
+    - React.createElement() ❌
+    - Any object with type, props, key, ref properties ❌
+
+    EXAMPLES OF CORRECT VALUES:
+    - "This is plain text" ✅
+    - "🟢 Low priority" ✅
+    - "Important information" ✅
 
     - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
     - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
@@ -495,21 +511,21 @@ r.post("/results", async (req, res) => {
     {
       "diagnosis": {
         "title": "Diagnosis",
-        "likely_condition": "...", 
+        "likely_condition": "condition name as plain text", 
         "other_possibilities": [
-          { "name": "...", "likelihood": "high/medium/low" }
+          { "name": "condition name as plain text", "likelihood": "high" }
         ],
         "urgency": {
-          "badge": "🟢 | 🟡 | 🔴",
-          "level": "Low | Moderate | High",
-          "note": "short explanation"
+          "badge": "🟢",
+          "level": "Low",
+          "note": "plain text explanation"
         }
       },
       "care": {
         "title": "General Care Tips",
         "tips": [
-          { "icon": "🧼", "text": "Tip 1" },
-          { "icon": "🥩", "text": "Tip 2" }
+          { "icon": "🧼", "text": "plain text tip" },
+          { "icon": "🥩", "text": "plain text tip" }
         ],
         "disclaimer": "This information is for educational purposes only and not a substitute for professional veterinary advice."
       },
@@ -517,7 +533,7 @@ r.post("/results", async (req, res) => {
         "title": "Vet Procedures & Costs",
         "disclaimer": "Prices are typical for GTA, Ontario clinics. Costs may vary.",
         "steps": [
-          { "icon": "💉", "name": "Procedure", "likelihood": "high/medium/low", "desc": "short description", "cost": "$100–$300 CAD" }
+          { "icon": "💉", "name": "procedure name", "likelihood": "high", "desc": "plain text description", "cost": "$100–$300 CAD" }
         ]
       }
     }
@@ -610,11 +626,21 @@ r.post("/results", async (req, res) => {
 
     const parsed = JSON.parse(rawContent);
     
-    // Server-side validation to ensure all values are primitives
+    // Aggressive server-side validation to strip HTML/JSX and ensure primitive values
     function validateAndCleanResponse(obj) {
-      if (obj === null || obj === undefined) return obj;
+      if (obj === null || obj === undefined) return "";
       
-      if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') {
+      if (typeof obj === 'string') {
+        // Strip any HTML/JSX-like tags and convert to plain text
+        let cleaned = obj
+          .replace(/<[^>]*>/g, '') // Remove all HTML/JSX tags
+          .replace(/\{[^}]*\}/g, '') // Remove any JSX-like expressions
+          .replace(/&[a-zA-Z0-9#]*;/g, '') // Remove HTML entities
+          .trim();
+        return cleaned;
+      }
+      
+      if (typeof obj === 'number' || typeof obj === 'boolean') {
         return String(obj);
       }
       
@@ -623,10 +649,15 @@ r.post("/results", async (req, res) => {
       }
       
       if (typeof obj === 'object') {
-        // Check for React element-like objects
-        if (obj.$$typeof || obj.type || (obj.props && typeof obj.props === 'object')) {
-          console.warn("🚨 Found React element-like object, converting to string");
-          return "[converted-react-element]";
+        // Check for React element-like objects - aggressively reject them
+        if (obj.$$typeof || obj.type || obj.key !== undefined || obj.ref !== undefined || 
+            (obj.props && typeof obj.props === 'object')) {
+          console.warn("🚨 Found React element-like object, converting to plain text");
+          // Try to extract meaningful text or return placeholder
+          if (obj.props && obj.props.children) {
+            return validateAndCleanResponse(obj.props.children);
+          }
+          return "[element]";
         }
         
         const cleaned = {};
@@ -636,7 +667,8 @@ r.post("/results", async (req, res) => {
         return cleaned;
       }
       
-      return String(obj);
+      // Fallback: convert to string and strip tags
+      return String(obj).replace(/<[^>]*>/g, '').replace(/\{[^}]*\}/g, '').trim();
     }
     
     const cleanedParsed = validateAndCleanResponse(parsed);
