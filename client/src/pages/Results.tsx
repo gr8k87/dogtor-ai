@@ -9,42 +9,136 @@ import {
   CardTitle,
 } from "../components/ui/card";
 
-// Force everything into a safe string
-function toSafeString(val: any): string {
-  if (val === null || val === undefined) return "";
-  if (typeof val === "string" || typeof val === "number") return String(val);
+/*
+ * Helper utilities to ensure that any data passed to React components
+ * is converted into primitives. React will throw an error if an object
+ * (including a React element) is rendered directly as a child. See
+ * React’s documentation on the invariant “Objects are not valid as a
+ * React child”【937151002077259†L168-L182】. To avoid this, we
+ * convert all values to strings using `toSafeString` and then
+ * recursively normalise entire objects/arrays via `sanitize`. The
+ * `React.isValidElement` check identifies values that are actually
+ * React elements【673308173346315†L187-L203】, and we return a
+ * placeholder string or extract simple textual children where
+ * possible. These functions should be used before storing API
+ * responses in state or rendering them.
+ */
 
-  if (React.isValidElement(val)) {
-    const element = val as React.ReactElement<any>;
+// Detect objects that look like React elements by checking for the $$typeof key.
+// Sometimes values returned from AI may mimic React elements without passing
+// React.isValidElement. This helper treats any object with $$typeof as a
+// React element-like object.
+function isReactElementLike(value: unknown): value is { props?: any } {
+  return (
+    typeof value === "object" && value !== null && !!(value as any).$$typeof
+  );
+}
+
+/**
+ * Recursively convert an arbitrary value into a form that React can render safely.
+ *
+ * - Strings, numbers and booleans are returned as strings.
+ * - React elements (or objects with $$typeof) are flattened to the text of
+ *   their children if possible; otherwise a placeholder string is returned.
+ * - Arrays are sanitized item-by-item (preserving their structure).
+ * - Plain objects are sanitized field-by-field (preserving their structure).
+ * - Any other type is coerced to a string via JSON.stringify or String().
+ *
+ * This ensures that nested values like `p.name`, `t.text`, `s.desc`, etc., cannot
+ * accidentally contain React element objects, preventing the "Objects are not
+ * valid as a React child" error.【207238956757809†L214-L230】【358190641072674†L228-L275】
+ */
+function sanitize(value: any): any {
+  // Nullish values become empty strings
+  if (value === null || value === undefined) return "";
+
+  // Primitive types: convert booleans/numbers to strings
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+
+  // React element (or element-like): attempt to extract simple textual children
+  if (isReactElementLike(value) || React.isValidElement(value)) {
+    const element = value as any;
     const child = element.props?.children;
+    // If the child is a primitive, use it directly
     if (typeof child === "string" || typeof child === "number") {
       return String(child);
     }
+    // If the child is an array, sanitize each item and join without separators
+    if (Array.isArray(child)) {
+      return child.map((v: any) => sanitize(v)).join("");
+    }
+    // If the child is something else (e.g., another element or object), fall back
+    // to a placeholder to indicate a React element was encountered
     return "[react-element]";
   }
 
-  if (Array.isArray(val)) {
-    return val.map((v) => toSafeString(v)).join(", ");
+  // Arrays: sanitize each element recursively, preserving array structure
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitize(item));
   }
 
+  // Plain objects: sanitize each property recursively, preserving object keys
+  if (typeof value === "object") {
+    const result: any = {};
+    for (const key of Object.keys(value)) {
+      result[key] = sanitize(value[key]);
+    }
+    return result;
+  }
+
+  // Fallback: attempt JSON stringify, or default to String()
   try {
-    return JSON.stringify(val);
+    return JSON.stringify(value);
   } catch {
-    return String(val);
+    return String(value);
   }
 }
 
-// Recursively sanitize an object or array
-function sanitize(obj: any): any {
-  if (Array.isArray(obj)) return obj.map((o) => sanitize(o));
-  if (obj && typeof obj === "object" && !React.isValidElement(obj)) {
-    const out: any = {};
-    for (const key of Object.keys(obj)) {
-      out[key] = sanitize(obj[key]);
-    }
-    return out;
-  }
-  return toSafeString(obj);
+interface DiagnosisCard {
+  title: string;
+  likely_condition: string;
+  other_possibilities: Array<{
+    name: string;
+    likelihood: string;
+  }>;
+  urgency: {
+    badge: string;
+    level: string;
+    note: string;
+  };
+}
+
+interface CareCard {
+  title: string;
+  tips: Array<{
+    icon: string;
+    text: string;
+  }>;
+  disclaimer: string;
+}
+
+interface CostsCard {
+  title: string;
+  disclaimer: string;
+  steps: Array<{
+    icon: string;
+    name: string;
+    likelihood: string;
+    desc: string;
+    cost: string;
+  }>;
+}
+
+interface ResultCards {
+  diagnosis: DiagnosisCard;
+  care: CareCard;
+  costs: CostsCard;
 }
 
 export default function Results() {
@@ -52,7 +146,7 @@ export default function Results() {
   const location = useLocation();
   const navigate = useNavigate();
   const { addEntry } = useHistory();
-  const [cards, setCards] = useState<any>(null);
+  const [cards, setCards] = useState<ResultCards | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -62,60 +156,146 @@ export default function Results() {
       return;
     }
 
+    // Check if we have results passed via navigation state
     const stateCards = location.state?.cards;
     if (stateCards) {
-      const clean = sanitize(stateCards);
-      setCards(clean);
+      console.log("✅ Using results from navigation state");
+      // Sanitize once and reuse
+      const cleanCards = sanitize(stateCards);
+      setCards(cleanCards);
 
-      addEntry({
+      // Save to history
+      const historyEntry = {
         form: { symptoms: "Analysis completed" },
         triage: {
-          diagnosis: clean.diagnosis?.likely_condition || "Analysis complete",
-          urgency: clean.diagnosis?.urgency?.level || "Unknown",
+          diagnosis:
+            cleanCards.diagnosis?.likely_condition || "Analysis complete",
+          urgency: cleanCards.diagnosis?.urgency?.level || "Unknown",
         },
-      });
+      };
+      addEntry(historyEntry);
 
       setLoading(false);
       return;
     }
 
+    // Otherwise fetch results from API
+    console.log("🔍 Fetching results for case:", caseId);
+
     fetch(`/api/diagnose/results/${caseId}`)
       .then(async (res) => {
+        console.log("📡 Results API response status:", res.status);
+
         if (res.status === 404) {
+          console.log("❌ Results not found, redirecting home");
           navigate("/");
           return null;
         }
+
         if (!res.ok) {
           const errorText = await res.text();
+          console.log("❌ Results API error:", errorText);
           throw new Error(`Results API failed: ${res.status} - ${errorText}`);
         }
-        return res.json();
+
+        const data = await res.json();
+        console.log("📋 Raw results response:", data);
+        return data;
       })
       .then((data) => {
         if (data?.cards) {
+          console.log("✅ Results data received:", data.cards);
+          // Sanitize once and reuse
           const clean = sanitize(data.cards);
           setCards(clean);
-          addEntry({
+
+          // Save to history
+          const historyEntry = {
             form: { symptoms: "Analysis completed" },
             triage: {
               diagnosis:
                 clean.diagnosis?.likely_condition || "Analysis complete",
               urgency: clean.diagnosis?.urgency?.level || "Unknown",
             },
-          });
+          };
+          addEntry(historyEntry);
         }
         setLoading(false);
       })
       .catch((err) => {
+        console.error("❌ Results fetch error:", err);
         setError(err.message || "Failed to load results");
         setLoading(false);
       });
   }, [caseId, location.state, navigate, addEntry]);
 
-  if (loading) return <div className="p-6 text-center">Analyzing results…</div>;
-  if (error) return <div className="p-6 text-center text-red-600">{error}</div>;
-  if (!cards)
-    return <div className="p-6 text-center">No results to display</div>;
+  if (loading) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold mb-2">Analyzing Results...</h2>
+          <div className="text-sm text-gray-500">Step 3 of 3</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+        </header>
+
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-800">
+                ⚠️ Error Loading Results
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-700 text-sm mb-3">{error}</p>
+              <Button
+                onClick={() => navigate("/")}
+                variant="outline"
+                className="border-red-300 text-red-700 hover:bg-red-100"
+              >
+                ← Start Over
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  if (!cards) {
+    return (
+      <div className="min-h-dvh flex flex-col">
+        <header className="p-4 text-center">
+          <h1 className="font-bold">Dogtor AI</h1>
+          <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+        </header>
+
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full">
+          <Card>
+            <CardContent className="text-center p-6">
+              <p className="text-gray-500">No results to display</p>
+              <Button
+                onClick={() => navigate("/")}
+                className="mt-4"
+                variant="outline"
+              >
+                Back to Diagnose
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh flex flex-col bg-background">
@@ -135,7 +315,7 @@ export default function Results() {
           </Button>
         </div>
 
-        {/* Diagnosis */}
+        {/* Card 1: Diagnosis */}
         <Card>
           <CardHeader>
             <CardTitle>{cards.diagnosis.title}</CardTitle>
@@ -167,7 +347,7 @@ export default function Results() {
           </CardContent>
         </Card>
 
-        {/* Care */}
+        {/* Card 2: General Care Tips */}
         <Card>
           <CardHeader>
             <CardTitle>{cards.care.title}</CardTitle>
@@ -186,7 +366,7 @@ export default function Results() {
           </CardContent>
         </Card>
 
-        {/* Costs */}
+        {/* Card 3: Vet Procedures & Costs */}
         <Card>
           <CardHeader>
             <CardTitle>{cards.costs.title}</CardTitle>
