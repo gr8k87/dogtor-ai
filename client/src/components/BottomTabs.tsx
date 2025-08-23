@@ -47,7 +47,7 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
             <span>🔗</span>
             <span>Connect</span>
           </div>
-        </button>ccent"
+        </button>Accent"
               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
         >
