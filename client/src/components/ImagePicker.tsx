@@ -48,18 +48,20 @@ export default function ImagePicker({ onChange }: Props) {
 
       <div className="space-y-4">
         {selectedFile ? (
-          <div className="relative">
-            <img
-              src={selectedFile.preview}
-              alt="Selected pet"
-              className="w-full h-48 object-cover rounded-lg"
-            />
-            <button
-              onClick={handleRemoveFile}
-              className="btn btn-destructive absolute top-2 right-2 w-8 h-8 p-0 rounded-full"
-            >
-              ✕
-            </button>
+          <div className="relative flex justify-center">
+            <div className="relative w-32 h-32">
+              <img
+                src={selectedFile.preview}
+                alt="Selected pet"
+                className="w-full h-full object-contain rounded-lg border border-border"
+              />
+              <button
+                onClick={handleRemoveFile}
+                className="btn btn-destructive absolute -top-2 -right-2 w-6 h-6 p-0 rounded-full text-xs"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         ) : (
           <div className="border-2 border-dashed border-border rounded-lg p-8 text-center bg-muted/20">
