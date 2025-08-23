@@ -69,12 +69,14 @@ function sanitize(value: any): any {
     if (typeof child === "string" || typeof child === "number") {
       return String(child);
     }
-    // If the child is an array, sanitize each item and join without separators
+    // If the child is an array, sanitize each item and join with spaces
     if (Array.isArray(child)) {
-      return child.map((v: any) => sanitize(v)).join("");
+      return child.map((v: any) => sanitize(v)).filter(v => v).join(" ");
     }
-    // If the child is something else (e.g., another element or object), fall back
-    // to a placeholder to indicate a React element was encountered
+    // For other cases, try to extract meaningful text from element type or return placeholder
+    if (element.type && typeof element.type === "string") {
+      return `[${element.type}]`;
+    }
     return "[react-element]";
   }
 

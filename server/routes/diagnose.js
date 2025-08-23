@@ -121,6 +121,12 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
       
       const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
 
+CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
+- All property values MUST be plain text strings
+- Do NOT use angle brackets < > in any values
+- Do NOT use React-like syntax or HTML tags
+- Format all text as simple readable strings without any tags
+
 Return ONLY JSON in this exact format:
 {
   "questions": [
@@ -198,11 +204,26 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
       }
 
       const parsed = JSON.parse(rawContent);
+      
+      // Validate questions response to ensure no React elements
+      function validateQuestions(questions) {
+        if (!Array.isArray(questions)) return [];
+        
+        return questions.map(q => ({
+          id: String(q.id || ''),
+          type: String(q.type || 'yesno'),
+          label: String(q.label || ''),
+          options: Array.isArray(q.options) ? q.options.map(opt => String(opt)) : [],
+          required: Boolean(q.required)
+        }));
+      }
+      
+      const validatedQuestions = validateQuestions(parsed.questions);
 
       // Store questions in case
       const { error: updateError } = await supabase
         .from("cases")
-        .update({ questions: parsed.questions })
+        .update({ questions: validatedQuestions })
         .eq("id", caseId);
 
       if (updateError) {
@@ -210,7 +231,7 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
       }
 
       console.log("✅ Questions generated and stored for case:", caseId);
-      res.json({ caseId, questions: parsed.questions });
+      res.json({ caseId, questions: validatedQuestions });
 
     } catch (aiError) {
       console.error("❌ AI Questions generation error:", aiError.message);
@@ -295,6 +316,13 @@ r.post("/questions", async (req, res) => {
       role: "system",
       content: `
         Generate 3-5 follow-up questions based on the symptoms: ${symptoms}. 
+        
+        CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
+        - All property values MUST be plain text strings
+        - Do NOT use angle brackets < > in any values
+        - Do NOT use React-like syntax or HTML tags
+        - Format all text as simple readable strings without any tags
+        
         Return ONLY a JSON array of question objects with this exact structure:
         [
           {
@@ -370,9 +398,24 @@ r.post("/questions", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
-    console.log("✅ Generated questions:", parsed);
+    
+    // Validate questions response to ensure no React elements
+    function validateQuestions(questions) {
+      if (!Array.isArray(questions)) return [];
+      
+      return questions.map(q => ({
+        id: String(q.id || ''),
+        type: String(q.type || 'radio'),
+        question: String(q.question || ''),
+        options: Array.isArray(q.options) ? q.options.map(opt => String(opt)) : [],
+        required: Boolean(q.required)
+      }));
+    }
+    
+    const validatedQuestions = validateQuestions(parsed);
+    console.log("✅ Generated questions:", validatedQuestions);
 
-    res.json(parsed);
+    res.json(validatedQuestions);
   } catch (err) {
     console.error("❌ Questions generation error:", err.message);
     res.status(500).json({ 
@@ -428,6 +471,13 @@ r.post("/results", async (req, res) => {
     You are a veterinary diagnostic assistant.
 
     Analyze the provided photo and notes.
+
+    CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
+    - All property values MUST be plain text strings
+    - Do NOT use angle brackets < > in any values
+    - Do NOT use React-like syntax or HTML tags
+    - Do NOT include any formatting markup in string values
+    - Format all text as simple readable strings without any tags
 
     - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
     - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
@@ -559,23 +609,55 @@ r.post("/results", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
+    
+    // Server-side validation to ensure all values are primitives
+    function validateAndCleanResponse(obj) {
+      if (obj === null || obj === undefined) return obj;
+      
+      if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean') {
+        return String(obj);
+      }
+      
+      if (Array.isArray(obj)) {
+        return obj.map(item => validateAndCleanResponse(item));
+      }
+      
+      if (typeof obj === 'object') {
+        // Check for React element-like objects
+        if (obj.$$typeof || obj.type || (obj.props && typeof obj.props === 'object')) {
+          console.warn("🚨 Found React element-like object, converting to string");
+          return "[converted-react-element]";
+        }
+        
+        const cleaned = {};
+        for (const [key, value] of Object.entries(obj)) {
+          cleaned[key] = validateAndCleanResponse(value);
+        }
+        return cleaned;
+      }
+      
+      return String(obj);
+    }
+    
+    const cleanedParsed = validateAndCleanResponse(parsed);
+    
     const processingEnd = Date.now();
     timings.responseProcessing = processingEnd - processingStart;
     console.log("⏱️ Response processing completed:", timings.responseProcessing + "ms");
 
     // Check if AI returned an error response
-    if (parsed.error) {
-      console.log("🚫 AI refused analysis:", parsed.error.reason);
+    if (cleanedParsed.error) {
+      console.log("🚫 AI refused analysis:", cleanedParsed.error.reason);
       return res.status(400).json({
         error: "Analysis not possible",
         details: {
-          reason: parsed.error.reason,
-          suggestions: parsed.error.suggestions || []
+          reason: cleanedParsed.error.reason,
+          suggestions: cleanedParsed.error.suggestions || []
         }
       });
     }
 
-    Object.assign(cards, parsed);
+    Object.assign(cards, cleanedParsed);
 
     // Calculate total time and log summary
     const totalTime = Date.now() - timingStart;
@@ -637,6 +719,13 @@ r.post("/triage", async (req, res) => {
         content: `
 You are a veterinary triage assistant. 
 Analyze the pet photo (primary) and owner notes (secondary). 
+
+CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
+- All property values MUST be plain text strings
+- Do NOT use angle brackets < > in any values
+- Do NOT use React-like syntax or HTML tags
+- Format all text as simple readable strings without any tags
+
 Return ONLY valid JSON structured as:
 
 {
