@@ -71,7 +71,10 @@ function sanitize(value: any): any {
     }
     // If the child is an array, sanitize each item and join with spaces
     if (Array.isArray(child)) {
-      return child.map((v: any) => sanitize(v)).filter(v => v).join(" ");
+      return child
+        .map((v: any) => sanitize(v))
+        .filter((v) => v)
+        .join(" ");
     }
     // For other cases, try to extract meaningful text from element type or return placeholder
     if (element.type && typeof element.type === "string") {

@@ -29,18 +29,22 @@ r.post("/cases", async (req, res) => {
     // Create draft case in database
     const { data: caseData, error: caseError } = await supabase
       .from("cases")
-      .insert([{
-        symptoms: symptoms || "general health check",
-        image_url: imageUrl,
-        status: "draft",
-        created_at: new Date().toISOString()
-      }])
+      .insert([
+        {
+          symptoms: symptoms || "general health check",
+          image_url: imageUrl,
+          status: "draft",
+          created_at: new Date().toISOString(),
+        },
+      ])
       .select()
       .single();
 
     if (caseError) {
       console.error("❌ Case creation error:", caseError);
-      return res.status(500).json({ error: "Failed to create case: " + caseError.message });
+      return res
+        .status(500)
+        .json({ error: "Failed to create case: " + caseError.message });
     }
 
     const caseId = caseData.id;
@@ -73,7 +77,7 @@ Question types:
 - "number": number input
 
 Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.
-      `
+      `,
     };
 
     let messages = [prompt];
@@ -88,9 +92,9 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, { 
-            fit: 'inside', 
-            withoutEnlargement: true 
+          .resize(1024, 1024, {
+            fit: "inside",
+            withoutEnlargement: true,
           })
           .jpeg({ quality: 85 })
           .toBuffer();
@@ -117,8 +121,10 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 
     try {
       // Use Gemini for questions generation
-      const model = geminiClient.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
+      const model = geminiClient.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
       const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
 
 CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
@@ -161,28 +167,33 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
         const imagePath = path.join(__dirname, "..", imageUrl);
         if (fs.existsSync(imagePath)) {
           let imageBuffer = fs.readFileSync(imagePath);
-          
+
           // Optimize image for Gemini
           imageBuffer = await sharp(imageBuffer)
-            .resize(1024, 1024, { 
-              fit: 'inside', 
-              withoutEnlargement: true 
+            .resize(1024, 1024, {
+              fit: "inside",
+              withoutEnlargement: true,
             })
             .jpeg({ quality: 85 })
             .toBuffer();
 
-          const imageParts = [{
-            inlineData: {
-              data: imageBuffer.toString("base64"),
-              mimeType: "image/jpeg"
-            }
-          }];
+          const imageParts = [
+            {
+              inlineData: {
+                data: imageBuffer.toString("base64"),
+                mimeType: "image/jpeg",
+              },
+            },
+          ];
 
           const promptWithImage = `${systemPrompt}
 
 Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`;
 
-          result = await model.generateContent([promptWithImage, ...imageParts]);
+          result = await model.generateContent([
+            promptWithImage,
+            ...imageParts,
+          ]);
         } else {
           const textPrompt = `${systemPrompt}
 
@@ -204,20 +215,22 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
       }
 
       const parsed = JSON.parse(rawContent);
-      
+
       // Validate questions response to ensure no React elements
       function validateQuestions(questions) {
         if (!Array.isArray(questions)) return [];
-        
-        return questions.map(q => ({
-          id: String(q.id || ''),
-          type: String(q.type || 'yesno'),
-          label: String(q.label || ''),
-          options: Array.isArray(q.options) ? q.options.map(opt => String(opt)) : [],
-          required: Boolean(q.required)
+
+        return questions.map((q) => ({
+          id: String(q.id || ""),
+          type: String(q.type || "yesno"),
+          label: String(q.label || ""),
+          options: Array.isArray(q.options)
+            ? q.options.map((opt) => String(opt))
+            : [],
+          required: Boolean(q.required),
         }));
       }
-      
+
       const validatedQuestions = validateQuestions(parsed.questions);
 
       // Store questions in case
@@ -232,31 +245,29 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
 
       console.log("✅ Questions generated and stored for case:", caseId);
       res.json({ caseId, questions: validatedQuestions });
-
     } catch (aiError) {
       console.error("❌ AI Questions generation error:", aiError.message);
 
       // Store error in case
       const { error: updateError } = await supabase
         .from("cases")
-        .update({ 
+        .update({
           error_message: aiError.message,
-          status: "error" 
+          status: "error",
         })
         .eq("id", caseId);
 
       // Still return success with caseId so frontend can redirect
-      res.json({ 
-        caseId, 
+      res.json({
+        caseId,
         questions: [],
-        warning: "Questions generation failed, but case created"
+        warning: "Questions generation failed, but case created",
       });
     }
-
   } catch (err) {
     console.error("❌ Case creation error:", err.message);
-    res.status(500).json({ 
-      error: "Failed to create case: " + err.message
+    res.status(500).json({
+      error: "Failed to create case: " + err.message,
     });
   }
 });
@@ -275,7 +286,9 @@ r.get("/questions/:caseId", async (req, res) => {
 
     if (error) {
       console.error("❌ Case fetch error:", error);
-      return res.status(404).json({ error: "Case not found: " + error.message });
+      return res
+        .status(404)
+        .json({ error: "Case not found: " + error.message });
     }
 
     if (!caseData) {
@@ -287,23 +300,25 @@ r.get("/questions/:caseId", async (req, res) => {
       id: caseData.id,
       hasQuestions: !!caseData.questions,
       questionsCount: caseData.questions?.length || 0,
-      status: caseData.status
+      status: caseData.status,
     });
 
     const questions = caseData.questions || [];
     console.log("✅ Returning questions:", questions);
-    
-    res.json({ 
+
+    res.json({
       questions,
       caseStatus: caseData.status,
       debug: {
         caseId: caseData.id,
-        questionsFound: questions.length > 0
-      }
+        questionsFound: questions.length > 0,
+      },
     });
   } catch (err) {
     console.error("❌ Questions fetch error:", err);
-    res.status(500).json({ error: "Failed to fetch questions: " + err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch questions: " + err.message });
   }
 });
 
@@ -341,7 +356,7 @@ r.post("/questions", async (req, res) => {
 
         Do NOT include "text" input questions. Only use "radio", "checkbox", or "dropdown" types.
         Ensure all questions have the "options" array populated with relevant choices.
-      `
+      `,
     };
 
     let messages = [prompt];
@@ -356,9 +371,9 @@ r.post("/questions", async (req, res) => {
 
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, { 
-            fit: 'inside', 
-            withoutEnlargement: true 
+          .resize(1024, 1024, {
+            fit: "inside",
+            withoutEnlargement: true,
           })
           .jpeg({ quality: 85 })
           .toBuffer();
@@ -398,29 +413,31 @@ r.post("/questions", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
-    
+
     // Validate questions response to ensure no React elements
     function validateQuestions(questions) {
       if (!Array.isArray(questions)) return [];
-      
-      return questions.map(q => ({
-        id: String(q.id || ''),
-        type: String(q.type || 'radio'),
-        question: String(q.question || ''),
-        options: Array.isArray(q.options) ? q.options.map(opt => String(opt)) : [],
-        required: Boolean(q.required)
+
+      return questions.map((q) => ({
+        id: String(q.id || ""),
+        type: String(q.type || "radio"),
+        question: String(q.question || ""),
+        options: Array.isArray(q.options)
+          ? q.options.map((opt) => String(opt))
+          : [],
+        required: Boolean(q.required),
       }));
     }
-    
+
     const validatedQuestions = validateQuestions(parsed);
     console.log("✅ Generated questions:", validatedQuestions);
 
     res.json(validatedQuestions);
   } catch (err) {
     console.error("❌ Questions generation error:", err.message);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to generate questions: " + err.message,
-      details: err.message 
+      details: err.message,
     });
   }
 });
@@ -430,7 +447,12 @@ r.post("/results", async (req, res) => {
   const timingStart = Date.now();
   const timings = {};
 
-  console.log("🔍 Results request received:", { caseId, answers, symptoms, imageUrl });
+  console.log("🔍 Results request received:", {
+    caseId,
+    answers,
+    symptoms,
+    imageUrl,
+  });
   console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
   try {
@@ -457,10 +479,7 @@ r.post("/results", async (req, res) => {
 
       // Update case with answers if provided
       if (answers && Object.keys(answers).length > 0) {
-        await supabase
-          .from("cases")
-          .update({ answers })
-          .eq("id", caseId);
+        await supabase.from("cases").update({ answers }).eq("id", caseId);
       }
     }
 
@@ -472,28 +491,13 @@ r.post("/results", async (req, res) => {
 
     Analyze the provided photo and notes.
 
-    CRITICAL FORMATTING RULES - FOLLOW EXACTLY:
-    - Return ONLY valid JSON with PRIMITIVE STRING VALUES
-    - NEVER use HTML tags like <div>, <p>, <span>, <br>, <strong>, <em> in ANY value
-    - NEVER use JSX syntax or React-like elements in ANY value  
-    - NEVER use angle brackets < > anywhere in your response
-    - NEVER use curly braces {} except for JSON structure
-    - NEVER format text with markup - use ONLY plain readable text
-    - ALL object property values MUST be simple strings, numbers, or arrays of strings
-    - Use emoji symbols directly in strings: 🟢 🟡 🔴 not as HTML entities
-    - Use plain text formatting: "Important" not "<strong>Important</strong>"
-
-    EXAMPLES OF FORBIDDEN VALUES:
-    - "<div>text</div>" ❌
-    - "{component: text}" ❌  
-    - "$$typeof" objects ❌
-    - React.createElement() ❌
-    - Any object with type, props, key, ref properties ❌
-
-    EXAMPLES OF CORRECT VALUES:
-    - "This is plain text" ✅
-    - "🟢 Low priority" ✅
-    - "Important information" ✅
+ HARD CONSTRAINTS (read carefully):
+- Return ONLY JSON. No prose, no markdown, no explanations.
+- All property values MUST be primitive types allowed by the schema below.
+- All string values MUST be plain UTF-8 text. Absolutely NO markup or code:
+  - Forbidden anywhere in strings: "<", ">", "\`", "</", "/>", "<br", "<div", "<p", "<span", "<strong", "<em", "<h1", "<script"
+  - No JSX, HTML, markdown, code fences, or LaTeX.
+- Do NOT wrap text in tags or pseudo-tags. Use plain words like "Important:" not "<strong>Important</strong>".
 
     - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
     - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
@@ -507,37 +511,51 @@ r.post("/results", async (req, res) => {
 
     Return ONLY JSON. Do not include extra text or markdown.
 
-    If analysis is possible, return this structure:
-    {
-      "diagnosis": {
-        "title": "Diagnosis",
-        "likely_condition": "condition name as plain text", 
-        "other_possibilities": [
-          { "name": "condition name as plain text", "likelihood": "high" }
-        ],
-        "urgency": {
-          "badge": "🟢",
-          "level": "Low",
-          "note": "plain text explanation"
-        }
-      },
-      "care": {
-        "title": "General Care Tips",
-        "tips": [
-          { "icon": "🧼", "text": "plain text tip" },
-          { "icon": "🥩", "text": "plain text tip" }
-        ],
-        "disclaimer": "This information is for educational purposes only and not a substitute for professional veterinary advice."
-      },
-      "costs": {
-        "title": "Vet Procedures & Costs",
-        "disclaimer": "Prices are typical for GTA, Ontario clinics. Costs may vary.",
-        "steps": [
-          { "icon": "💉", "name": "procedure name", "likelihood": "high", "desc": "plain text description", "cost": "$100–$300 CAD" }
-        ]
-      }
+    If analysis is possible, return this OUTPUT SCHEMA (and nothing else):
+{
+  "diagnosis": {
+    "title": "string",
+    "likely_condition": "string",
+    "other_possibilities": [
+      { "name": "string", "likelihood": "low|medium|high" }
+    ],
+    "urgency": {
+      "badge": "string",
+      "level": "Low|Medium|High|Emergency",
+      "note": "string"
     }
-    `,
+  },
+  "care": {
+    "title": "string",
+    "tips": [
+      { "icon": "string", "text": "string" }
+    ],
+    "disclaimer": "string"
+  },
+  "costs": {
+    "title": "string",
+    "disclaimer": "string",
+    "steps": [
+      { "icon": "string", "name": "string", "likelihood": "low|medium|high", "desc": "string", "cost": "string" }
+    ]
+  }
+}
+   NEGATIVE EXAMPLES (never do this):
+- "likely_condition": "<div>Skin irritation</div>"
+- "note": "<p>Monitor closely</p>"
+- "text": "**Keep the area clean**"
+
+POSITIVE EXAMPLES (do this):
+- "likely_condition": "Skin irritation"
+- "note": "Monitor closely"
+- "text": "Keep the area clean"
+
+SELF-CHECK BEFORE YOU ANSWER:
+1) Ensure the response is valid JSON matching the schema exactly.
+2) Ensure every string contains NONE of the forbidden substrings and does not include "<", ">", or "\`".
+3) If any violation would occur, replace the offending content with plain text and re-validate internally.
+4) Then output ONLY the final valid JSON object. 
+`,
     };
 
     let userPrompt = finalImageUrl
@@ -555,7 +573,7 @@ r.post("/results", async (req, res) => {
     const cards = {};
     let messages = [prompt];
 
-      if (finalImageUrl) {
+    if (finalImageUrl) {
       const fileReadStart = Date.now();
       const imagePath = path.join(__dirname, "..", finalImageUrl);
 
@@ -567,16 +585,19 @@ r.post("/results", async (req, res) => {
         console.log("🖼️ Optimizing image...");
 
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, { 
-            fit: 'inside', 
-            withoutEnlargement: true 
+          .resize(1024, 1024, {
+            fit: "inside",
+            withoutEnlargement: true,
           })
           .jpeg({ quality: 85 })
           .toBuffer();
 
         const optimizeEnd = Date.now();
         timings.imageOptimization = optimizeEnd - optimizeStart;
-        console.log("⏱️ Image optimization completed:", timings.imageOptimization + "ms");
+        console.log(
+          "⏱️ Image optimization completed:",
+          timings.imageOptimization + "ms",
+        );
 
         const base64Image = imageBuffer.toString("base64");
         const fileReadEnd = Date.now();
@@ -603,7 +624,10 @@ r.post("/results", async (req, res) => {
     }
 
     const openaiStart = Date.now();
-    console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
+    console.log(
+      "⏱️ OpenAI API call started at:",
+      new Date(openaiStart).toISOString(),
+    );
 
     const completion = await openaiClient.chat.completions.create({
       model: "gpt-4o",
@@ -625,57 +649,70 @@ r.post("/results", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
-    
+
     // Aggressive server-side validation to strip HTML/JSX and ensure primitive values
     function validateAndCleanResponse(obj) {
       if (obj === null || obj === undefined) return "";
-      
-      if (typeof obj === 'string') {
+
+      if (typeof obj === "string") {
         // Strip any HTML/JSX-like tags and convert to plain text
         let cleaned = obj
-          .replace(/<[^>]*>/g, '') // Remove all HTML/JSX tags
-          .replace(/\{[^}]*\}/g, '') // Remove any JSX-like expressions
-          .replace(/&[a-zA-Z0-9#]*;/g, '') // Remove HTML entities
+          .replace(/<[^>]*>/g, "") // Remove all HTML/JSX tags
+          .replace(/\{[^}]*\}/g, "") // Remove any JSX-like expressions
+          .replace(/&[a-zA-Z0-9#]*;/g, "") // Remove HTML entities
           .trim();
         return cleaned;
       }
-      
-      if (typeof obj === 'number' || typeof obj === 'boolean') {
+
+      if (typeof obj === "number" || typeof obj === "boolean") {
         return String(obj);
       }
-      
+
       if (Array.isArray(obj)) {
-        return obj.map(item => validateAndCleanResponse(item));
+        return obj.map((item) => validateAndCleanResponse(item));
       }
-      
-      if (typeof obj === 'object') {
+
+      if (typeof obj === "object") {
         // Check for React element-like objects - aggressively reject them
-        if (obj.$$typeof || obj.type || obj.key !== undefined || obj.ref !== undefined || 
-            (obj.props && typeof obj.props === 'object')) {
-          console.warn("🚨 Found React element-like object, converting to plain text");
+        if (
+          obj.$$typeof ||
+          obj.type ||
+          obj.key !== undefined ||
+          obj.ref !== undefined ||
+          (obj.props && typeof obj.props === "object")
+        ) {
+          console.warn(
+            "🚨 Found React element-like object, converting to plain text",
+          );
           // Try to extract meaningful text or return placeholder
           if (obj.props && obj.props.children) {
             return validateAndCleanResponse(obj.props.children);
           }
           return "[element]";
         }
-        
+
         const cleaned = {};
         for (const [key, value] of Object.entries(obj)) {
           cleaned[key] = validateAndCleanResponse(value);
         }
         return cleaned;
       }
-      
+
       // Fallback: convert to string and strip tags
-      return String(obj).replace(/<[^>]*>/g, '').replace(/\{[^}]*\}/g, '').trim();
+      return String(obj)
+        .replace(/<[^>]*>/g, "")
+        .replace(/\{[^}]*\}/g, "")
+        .trim();
     }
-    
+
     const cleanedParsed = validateAndCleanResponse(parsed);
-    
+
     const processingEnd = Date.now();
     timings.responseProcessing = processingEnd - processingStart;
-    console.log("⏱️ Response processing completed:", timings.responseProcessing + "ms");
+    console.log(
+      "⏱️ Response processing completed:",
+      timings.responseProcessing + "ms",
+    );
 
     // Check if AI returned an error response
     if (cleanedParsed.error) {
@@ -684,8 +721,8 @@ r.post("/results", async (req, res) => {
         error: "Analysis not possible",
         details: {
           reason: cleanedParsed.error.reason,
-          suggestions: cleanedParsed.error.suggestions || []
-        }
+          suggestions: cleanedParsed.error.suggestions || [],
+        },
       });
     }
 
@@ -697,7 +734,10 @@ r.post("/results", async (req, res) => {
 
     console.log("⏱️ === TIMING SUMMARY ===");
     console.log("⏱️ File Read:", (timings.fileRead || 0) + "ms");
-    console.log("⏱️ Image Optimization:", (timings.imageOptimization || 0) + "ms");
+    console.log(
+      "⏱️ Image Optimization:",
+      (timings.imageOptimization || 0) + "ms",
+    );
     console.log("⏱️ OpenAI API Call:", timings.openaiCall + "ms");
     console.log("⏱️ Response Processing:", timings.responseProcessing + "ms");
     console.log("⏱️ Total Request Time:", timings.total + "ms");
@@ -708,10 +748,10 @@ r.post("/results", async (req, res) => {
     if (caseId) {
       await supabase
         .from("cases")
-        .update({ 
+        .update({
           status: "completed",
           diagnosis: cards,
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
         })
         .eq("id", caseId);
     }
