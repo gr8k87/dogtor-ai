@@ -331,13 +331,13 @@ r.post("/questions", async (req, res) => {
       role: "system",
       content: `
         Generate 3-5 follow-up questions based on the symptoms: ${symptoms}. 
-        
+
         CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
         - All property values MUST be plain text strings
         - Do NOT use angle brackets < > in any values
         - Do NOT use React-like syntax or HTML tags
         - Format all text as simple readable strings without any tags
-        
+
         Return ONLY a JSON array of question objects with this exact structure:
         [
           {
@@ -650,41 +650,53 @@ SELF-CHECK BEFORE YOU ANSWER:
 
     const parsed = JSON.parse(rawContent);
 
-    // Aggressive server-side validation to strip HTML/JSX and ensure primitive values
+    // Simplified validation: flatten complex structures to prevent React elements
     function validateAndCleanResponse(obj) {
       if (obj === null || obj === undefined) return "";
 
-      if (typeof obj === "string") {
-        // Strip any HTML/JSX-like tags and convert to plain text
-        let cleaned = obj
-          .replace(/<[^>]*>/g, "") // Remove all HTML/JSX tags
-          .replace(/\{[^}]*\}/g, "") // Remove any JSX-like expressions
-          .replace(/&[a-zA-Z0-9#]*;/g, "") // Remove HTML entities
+      if (typeof obj === "string" || typeof obj === "number" || typeof obj === "boolean") {
+        return String(obj)
+          .replace(/<[^>]*>/g, "") // Remove HTML/JSX tags
+          .replace(/\{[^}]*\}/g, "") // Remove JSX expressions
           .trim();
-        return cleaned;
-      }
-
-      if (typeof obj === "number" || typeof obj === "boolean") {
-        return String(obj);
       }
 
       if (Array.isArray(obj)) {
-        return obj.map((item) => validateAndCleanResponse(item));
+        return obj.map(item => {
+          if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+            return validateAndCleanResponse(item);
+          }
+
+          // For objects in arrays, flatten to descriptive strings
+          if (typeof item === "object" && item !== null) {
+            // Common patterns for our API responses
+            if (item.name && item.likelihood) {
+              return `${validateAndCleanResponse(item.name)} (${validateAndCleanResponse(item.likelihood)} likelihood)`;
+            }
+            if (item.icon && item.text) {
+              return `${validateAndCleanResponse(item.icon)} ${validateAndCleanResponse(item.text)}`;
+            }
+            if (item.icon && item.name && item.likelihood && item.desc && item.cost) {
+              return `${validateAndCleanResponse(item.icon)} ${validateAndCleanResponse(item.name)} - ${validateAndCleanResponse(item.likelihood)} | ${validateAndCleanResponse(item.desc)} | ${validateAndCleanResponse(item.cost)}`;
+            }
+
+            // Generic object flattening
+            const values = Object.values(item)
+              .filter(v => v !== null && v !== undefined)
+              .map(v => validateAndCleanResponse(v))
+              .filter(v => v && v.trim());
+            return values.join(" ");
+          }
+
+          return validateAndCleanResponse(item);
+        }).filter(item => item && item.trim());
       }
 
       if (typeof obj === "object") {
-        // Check for React element-like objects - aggressively reject them
-        if (
-          obj.$$typeof ||
-          obj.type ||
-          obj.key !== undefined ||
-          obj.ref !== undefined ||
-          (obj.props && typeof obj.props === "object")
-        ) {
-          console.warn(
-            "🚨 Found React element-like object, converting to plain text",
-          );
-          // Try to extract meaningful text or return placeholder
+        // Check for React element-like objects and flatten them immediately
+        if (obj.$$typeof || obj.type || obj.key !== undefined || obj.ref !== undefined || 
+            (obj.props && typeof obj.props === "object")) {
+          console.warn("🚨 Found React element-like object, flattening to text");
           if (obj.props && obj.props.children) {
             return validateAndCleanResponse(obj.props.children);
           }
@@ -698,11 +710,7 @@ SELF-CHECK BEFORE YOU ANSWER:
         return cleaned;
       }
 
-      // Fallback: convert to string and strip tags
-      return String(obj)
-        .replace(/<[^>]*>/g, "")
-        .replace(/\{[^}]*\}/g, "")
-        .trim();
+      return String(obj).replace(/<[^>]*>/g, "").replace(/\{[^}]*\}/g, "").trim();
     }
 
     const cleanedParsed = validateAndCleanResponse(parsed);
