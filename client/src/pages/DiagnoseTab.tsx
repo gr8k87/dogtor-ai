@@ -1,11 +1,7 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagePicker from "../components/ImagePicker";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import { useHistory } from "../state/historyContext";
 
 export default function DiagnoseTab() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -98,6 +94,8 @@ export default function DiagnoseTab() {
     }
   }
 
+
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="p-4 space-y-4">
@@ -105,63 +103,45 @@ export default function DiagnoseTab() {
           <h1 className="text-2xl font-bold text-foreground mb-6">Pet Health Diagnosis</h1>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Add photo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ImagePicker onChange={setImageFile} />
-            {errors.image && (
-              <p className="text-red-600 text-sm mt-2">{errors.image}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Notes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={onInitialSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="notes">Describe any symptoms, behaviors, or concerns about your pet (optional)</Label>
-                <textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Describe any symptoms, behaviors, or concerns about your pet (optional)..."
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                />
-              </div>
-
-              {errors.submit && (
-                <Card className="border-red-200 bg-red-50">
-                  <CardContent className="pt-6">
-                    <p className="text-red-700 text-sm font-medium">⚠️ Error</p>
-                    <p className="text-red-600 text-sm mt-1">{errors.submit}</p>
-                    {errors.submit.includes("OpenAI") && (
-                      <p className="text-red-500 text-xs mt-2">
-                        Check your OpenAI API key in the Secrets tab or verify your account has available credits.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
-
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="w-full h-12"
-                size="lg"
-              >
-                {submitting ? "Generating Questions..." : "Continue"}
-              </Button>
-              
-              {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
-            </form>
-          </CardContent>
-        </Card>
+      <div className="rounded-2xl border p-4">
+        <h2 className="font-semibold mb-2">Add photo</h2>
+        <ImagePicker onChange={setImageFile} />
+        {errors.image && (
+          <p className="text-red-600 text-sm mt-2">{errors.image}</p>
+        )}
       </div>
+
+      <form onSubmit={onInitialSubmit} className="rounded-2xl border p-4">
+        <h2 className="font-semibold mb-2">Notes</h2>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Describe any symptoms, behaviors, or concerns about your pet (optional)..."
+          className="w-full h-24 p-3 border rounded-lg resize-none text-sm"
+        />
+
+        {errors.submit && (
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-sm font-medium">⚠️ Error</p>
+            <p className="text-red-600 text-sm mt-1">{errors.submit}</p>
+            {errors.submit.includes("OpenAI") && (
+              <p className="text-red-500 text-xs mt-2">
+                Check your OpenAI API key in the Secrets tab or verify your account has available credits.
+              </p>
+            )}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
+        >
+          {submitting ? "Generating Questions..." : "Continue"}
+        </button>
+        {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
+      </form>
+    </div>
     </div>
   );
 }

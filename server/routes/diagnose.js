@@ -29,22 +29,18 @@ r.post("/cases", async (req, res) => {
     // Create draft case in database
     const { data: caseData, error: caseError } = await supabase
       .from("cases")
-      .insert([
-        {
-          symptoms: symptoms || "general health check",
-          image_url: imageUrl,
-          status: "draft",
-          created_at: new Date().toISOString(),
-        },
-      ])
+      .insert([{
+        symptoms: symptoms || "general health check",
+        image_url: imageUrl,
+        status: "draft",
+        created_at: new Date().toISOString()
+      }])
       .select()
       .single();
 
     if (caseError) {
       console.error("❌ Case creation error:", caseError);
-      return res
-        .status(500)
-        .json({ error: "Failed to create case: " + caseError.message });
+      return res.status(500).json({ error: "Failed to create case: " + caseError.message });
     }
 
     const caseId = caseData.id;
@@ -77,7 +73,7 @@ Question types:
 - "number": number input
 
 Make questions specific to the likely condition you see. Focus on symptoms, duration, behavior changes, eating/drinking habits, etc.
-      `,
+      `
     };
 
     let messages = [prompt];
@@ -92,9 +88,9 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, {
-            fit: "inside",
-            withoutEnlargement: true,
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
           })
           .jpeg({ quality: 85 })
           .toBuffer();
@@ -121,17 +117,9 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
 
     try {
       // Use Gemini for questions generation
-      const model = geminiClient.getGenerativeModel({
-        model: "gemini-1.5-flash",
-      });
-
+      const model = geminiClient.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
       const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
-
-CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
-- All property values MUST be plain text strings
-- Do NOT use angle brackets < > in any values
-- Do NOT use React-like syntax or HTML tags
-- Format all text as simple readable strings without any tags
 
 Return ONLY JSON in this exact format:
 {
@@ -167,33 +155,28 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
         const imagePath = path.join(__dirname, "..", imageUrl);
         if (fs.existsSync(imagePath)) {
           let imageBuffer = fs.readFileSync(imagePath);
-
+          
           // Optimize image for Gemini
           imageBuffer = await sharp(imageBuffer)
-            .resize(1024, 1024, {
-              fit: "inside",
-              withoutEnlargement: true,
+            .resize(1024, 1024, { 
+              fit: 'inside', 
+              withoutEnlargement: true 
             })
             .jpeg({ quality: 85 })
             .toBuffer();
 
-          const imageParts = [
-            {
-              inlineData: {
-                data: imageBuffer.toString("base64"),
-                mimeType: "image/jpeg",
-              },
-            },
-          ];
+          const imageParts = [{
+            inlineData: {
+              data: imageBuffer.toString("base64"),
+              mimeType: "image/jpeg"
+            }
+          }];
 
           const promptWithImage = `${systemPrompt}
 
 Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`;
 
-          result = await model.generateContent([
-            promptWithImage,
-            ...imageParts,
-          ]);
+          result = await model.generateContent([promptWithImage, ...imageParts]);
         } else {
           const textPrompt = `${systemPrompt}
 
@@ -216,27 +199,10 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
 
       const parsed = JSON.parse(rawContent);
 
-      // Validate questions response to ensure no React elements
-      function validateQuestions(questions) {
-        if (!Array.isArray(questions)) return [];
-
-        return questions.map((q) => ({
-          id: String(q.id || ""),
-          type: String(q.type || "yesno"),
-          label: String(q.label || ""),
-          options: Array.isArray(q.options)
-            ? q.options.map((opt) => String(opt))
-            : [],
-          required: Boolean(q.required),
-        }));
-      }
-
-      const validatedQuestions = validateQuestions(parsed.questions);
-
       // Store questions in case
       const { error: updateError } = await supabase
         .from("cases")
-        .update({ questions: validatedQuestions })
+        .update({ questions: parsed.questions })
         .eq("id", caseId);
 
       if (updateError) {
@@ -244,30 +210,32 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
       }
 
       console.log("✅ Questions generated and stored for case:", caseId);
-      res.json({ caseId, questions: validatedQuestions });
+      res.json({ caseId, questions: parsed.questions });
+
     } catch (aiError) {
       console.error("❌ AI Questions generation error:", aiError.message);
 
       // Store error in case
       const { error: updateError } = await supabase
         .from("cases")
-        .update({
+        .update({ 
           error_message: aiError.message,
-          status: "error",
+          status: "error" 
         })
         .eq("id", caseId);
 
       // Still return success with caseId so frontend can redirect
-      res.json({
-        caseId,
+      res.json({ 
+        caseId, 
         questions: [],
-        warning: "Questions generation failed, but case created",
+        warning: "Questions generation failed, but case created"
       });
     }
+
   } catch (err) {
     console.error("❌ Case creation error:", err.message);
-    res.status(500).json({
-      error: "Failed to create case: " + err.message,
+    res.status(500).json({ 
+      error: "Failed to create case: " + err.message
     });
   }
 });
@@ -286,9 +254,7 @@ r.get("/questions/:caseId", async (req, res) => {
 
     if (error) {
       console.error("❌ Case fetch error:", error);
-      return res
-        .status(404)
-        .json({ error: "Case not found: " + error.message });
+      return res.status(404).json({ error: "Case not found: " + error.message });
     }
 
     if (!caseData) {
@@ -300,25 +266,23 @@ r.get("/questions/:caseId", async (req, res) => {
       id: caseData.id,
       hasQuestions: !!caseData.questions,
       questionsCount: caseData.questions?.length || 0,
-      status: caseData.status,
+      status: caseData.status
     });
 
     const questions = caseData.questions || [];
     console.log("✅ Returning questions:", questions);
-
-    res.json({
+    
+    res.json({ 
       questions,
       caseStatus: caseData.status,
       debug: {
         caseId: caseData.id,
-        questionsFound: questions.length > 0,
-      },
+        questionsFound: questions.length > 0
+      }
     });
   } catch (err) {
     console.error("❌ Questions fetch error:", err);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch questions: " + err.message });
+    res.status(500).json({ error: "Failed to fetch questions: " + err.message });
   }
 });
 
@@ -331,13 +295,6 @@ r.post("/questions", async (req, res) => {
       role: "system",
       content: `
         Generate 3-5 follow-up questions based on the symptoms: ${symptoms}. 
-
-        CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
-        - All property values MUST be plain text strings
-        - Do NOT use angle brackets < > in any values
-        - Do NOT use React-like syntax or HTML tags
-        - Format all text as simple readable strings without any tags
-
         Return ONLY a JSON array of question objects with this exact structure:
         [
           {
@@ -356,7 +313,7 @@ r.post("/questions", async (req, res) => {
 
         Do NOT include "text" input questions. Only use "radio", "checkbox", or "dropdown" types.
         Ensure all questions have the "options" array populated with relevant choices.
-      `,
+      `
     };
 
     let messages = [prompt];
@@ -371,9 +328,9 @@ r.post("/questions", async (req, res) => {
 
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, {
-            fit: "inside",
-            withoutEnlargement: true,
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
           })
           .jpeg({ quality: 85 })
           .toBuffer();
@@ -413,31 +370,14 @@ r.post("/questions", async (req, res) => {
     }
 
     const parsed = JSON.parse(rawContent);
+    console.log("✅ Generated questions:", parsed);
 
-    // Validate questions response to ensure no React elements
-    function validateQuestions(questions) {
-      if (!Array.isArray(questions)) return [];
-
-      return questions.map((q) => ({
-        id: String(q.id || ""),
-        type: String(q.type || "radio"),
-        question: String(q.question || ""),
-        options: Array.isArray(q.options)
-          ? q.options.map((opt) => String(opt))
-          : [],
-        required: Boolean(q.required),
-      }));
-    }
-
-    const validatedQuestions = validateQuestions(parsed);
-    console.log("✅ Generated questions:", validatedQuestions);
-
-    res.json(validatedQuestions);
+    res.json(parsed);
   } catch (err) {
     console.error("❌ Questions generation error:", err.message);
-    res.status(500).json({
+    res.status(500).json({ 
       error: "Failed to generate questions: " + err.message,
-      details: err.message,
+      details: err.message 
     });
   }
 });
@@ -447,12 +387,7 @@ r.post("/results", async (req, res) => {
   const timingStart = Date.now();
   const timings = {};
 
-  console.log("🔍 Results request received:", {
-    caseId,
-    answers,
-    symptoms,
-    imageUrl,
-  });
+  console.log("🔍 Results request received:", { caseId, answers, symptoms, imageUrl });
   console.log("⏱️ Request started at:", new Date(timingStart).toISOString());
 
   try {
@@ -479,7 +414,10 @@ r.post("/results", async (req, res) => {
 
       // Update case with answers if provided
       if (answers && Object.keys(answers).length > 0) {
-        await supabase.from("cases").update({ answers }).eq("id", caseId);
+        await supabase
+          .from("cases")
+          .update({ answers })
+          .eq("id", caseId);
       }
     }
 
@@ -490,14 +428,6 @@ r.post("/results", async (req, res) => {
     You are a veterinary diagnostic assistant.
 
     Analyze the provided photo and notes.
-
- HARD CONSTRAINTS (read carefully):
-- Return ONLY JSON. No prose, no markdown, no explanations.
-- All property values MUST be primitive types allowed by the schema below.
-- All string values MUST be plain UTF-8 text. Absolutely NO markup or code:
-  - Forbidden anywhere in strings: "<", ">", "\`", "</", "/>", "<br", "<div", "<p", "<span", "<strong", "<em", "<h1", "<script"
-  - No JSX, HTML, markdown, code fences, or LaTeX.
-- Do NOT wrap text in tags or pseudo-tags. Use plain words like "Important:" not "<strong>Important</strong>".
 
     - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
     - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
@@ -511,51 +441,37 @@ r.post("/results", async (req, res) => {
 
     Return ONLY JSON. Do not include extra text or markdown.
 
-    If analysis is possible, return this OUTPUT SCHEMA (and nothing else):
-{
-  "diagnosis": {
-    "title": "string",
-    "likely_condition": "string",
-    "other_possibilities": [
-      { "name": "string", "likelihood": "low|medium|high" }
-    ],
-    "urgency": {
-      "badge": "string",
-      "level": "Low|Medium|High|Emergency",
-      "note": "string"
+    If analysis is possible, return this structure:
+    {
+      "diagnosis": {
+        "title": "Diagnosis",
+        "likely_condition": "...", 
+        "other_possibilities": [
+          { "name": "...", "likelihood": "high/medium/low" }
+        ],
+        "urgency": {
+          "badge": "🟢 | 🟡 | 🔴",
+          "level": "Low | Moderate | High",
+          "note": "short explanation"
+        }
+      },
+      "care": {
+        "title": "General Care Tips",
+        "tips": [
+          { "icon": "🧼", "text": "Tip 1" },
+          { "icon": "🥩", "text": "Tip 2" }
+        ],
+        "disclaimer": "This information is for educational purposes only and not a substitute for professional veterinary advice."
+      },
+      "costs": {
+        "title": "Vet Procedures & Costs",
+        "disclaimer": "Prices are typical for GTA, Ontario clinics. Costs may vary.",
+        "steps": [
+          { "icon": "💉", "name": "Procedure", "likelihood": "high/medium/low", "desc": "short description", "cost": "$100–$300 CAD" }
+        ]
+      }
     }
-  },
-  "care": {
-    "title": "string",
-    "tips": [
-      { "icon": "string", "text": "string" }
-    ],
-    "disclaimer": "string"
-  },
-  "costs": {
-    "title": "string",
-    "disclaimer": "string",
-    "steps": [
-      { "icon": "string", "name": "string", "likelihood": "low|medium|high", "desc": "string", "cost": "string" }
-    ]
-  }
-}
-   NEGATIVE EXAMPLES (never do this):
-- "likely_condition": "<div>Skin irritation</div>"
-- "note": "<p>Monitor closely</p>"
-- "text": "**Keep the area clean**"
-
-POSITIVE EXAMPLES (do this):
-- "likely_condition": "Skin irritation"
-- "note": "Monitor closely"
-- "text": "Keep the area clean"
-
-SELF-CHECK BEFORE YOU ANSWER:
-1) Ensure the response is valid JSON matching the schema exactly.
-2) Ensure every string contains NONE of the forbidden substrings and does not include "<", ">", or "\`".
-3) If any violation would occur, replace the offending content with plain text and re-validate internally.
-4) Then output ONLY the final valid JSON object. 
-`,
+    `,
     };
 
     let userPrompt = finalImageUrl
@@ -573,7 +489,7 @@ SELF-CHECK BEFORE YOU ANSWER:
     const cards = {};
     let messages = [prompt];
 
-    if (finalImageUrl) {
+      if (finalImageUrl) {
       const fileReadStart = Date.now();
       const imagePath = path.join(__dirname, "..", finalImageUrl);
 
@@ -585,19 +501,16 @@ SELF-CHECK BEFORE YOU ANSWER:
         console.log("🖼️ Optimizing image...");
 
         imageBuffer = await sharp(imageBuffer)
-          .resize(1024, 1024, {
-            fit: "inside",
-            withoutEnlargement: true,
+          .resize(1024, 1024, { 
+            fit: 'inside', 
+            withoutEnlargement: true 
           })
           .jpeg({ quality: 85 })
           .toBuffer();
 
         const optimizeEnd = Date.now();
         timings.imageOptimization = optimizeEnd - optimizeStart;
-        console.log(
-          "⏱️ Image optimization completed:",
-          timings.imageOptimization + "ms",
-        );
+        console.log("⏱️ Image optimization completed:", timings.imageOptimization + "ms");
 
         const base64Image = imageBuffer.toString("base64");
         const fileReadEnd = Date.now();
@@ -624,10 +537,7 @@ SELF-CHECK BEFORE YOU ANSWER:
     }
 
     const openaiStart = Date.now();
-    console.log(
-      "⏱️ OpenAI API call started at:",
-      new Date(openaiStart).toISOString(),
-    );
+    console.log("⏱️ OpenAI API call started at:", new Date(openaiStart).toISOString());
 
     const completion = await openaiClient.chat.completions.create({
       model: "gpt-4o",
@@ -649,92 +559,23 @@ SELF-CHECK BEFORE YOU ANSWER:
     }
 
     const parsed = JSON.parse(rawContent);
-
-    // Simplified validation: flatten complex structures to prevent React elements
-    function validateAndCleanResponse(obj) {
-      if (obj === null || obj === undefined) return "";
-
-      if (typeof obj === "string" || typeof obj === "number" || typeof obj === "boolean") {
-        return String(obj)
-          .replace(/<[^>]*>/g, "") // Remove HTML/JSX tags
-          .replace(/\{[^}]*\}/g, "") // Remove JSX expressions
-          .trim();
-      }
-
-      if (Array.isArray(obj)) {
-        return obj.map(item => {
-          if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
-            return validateAndCleanResponse(item);
-          }
-
-          // For objects in arrays, flatten to descriptive strings
-          if (typeof item === "object" && item !== null) {
-            // Common patterns for our API responses
-            if (item.name && item.likelihood) {
-              return `${validateAndCleanResponse(item.name)} (${validateAndCleanResponse(item.likelihood)} likelihood)`;
-            }
-            if (item.icon && item.text) {
-              return `${validateAndCleanResponse(item.icon)} ${validateAndCleanResponse(item.text)}`;
-            }
-            if (item.icon && item.name && item.likelihood && item.desc && item.cost) {
-              return `${validateAndCleanResponse(item.icon)} ${validateAndCleanResponse(item.name)} - ${validateAndCleanResponse(item.likelihood)} | ${validateAndCleanResponse(item.desc)} | ${validateAndCleanResponse(item.cost)}`;
-            }
-
-            // Generic object flattening
-            const values = Object.values(item)
-              .filter(v => v !== null && v !== undefined)
-              .map(v => validateAndCleanResponse(v))
-              .filter(v => v && v.trim());
-            return values.join(" ");
-          }
-
-          return validateAndCleanResponse(item);
-        }).filter(item => item && item.trim());
-      }
-
-      if (typeof obj === "object") {
-        // Check for React element-like objects and flatten them immediately
-        if (obj.$$typeof || obj.type || obj.key !== undefined || obj.ref !== undefined || 
-            (obj.props && typeof obj.props === "object")) {
-          console.warn("🚨 Found React element-like object, flattening to text");
-          if (obj.props && obj.props.children) {
-            return validateAndCleanResponse(obj.props.children);
-          }
-          return "[element]";
-        }
-
-        const cleaned = {};
-        for (const [key, value] of Object.entries(obj)) {
-          cleaned[key] = validateAndCleanResponse(value);
-        }
-        return cleaned;
-      }
-
-      return String(obj).replace(/<[^>]*>/g, "").replace(/\{[^}]*\}/g, "").trim();
-    }
-
-    const cleanedParsed = validateAndCleanResponse(parsed);
-
     const processingEnd = Date.now();
     timings.responseProcessing = processingEnd - processingStart;
-    console.log(
-      "⏱️ Response processing completed:",
-      timings.responseProcessing + "ms",
-    );
+    console.log("⏱️ Response processing completed:", timings.responseProcessing + "ms");
 
     // Check if AI returned an error response
-    if (cleanedParsed.error) {
-      console.log("🚫 AI refused analysis:", cleanedParsed.error.reason);
+    if (parsed.error) {
+      console.log("🚫 AI refused analysis:", parsed.error.reason);
       return res.status(400).json({
         error: "Analysis not possible",
         details: {
-          reason: cleanedParsed.error.reason,
-          suggestions: cleanedParsed.error.suggestions || [],
-        },
+          reason: parsed.error.reason,
+          suggestions: parsed.error.suggestions || []
+        }
       });
     }
 
-    Object.assign(cards, cleanedParsed);
+    Object.assign(cards, parsed);
 
     // Calculate total time and log summary
     const totalTime = Date.now() - timingStart;
@@ -742,10 +583,7 @@ SELF-CHECK BEFORE YOU ANSWER:
 
     console.log("⏱️ === TIMING SUMMARY ===");
     console.log("⏱️ File Read:", (timings.fileRead || 0) + "ms");
-    console.log(
-      "⏱️ Image Optimization:",
-      (timings.imageOptimization || 0) + "ms",
-    );
+    console.log("⏱️ Image Optimization:", (timings.imageOptimization || 0) + "ms");
     console.log("⏱️ OpenAI API Call:", timings.openaiCall + "ms");
     console.log("⏱️ Response Processing:", timings.responseProcessing + "ms");
     console.log("⏱️ Total Request Time:", timings.total + "ms");
@@ -756,10 +594,10 @@ SELF-CHECK BEFORE YOU ANSWER:
     if (caseId) {
       await supabase
         .from("cases")
-        .update({
+        .update({ 
           status: "completed",
           diagnosis: cards,
-          completed_at: new Date().toISOString(),
+          completed_at: new Date().toISOString()
         })
         .eq("id", caseId);
     }
@@ -799,13 +637,6 @@ r.post("/triage", async (req, res) => {
         content: `
 You are a veterinary triage assistant. 
 Analyze the pet photo (primary) and owner notes (secondary). 
-
-CRITICAL: Return ONLY JSON with primitive string values. NO HTML, JSX, React syntax, or markup elements.
-- All property values MUST be plain text strings
-- Do NOT use angle brackets < > in any values
-- Do NOT use React-like syntax or HTML tags
-- Format all text as simple readable strings without any tags
-
 Return ONLY valid JSON structured as:
 
 {
