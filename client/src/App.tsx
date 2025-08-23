@@ -6,6 +6,7 @@ import Questions from "./pages/Questions";
 import Results from "./pages/Results";
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
+import BottomTabs from "./components/BottomTabs";
 
 import React, { useState } from "react";
 import OfflineBadge from "./components/OfflineBadge";
@@ -60,7 +61,7 @@ function AppContent() {
         <Route path="/" element={
           <>
             <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
+            <main className="flex-1 p-4 pb-20">
               <DiagnoseTab />
             </main>
           </>
@@ -68,7 +69,7 @@ function AppContent() {
         <Route path="/history" element={
           <>
             <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
+            <main className="flex-1 p-4 pb-20">
               <History />
             </main>
           </>
@@ -76,7 +77,7 @@ function AppContent() {
         <Route path="/connect" element={
           <>
             <header className="p-4 text-center font-bold">Dogtor AI</header>
-            <main className="flex-1 p-4">
+            <main className="flex-1 p-4 pb-20">
               <ConnectTab />
             </main>
           </>
@@ -86,30 +87,14 @@ function AppContent() {
       </Routes>
 
       {!hideNav && (
-        <nav className="sticky bottom-0 inset-x-0 border-t bg-white">
-          <div className="grid grid-cols-3 text-center">
-            {tabs.map((t) => (
-              <Button
-                key={t}
-                variant="ghost"
-                onClick={() => {
-                  setTab(t);
-                  if (t === "Diagnose") navigate("/");
-                  else if (t === "History") navigate("/history");
-                  else if (t === "Connect") navigate("/connect");
-                }}
-                className={`py-3 ${
-                  (t === "Diagnose" && location.pathname === "/") ||
-                  (t === "History" && location.pathname === "/history") ||
-                  (t === "Connect" && location.pathname === "/connect")
-                    ? "font-semibold" : "text-gray-500"
-                }`}
-              >
-                {t}
-              </Button>
-            ))}
-          </div>
-        </nav>
+        <BottomTabs 
+          navigate={navigate} 
+          activeTab={
+            location.pathname === "/" ? "diagnose" :
+            location.pathname === "/history" ? "history" :
+            location.pathname === "/connect" ? "results" : "diagnose"
+          }
+        />
       )}
     </div>
   );

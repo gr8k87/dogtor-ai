@@ -36,7 +36,7 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
           </div>
         </button>
         <button
-          onClick={() => navigate("/results")}
+          onClick={() => navigate("/connect")}
           className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
             activeTab === "results"
               ? "text-primary bg-accent"
@@ -44,8 +44,8 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
           }`}
         >
           <div className="flex flex-col items-center gap-1">
-            <span>📊</span>
-            <span>Results</span>
+            <span>🔗</span>
+            <span>Connect</span>
           </div>
         </button>
       </div>

@@ -4,11 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card"
 
 export default function ConnectTab() {
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="p-4 space-y-4">
-        <div className="pt-4">
-          <h1 className="text-2xl font-bold text-foreground mb-6">Connect to Vet</h1>
-        </div>
+    <div className="space-y-4")
 
         {/* Emergency Contact Card */}
         <Card className="opacity-75">
@@ -196,7 +192,6 @@ export default function ConnectTab() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }
