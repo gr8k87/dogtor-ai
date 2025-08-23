@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 
 type Props = { onChange: (file: File | null) => void };
 
 export default function ImagePicker({ onChange }: Props) {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<{ file: File; preview: string } | null>(null);
+  const [preview, setPreview] = React.useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<{ file: File; preview: string } | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   function handle(e: React.ChangeEvent<HTMLInputElement>) {
@@ -19,7 +19,7 @@ export default function ImagePicker({ onChange }: Props) {
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Cleanup function to revoke object URLs when the component unmounts or preview changes
     return () => {
       if (preview) URL.revokeObjectURL(preview);

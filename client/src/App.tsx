@@ -4,7 +4,7 @@ import DiagnoseTab from "./pages/DiagnoseTab";
 import ConnectTab from "./pages/ConnectTab";
 import Questions from "./pages/Questions";
 import Results from "./pages/Results";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
 
 import React, { useState } from "react";
@@ -40,6 +40,7 @@ function AppContent() {
     () => localStorage.getItem("hasStarted") === "1",
   );
   const location = useLocation();
+  const navigate = useNavigate();
 
   function begin() {
     localStorage.setItem("hasStarted", "1");
@@ -93,9 +94,9 @@ function AppContent() {
                 variant="ghost"
                 onClick={() => {
                   setTab(t);
-                  if (t === "Diagnose") window.location.href = "/";
-                  else if (t === "History") window.location.href = "/history";
-                  else if (t === "Connect") window.location.href = "/connect";
+                  if (t === "Diagnose") navigate("/");
+                  else if (t === "History") navigate("/history");
+                  else if (t === "Connect") navigate("/connect");
                 }}
                 className={`py-3 ${
                   (t === "Diagnose" && location.pathname === "/") ||
