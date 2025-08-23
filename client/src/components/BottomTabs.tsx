@@ -2,7 +2,7 @@ import React from "react";
 
 interface BottomTabsProps {
   navigate: any;
-  activeTab: 'diagnose' | 'history' | 'results';
+  activeTab: 'diagnose' | 'history' | 'results' | 'connect';
 }
 
 export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
@@ -38,8 +38,16 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
         <button
           onClick={() => navigate("/connect")}
           className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
-            activeTab === "results"
+            activeTab === "connect"
               ? "text-primary bg-accent"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+          }`}
+        >
+          <div className="flex flex-col items-center gap-1">
+            <span>🔗</span>
+            <span>Connect</span>
+          </div>
+        </button>ccent"
               : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
           }`}
         >
