@@ -2,47 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagePicker from "../components/ImagePicker";
 import { useHistory } from "../state/historyContext";
+import { Button } from "../components/ui/button";
+import { Textarea } from "../components/ui/textarea";
+import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 
-// Dummy BottomTabs component for context, assuming it exists elsewhere
-// If BottomTabs is defined in the same file, it should be placed here.
-// For this example, we'll assume it's imported correctly.
-// Placeholder for BottomTabs if not provided in the context:
-/*
-const BottomTabs = ({ navigate, activeTab }) => {
-  const tabs = [
-    { id: "diagnose", label: "Diagnose", path: "/diagnose" },
-    { id: "history", label: "History", path: "/history" },
-    { id: "results", label: "Results", path: "/results" },
-  ];
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md flex justify-around p-2 border-t">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => navigate(tab.path)}
-          className={`flex flex-col items-center p-2 rounded-lg ${
-            activeTab === tab.id
-              ? "bg-blue-100 text-blue-600 font-semibold"
-              : "text-gray-500"
-          }`}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-};
-*/
-// Assuming BottomTabs is imported from "../components/BottomTabs"
-// If it's not, and the intention is to create it here, uncomment and adjust the above.
-// For now, we proceed assuming it's an external import.
-
-// NOTE: The original provided code snippet for `DiagnoseTab` is missing the import for `BottomTabs`.
-// Based on the changes, it's clear that `BottomTabs` is intended to be used.
-// I will add a placeholder import and assume the component is correctly defined elsewhere.
-// If `BottomTabs` was meant to be defined in this file, the structure would need adjustment.
-import BottomTabs from "../components/BottomTabs"; // Assuming this is the correct path
+import BottomTabs from "../components/BottomTabs";
 
 
 export default function DiagnoseTab() {
@@ -139,60 +103,119 @@ export default function DiagnoseTab() {
 
 
   return (
-    <div className="min-h-dvh bg-gray-50 flex flex-col">
-      <header className="p-4 text-center bg-white border-b">
-        <h1 className="font-bold">Dogtor AI</h1>
-        <div className="text-sm text-gray-500 mt-1">Step 1 of 3</div>
-      </header>
+    <div className="container max-w-2xl mx-auto p-4 space-y-6">
+      {/* Status indicator */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-primary"></div>
+          <span>Step 1</span>
+        </div>
+        <div className="w-4 h-px bg-border"></div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-muted"></div>
+          <span>Step 2</span>
+        </div>
+        <div className="w-4 h-px bg-border"></div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-muted"></div>
+          <span>Step 3</span>
+        </div>
+      </div>
 
-      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-        <div className="space-y-6">{debugMsg && (
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-blue-700 text-sm">{debugMsg}</p>
-            </div>
-          )}
-          <div className="rounded-2xl border p-4">
-            <h2 className="font-semibold mb-2">Add photo</h2>
-            <ImagePicker onChange={setImageFile} />
-            {errors.image && (
-              <p className="text-red-600 text-sm mt-2">{errors.image}</p>
-            )}
+      {/* Debug message */}
+      {debugMsg && (
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+            <p className="text-sm font-medium text-primary">{debugMsg}</p>
           </div>
+        </div>
+      )}
 
-          <form onSubmit={onInitialSubmit} className="rounded-2xl border p-4">
-            <h2 className="font-semibold mb-2">Notes</h2>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Describe any symptoms, behaviors, or concerns about your pet (optional)..."
-              className="w-full h-24 p-3 border rounded-lg resize-none text-sm"
-            />
+      {/* Photo upload section */}
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <AppIcons.camera size={20} className="text-primary" />
+            Add Photo
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Upload a clear photo of your pet for accurate analysis
+          </p>
+        </div>
+        
+        <ImagePicker onChange={setImageFile} />
+        {errors.image && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+            <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-destructive">{errors.image}</p>
+          </div>
+        )}
+      </div>
 
-            {errors.submit && (
-              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm font-medium">⚠️ Error</p>
-                <p className="text-red-600 text-sm mt-1">{errors.submit}</p>
-                {errors.submit.includes("OpenAI") && (
-                  <p className="text-red-500 text-xs mt-2">
-                    Check your OpenAI API key in the Secrets tab or verify your account has available credits.
-                  </p>
-                )}
+      {/* Notes section */}
+      <form onSubmit={onInitialSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <Edit size={20} className="text-primary" />
+              Describe Symptoms
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Tell us about any symptoms, behaviors, or concerns (optional)
+            </p>
+          </div>
+          
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Describe what you've noticed about your pet's health..."
+            className="min-h-[100px] resize-none"
+            data-testid="textarea-symptoms"
+          />
+        </div>
+
+        {/* Error message */}
+        {errors.submit && (
+          <div className="space-y-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+            <div className="flex items-start gap-2">
+              <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-destructive">Analysis Failed</p>
+                <p className="text-sm text-destructive/80">{errors.submit}</p>
+              </div>
+            </div>
+            {errors.submit.includes("OpenAI") && (
+              <div className="p-3 rounded-md bg-muted/50">
+                <p className="text-xs text-muted-foreground">
+                  💡 This might be due to API key issues or account credits. Check your OpenAI configuration in the Secrets tab.
+                </p>
               </div>
             )}
+          </div>
+        )}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="mt-4 w-full h-12 rounded-xl bg-black text-white disabled:opacity-50"
-            >
-              {submitting ? "Generating Questions..." : "Continue"}
-            </button>
-            {debugMsg && <p className="text-xs text-blue-600 mt-2">{debugMsg}</p>}
-          </form>
-        </div>
-      </main>
-
-      <BottomTabs navigate={navigate} activeTab="diagnose" />
+        {/* Submit button */}
+        <Button
+          type="submit"
+          disabled={submitting}
+          size="lg"
+          className="w-full h-12 text-base font-medium shadow-md hover:shadow-lg transition-all"
+          data-testid="button-continue"
+        >
+          {submitting ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+              Analyzing...
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <ArrowRight size={20} />
+              Continue Analysis
+            </div>
+          )}
+        </Button>
+      </form>
     </div>
   );
 }
