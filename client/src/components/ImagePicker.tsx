@@ -64,7 +64,7 @@ export default function ImagePicker({ onChange, className }: Props) {
             <img
               src={selectedFile.preview}
               alt="Selected pet photo"
-              className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
               data-testid="img-preview"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />

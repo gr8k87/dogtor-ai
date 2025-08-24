@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import BottomTabs from "../components/BottomTabs";
+import { AppIcons, ArrowLeft, AlertTriangle } from "../components/icons";
 
 interface ResultsProps {}
 
@@ -19,22 +20,56 @@ export default function Results({}: ResultsProps) {
 
   if (!cards) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <header className="p-4 text-center">
-          <h1 className="font-bold">Dogtor AI</h1>
-          <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+      <div className="min-h-dvh flex flex-col bg-background">
+        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center justify-between px-4">
+            <div className="flex items-center gap-3">
+              <AppIcons.logo size={32} className="text-primary" />
+              <h1 className="text-xl font-bold">Dogtor AI</h1>
+            </div>
+          </div>
         </header>
 
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-          <div className="text-center p-6">
-            <p className="text-gray-500">No results to display</p>
-            <Button
-              onClick={handleNewDiagnosis}
-              variant="secondary"
-              className="mt-4"
-            >
-              Back to Diagnose
-            </Button>
+        <main className="flex-1 pb-20 overflow-y-auto">
+          <div className="container max-w-2xl mx-auto p-4 space-y-6">
+            {/* Status indicator */}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-muted"></div>
+                <span>Step 1</span>
+              </div>
+              <div className="w-4 h-px bg-border"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-muted"></div>
+                <span>Step 2</span>
+              </div>
+              <div className="w-4 h-px bg-border"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-primary"></div>
+                <span>Step 3</span>
+              </div>
+            </div>
+
+            <div className="text-center p-12 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center mx-auto">
+                <AppIcons.medical size={32} className="text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-lg font-medium">No Results Available</h2>
+                <p className="text-sm text-muted-foreground">
+                  We couldn't generate results for this diagnosis
+                </p>
+              </div>
+              <Button
+                onClick={handleNewDiagnosis}
+                variant="default"
+                className="mt-6"
+                data-testid="button-back-diagnose"
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back to Diagnose
+              </Button>
+            </div>
           </div>
         </main>
 
@@ -44,125 +79,190 @@ export default function Results({}: ResultsProps) {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      <header className="p-4 text-center">
-        <h1 className="font-bold">Dogtor AI</h1>
-        <div className="text-sm text-gray-500 mt-1">Step 3 of 3</div>
+    <div className="min-h-dvh flex flex-col bg-background">
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <AppIcons.logo size={32} className="text-primary" />
+            <h1 className="text-xl font-bold">Dogtor AI</h1>
+          </div>
+        </div>
       </header>
 
-      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-        <div className="flex items-center mb-4">
-          <button
-            onClick={handleNewDiagnosis}
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            ← Back to Diagnose
-          </button>
-        </div>
+      <main className="flex-1 pb-20 overflow-y-auto">
+        <div className="container max-w-2xl mx-auto p-4 space-y-6">
+          {/* Status indicator */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-muted"></div>
+              <span>Step 1</span>
+            </div>
+            <div className="w-4 h-px bg-border"></div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-muted"></div>
+              <span>Step 2</span>
+            </div>
+            <div className="w-4 h-px bg-border"></div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-primary"></div>
+              <span>Step 3</span>
+            </div>
+          </div>
 
-        <div className="space-y-4">
-          {/* Card 1: Diagnosis */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">{cards.diagnosis?.title || "Diagnosis"}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-2">
-                <b>Likely condition:</b> {cards.diagnosis?.likely_condition || "Analysis complete"}
-              </p>
-              {cards.diagnosis?.other_possibilities && (
-                <>
-                  <p className="mb-1"><b>Other possibilities:</b></p>
-                  <ul className="text-sm mb-3">
-                    {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
-                      <li key={i} className="ml-2">
-                        • {p.name} ({p.likelihood} likelihood)
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {cards.diagnosis?.urgency && (
-                <>
-                  <p className="mb-1"><b>Urgency:</b></p>
-                  <p className="text-sm">
-                    {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
-                  </p>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          {/* Back button */}
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              onClick={handleNewDiagnosis}
+              className="p-0 h-auto font-medium text-primary hover:text-primary/80"
+              data-testid="button-back-diagnose-top"
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Diagnose
+            </Button>
+          </div>
 
-          {/* Card 2: Care Tips */}
-          {cards.care && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">{cards.care.title}</CardTitle>
+          {/* Results content */}
+          <div className="space-y-6">
+            {/* Card 1: Diagnosis */}
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <AppIcons.medical size={20} className="text-primary" />
+                  {cards.diagnosis?.title || "Diagnosis"}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                {cards.care.tips && (
-                  <ul className="space-y-2 mb-3">
-                    {cards.care.tips.map((tip: any, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <span>{tip.icon}</span>
-                        <span>{tip.text}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-sm mb-1">Likely condition:</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {cards.diagnosis?.likely_condition || "Analysis complete"}
+                  </p>
+                </div>
+                
+                {cards.diagnosis?.other_possibilities && (
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Other possibilities:</h4>
+                    <ul className="space-y-1">
+                      {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
+                        <li key={i} className="text-sm text-muted-foreground flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"></div>
+                          <span>{p.name} ({p.likelihood} likelihood)</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
-                {cards.care.disclaimer && (
-                  <p className="text-xs text-muted-foreground italic">{cards.care.disclaimer}</p>
+                
+                {cards.diagnosis?.urgency && (
+                  <div className="p-3 rounded-md bg-muted/50 border">
+                    <h4 className="font-medium text-sm mb-1">Urgency Level:</h4>
+                    <p className="text-sm">
+                      {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
+                    </p>
+                  </div>
                 )}
               </CardContent>
             </Card>
-          )}
 
-          {/* Card 3: Costs */}
-          {cards.costs && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">{cards.costs.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {cards.costs.disclaimer && (
-                  <p className="text-xs text-muted-foreground mb-3">{cards.costs.disclaimer}</p>
-                )}
-                {cards.costs.steps && (
-                  <ul className="space-y-3">
-                    {cards.costs.steps.map((step: any, i: number) => (
-                      <li key={i} className="border border-border rounded-lg p-3">
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg">{step.icon}</span>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                              <h3 className="font-medium text-foreground">{step.name}</h3>
-                              <span className="text-sm font-medium text-green-600">{step.cost}</span>
+            {/* Card 2: Care Tips */}
+            {cards.care && (
+              <Card className="border-l-4 border-l-green-500">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AppIcons.health size={20} className="text-green-500" />
+                    {cards.care.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {cards.care.tips && (
+                    <ul className="space-y-3">
+                      {cards.care.tips.map((tip: any, i: number) => (
+                        <li key={i} className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100">
+                          <span className="text-lg flex-shrink-0">{tip.icon}</span>
+                          <span className="text-sm text-green-800">{tip.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {cards.care.disclaimer && (
+                    <p className="text-xs text-muted-foreground italic p-2 bg-muted/30 rounded">
+                      {cards.care.disclaimer}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Card 3: Costs */}
+            {cards.costs && (
+              <Card className="border-l-4 border-l-blue-500">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AppIcons.upload size={20} className="text-blue-500" />
+                    {cards.costs.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {cards.costs.disclaimer && (
+                    <p className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
+                      {cards.costs.disclaimer}
+                    </p>
+                  )}
+                  {cards.costs.steps && (
+                    <div className="space-y-3">
+                      {cards.costs.steps.map((step: any, i: number) => (
+                        <div key={i} className="border border-border rounded-lg p-4 bg-card">
+                          <div className="flex items-start gap-3">
+                            <span className="text-lg flex-shrink-0">{step.icon}</span>
+                            <div className="flex-1 space-y-1">
+                              <div className="flex justify-between items-start">
+                                <h4 className="font-medium text-sm">{step.name}</h4>
+                                <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                  {step.cost}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{step.desc}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Likelihood: {step.likelihood}
+                              </p>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-1">{step.desc}</p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Likelihood: {step.likelihood}
-                            </p>
                           </div>
                         </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
 
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mt-6">
-          <div className="flex items-start space-x-3">
-            <span className="text-orange-500 text-lg">⚠️</span>
-            <div>
-              <h3 className="font-medium text-orange-800 mb-1">Important Disclaimer</h3>
-              <p className="text-orange-700 text-sm">
-                This AI diagnosis is for informational purposes only and should not replace professional veterinary care.
-                Always consult with a qualified veterinarian for accurate diagnosis and treatment.
-              </p>
+          {/* Disclaimer */}
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h3 className="font-medium text-amber-800 text-sm">Important Disclaimer</h3>
+                <p className="text-amber-700 text-sm">
+                  This AI diagnosis is for informational purposes only and should not replace professional veterinary care.
+                  Always consult with a qualified veterinarian for accurate diagnosis and treatment.
+                </p>
+              </div>
             </div>
+          </div>
+
+          {/* Action button */}
+          <div className="pt-4">
+            <Button
+              onClick={handleNewDiagnosis}
+              variant="outline"
+              size="lg"
+              className="w-full h-12"
+              data-testid="button-new-diagnosis"
+            >
+              <AppIcons.medical size={20} className="mr-2" />
+              Start New Diagnosis
+            </Button>
           </div>
         </div>
       </main>
