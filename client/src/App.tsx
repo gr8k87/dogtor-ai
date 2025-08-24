@@ -64,13 +64,15 @@ function Splash({ onStart }: { onStart: () => void }) {
 
 function AppContent() {
   const [tab, setTab] = useState<Tab>("Diagnose");
-  const [started, setStarted] = useState<boolean>(false);
+  const [started, setStarted] = useState<boolean>(
+    () => localStorage.getItem("hasStarted") === "1",
+  );
   const location = useLocation();
   const navigate = useNavigate();
 
   function begin() {
+    localStorage.setItem("hasStarted", "1");
     setStarted(true);
-    navigate("/");
   }
 
   // Hide navigation on question and result pages
