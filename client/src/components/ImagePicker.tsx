@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { AppIcons, Camera, Upload, X, Image as ImageIcon } from "./icons";
 import { cn } from "../lib/utils";
 
-type Props = { 
+type Props = {
   onChange: (file: File | null) => void;
   className?: string;
 };
@@ -17,7 +17,7 @@ export default function ImagePicker({ onChange, className }: Props) {
   function handle(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setIsLoading(true);
-    
+
     onChange(f);
     if (f) {
       const previewUrl = URL.createObjectURL(f);
@@ -27,7 +27,7 @@ export default function ImagePicker({ onChange, className }: Props) {
       setPreview(null);
       setSelectedFile(null);
     }
-    
+
     setTimeout(() => setIsLoading(false), 300); // Small delay for better UX
   }
 
@@ -68,7 +68,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               data-testid="img-preview"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-            
+
             {/* Overlay info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
               <div className="flex items-center justify-between text-white">
@@ -82,7 +82,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               </div>
             </div>
           </div>
-          
+
           {/* Remove button */}
           <Button
             variant="destructive"
@@ -93,7 +93,7 @@ export default function ImagePicker({ onChange, className }: Props) {
           >
             <X size={16} />
           </Button>
-          
+
           {/* Replace button */}
           <div className="flex gap-2 mt-4">
             <Button
@@ -133,14 +133,14 @@ export default function ImagePicker({ onChange, className }: Props) {
                       <AppIcons.camera size={32} className="text-primary" />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">Add Your Pet's Photo</h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
                       Take a clear photo of your pet or upload from your device. Better photos lead to more accurate analysis.
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-green-500" />
@@ -153,7 +153,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               )}
             </div>
           </div>
-          
+
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button
@@ -179,7 +179,7 @@ export default function ImagePicker({ onChange, className }: Props) {
           </div>
         </div>
       )}
-      
+
       <input
         type="file"
         accept="image/*"
