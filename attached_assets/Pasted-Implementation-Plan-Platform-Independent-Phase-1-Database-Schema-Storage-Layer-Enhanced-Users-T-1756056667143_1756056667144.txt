@@ -1,0 +1,116 @@
+Implementation Plan (Platform-Independent)
+Phase 1: Database Schema & Storage Layer
+Enhanced Users Table in shared/schema.ts:
+id - Primary key (UUID)
+authMethod - "google" or "email" (track signup method)
+Google OAuth fields:
+googleId - Unique Google identifier (nullable for email users)
+email - Email address (from Google or user input)
+emailVerified - Boolean verification status
+firstName - Given name (from Google or user input)
+lastName - Family name (from Google or user input)
+fullName - Complete name (from Google or constructed)
+profileImageUrl - Google profile photo (nullable for email users)
+Email signup fields:
+passwordHash - Hashed password (nullable for Google users)
+Pet information fields:
+petName - Pet's name (required)
+petBreed - Pet's breed (required)
+petAge - Pet's age (optional, can add later)
+petGender - Pet's gender (optional, can add later)
+System fields:
+createdAt, updatedAt, lastLoginAt, isActive
+Sessions table for secure session storage (express-session + connect-pg-simple)
+History table updates to link records to user IDs instead of "demo-user"
+Phase 2: Backend Authentication System
+Google OAuth 2.0 setup using Passport.js + passport-google-oauth20:
+Google Cloud Console project configuration
+OAuth 2.0 client credentials setup
+Passport Google strategy implementation
+Automatic account creation for new Google users
+Email authentication using Passport.js + passport-local:
+Password hashing with bcrypt
+Email/password validation
+Account creation for email signups
+Session management:
+express-session with PostgreSQL storage
+Secure cookie configuration
+Session cleanup and expiration
+SendGrid email integration:
+Welcome emails for new users (both Google and email)
+Email verification for email signups
+Profile update confirmations
+Password reset emails
+Authentication routes:
+/auth/google - Initiate Google OAuth flow
+/auth/google/callback - Handle OAuth callback
+/auth/email/signup - Email account creation
+/auth/email/login - Email login
+/auth/logout - Clear session and logout
+/api/auth/user - Get current user profile
+/api/auth/profile - Update user profile and pet info
+/api/auth/verify-email - Email verification
+Protected route middleware for /api/diagnose/* and /api/history/*
+Phase 3: Frontend Authentication UI
+Login/Signup Page:
+Primary: Large "Continue with Google" button (handles both login/signup)
+Divider: "OR" separator line
+Secondary: Email login form (email + password)
+Links: "Create account with email" | "Forgot password"
+Email Signup Flow:
+Minimal form: Email + Password + Pet Name + Pet Breed only
+Progressive disclosure: Collect additional pet details later
+Email verification: Send confirmation email via SendGrid
+Google OAuth Flow:
+New users: OAuth success → Pet profile completion (if missing pet data)
+Returning users: OAuth success → Redirect to main app
+Profile sync: Update Google data on each login
+Profile Management:
+Account settings page with user and pet information
+Progressive pet profile completion (age, gender, medical history)
+Profile picture handling (Google photo or upload option)
+Account linking (future: link Google to existing email account)
+Authentication State Management:
+Protected route handling with login redirects
+Session persistence across browser sessions
+Loading states during authentication flows
+Error handling for failed logins/signups
+Phase 4: Data Migration & Enhancement
+Database migration from Supabase:
+History record association with new user accounts
+Data cleanup and normalization
+Migration scripts for existing data
+Enhanced user experience:
+Personalized greetings with pet names
+User-specific diagnostic history
+Pet profile-based recommendations
+Custom emergency contact information
+Advanced features:
+Multiple pet profiles per user account
+Family account sharing (multiple users, same pets)
+Veterinarian connections tied to user profiles
+Technology Stack (All Platform-Independent)
+Authentication: Passport.js with Google OAuth 2.0 and Local Strategy
+Session Management: express-session + connect-pg-simple
+Password Security: bcrypt for hashing
+Email Service: SendGrid (100 emails/day free)
+Database: PostgreSQL with Drizzle ORM
+Frontend: React with protected routes and session management
+Security Features
+OAuth 2.0 standard with HTTPS enforcement
+Secure session storage in PostgreSQL
+Password hashing with bcrypt + salt
+CSRF protection and secure headers
+Email verification for account security
+Rate limiting on authentication endpoints
+Cost Breakdown (Starting Free)
+✅ Google OAuth: Completely free
+✅ SendGrid: 100 emails/day free tier
+✅ PostgreSQL: Free on most hosting platforms
+✅ All libraries: Open source and free
+Deployment Flexibility
+✅ Platform agnostic: Works on any Node.js hosting
+✅ No vendor lock-in: Standard OAuth and email services
+✅ Docker ready: Can be containerized for any deployment
+✅ Database portable: PostgreSQL runs everywhere
+✅ Scalable: Can handle thousands of users on free tiers
