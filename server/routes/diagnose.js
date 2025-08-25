@@ -23,7 +23,7 @@ const supabase = createClient(
 // Create a new case and generate questions
 r.post("/cases", async (req, res) => {
   const { symptoms, imageUrl } = req.body || {};
-  console.log("📝 Case creation request:", { symptoms, imageUrl });
+  console.log("📝 Case creation request:", { symptoms, imageUrl, user: req.currentUser?.id });
 
   try {
     // Create draft case in database
@@ -33,6 +33,7 @@ r.post("/cases", async (req, res) => {
         symptoms: symptoms || "general health check",
         image_url: imageUrl,
         status: "draft",
+        user_id: req.currentUser?.id || null,
         created_at: new Date().toISOString()
       }])
       .select()
