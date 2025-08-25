@@ -15,19 +15,28 @@ import { ThemeToggle } from "./components/theme-toggle";
 import { ProfileButton } from "./components/ProfileButton";
 import { AppIcons } from "./components/icons";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OfflineBadge from "./components/OfflineBadge";
 
 type Tab = "Diagnose" | "History" | "Connect" | "Results";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
-function Splash({ onStart }: { onStart: () => void }) {
+function Splash({ onComplete }: { onComplete: () => void }) {
+  useEffect(() => {
+    // Auto-transition to login after 2.5 seconds
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-background to-muted/20">
       <div className="max-w-md mx-auto space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
-            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 animate-pulse">
               <AppIcons.logo size={64} className="text-primary" />
             </div>
           </div>
@@ -46,14 +55,10 @@ function Splash({ onStart }: { onStart: () => void }) {
             <span>AI-powered pet health guidance</span>
           </div>
           
-          <Button
-            onClick={onStart}
-            size="lg"
-            className="w-full h-12 text-base font-medium shadow-lg hover:shadow-xl transition-all"
-            data-testid="button-get-started"
-          >
-            Get started
-          </Button>
+          {/* Loading indicator */}
+          <div className="flex justify-center">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
         </div>
 
         <div className="pt-4 border-t border-border">
@@ -68,19 +73,81 @@ function Splash({ onStart }: { onStart: () => void }) {
 
 function AppContent() {
   const [tab, setTab] = useState<Tab>("Diagnose");
-  const [started, setStarted] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  function begin() {
-    setStarted(true);
+  function handleSplashComplete() {
+    setShowSplash(false);
   }
+
+  // Check authentication status on mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/auth/user', {
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
+
+  // Handle demo user access
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('demo') === 'true') {
+      handleDemoAccess();
+    }
+  }, []);
+
+  const handleDemoAccess = async () => {
+    try {
+      const response = await fetch('/auth/demo', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setShowSplash(false);
+        navigate('/', { replace: true });
+      }
+    } catch (error) {
+      console.error('Demo access failed:', error);
+    }
+  };
 
   // Hide navigation on question, result, and auth pages
   const hideNav = location.pathname.includes("/questions/") || location.pathname.includes("/results/") || 
                   location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/profile";
 
-  if (!started) return <Splash onStart={begin} />;
+  // Show splash screen first
+  if (showSplash) return <Splash onComplete={handleSplashComplete} />;
+  
+  // If authentication status is still loading, show a loading screen
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  // If not authenticated, redirect to login (except for auth pages)
+  if (!isAuthenticated && !['/login', '/signup'].includes(location.pathname)) {
+    return <Login />;
+  }
 
   return (
     <div className="min-h-dvh flex flex-col bg-background">

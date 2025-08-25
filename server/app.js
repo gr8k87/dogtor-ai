@@ -57,7 +57,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
 }));
 
@@ -310,6 +310,74 @@ app.post('/auth/logout', (req, res) => {
     }
     res.json({ success: true });
   });
+});
+
+// Demo authentication (for testing)
+app.post('/auth/demo', async (req, res) => {
+  try {
+    console.log('🧪 Demo authentication requested');
+    
+    // Check if demo user already exists
+    const { data: existingDemoUser, error: findError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', 'demo@dogtorai.com')
+      .single();
+
+    let demoUser = existingDemoUser;
+
+    // Create demo user if doesn't exist
+    if (!existingDemoUser || findError) {
+      console.log('🧪 Creating new demo user');
+      const { data: newDemoUser, error: createError } = await supabase
+        .from('users')
+        .insert([{
+          auth_method: 'demo',
+          email: 'demo@dogtorai.com',
+          first_name: 'Demo',
+          last_name: 'User',
+          full_name: 'Demo User',
+          // Start with empty pet profile - user will set this up
+          pet_name: null,
+          pet_breed: null,
+          pet_birth_month: null,
+          pet_birth_year: null,
+          pet_gender: null,
+          email_verified: true
+        }])
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('❌ Demo user creation error:', createError);
+        return res.status(500).json({ error: 'Failed to create demo user' });
+      }
+
+      demoUser = newDemoUser;
+    }
+
+    // Log in the demo user
+    req.logIn(demoUser, (err) => {
+      if (err) {
+        console.error('❌ Demo login error:', err);
+        return res.status(500).json({ error: 'Demo login failed' });
+      }
+      
+      console.log('✅ Demo user logged in successfully');
+      res.json({ 
+        success: true, 
+        user: { 
+          id: demoUser.id, 
+          email: demoUser.email,
+          isDemo: true 
+        } 
+      });
+    });
+
+  } catch (error) {
+    console.error('❌ Demo auth error:', error);
+    res.status(500).json({ error: 'Demo authentication failed' });
+  }
 });
 
 // Get current user

@@ -93,6 +93,8 @@ export default function Login() {
     window.location.href = '/auth/google';
   };
 
+  const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -103,9 +105,9 @@ export default function Login() {
               <AppIcons.logo size={48} className="text-primary" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome to Dogtor AI</h1>
           <p className="text-muted-foreground mt-2">
-            Sign in to your Dogtor AI account
+            Sign in to get personalized pet health guidance
           </p>
         </div>
 
@@ -118,7 +120,7 @@ export default function Login() {
             <Button
               onClick={handleGoogleLogin}
               variant="outline"
-              className="w-full"
+              className="w-full h-12 text-base"
               disabled={isLoading}
               data-testid="button-google-login"
             >
@@ -143,85 +145,108 @@ export default function Login() {
               Continue with Google
             </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with email
-                </span>
-              </div>
-            </div>
-
-            {/* Email Login Form */}
-            <form onSubmit={handleEmailLogin} className="space-y-4">
-              {errors.general && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-login-error">
-                  {errors.general}
+            {/* Hidden Email Login Form - Preserved for future use */}
+            {isEmailFlowEnabled && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with email
+                    </span>
+                  </div>
                 </div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={errors.email ? "border-red-500" : ""}
-                  disabled={isLoading}
-                  data-testid="input-email"
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500" data-testid="text-email-error">
-                    {errors.email}
-                  </p>
-                )}
+                {/* Email Login Form */}
+                <form onSubmit={handleEmailLogin} className="space-y-4">
+                  {errors.general && (
+                    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-login-error">
+                      {errors.general}
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className={errors.email ? "border-red-500" : ""}
+                      disabled={isLoading}
+                      data-testid="input-email"
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-red-500" data-testid="text-email-error">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className={errors.password ? "border-red-500" : ""}
+                      disabled={isLoading}
+                      data-testid="input-password"
+                    />
+                    {errors.password && (
+                      <p className="text-sm text-red-500" data-testid="text-password-error">
+                        {errors.password}
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading}
+                    data-testid="button-email-login"
+                  >
+                    {isLoading ? 'Signing in...' : 'Sign in'}
+                  </Button>
+                </form>
+
+                <div className="text-center text-sm text-muted-foreground">
+                  Don't have an account?{' '}
+                  <Link 
+                    to="/signup" 
+                    className="text-primary hover:text-primary/80 font-medium"
+                    data-testid="link-signup"
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {/* Message when email flow is disabled */}
+            {!isEmailFlowEnabled && (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Other signup options coming soon
+                </p>
+                <div className="text-xs text-muted-foreground">
+                  <a 
+                    href="/?demo=true" 
+                    className="text-primary hover:text-primary/80 underline"
+                    data-testid="link-demo"
+                  >
+                    Try demo version
+                  </a>
+                </div>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className={errors.password ? "border-red-500" : ""}
-                  disabled={isLoading}
-                  data-testid="input-password"
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500" data-testid="text-password-error">
-                    {errors.password}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-                data-testid="button-email-login"
-              >
-                {isLoading ? 'Signing in...' : 'Sign in'}
-              </Button>
-            </form>
-
-            <div className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
-              <Link 
-                to="/signup" 
-                className="text-primary hover:text-primary/80 font-medium"
-                data-testid="link-signup"
-              >
-                Sign up
-              </Link>
-            </div>
+            )}
           </CardContent>
         </Card>
 

@@ -45,6 +45,8 @@ const GENDERS = [
 
 export default function Signup() {
   const navigate = useNavigate();
+  const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup
+  
   const [formData, setFormData] = useState<SignupFormData>({
     email: '',
     password: '',
@@ -194,9 +196,9 @@ export default function Signup() {
               <AppIcons.logo size={48} className="text-primary" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Get started</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Join Dogtor AI</h1>
           <p className="text-muted-foreground mt-2">
-            Create your account and add your pet
+            Sign up with Google to get personalized pet health guidance
           </p>
         </div>
 
@@ -209,7 +211,7 @@ export default function Signup() {
             <Button
               onClick={handleGoogleSignup}
               variant="outline"
-              className="w-full"
+              className="w-full h-12 text-base"
               disabled={isLoading}
               data-testid="button-google-signup"
             >
@@ -234,19 +236,22 @@ export default function Signup() {
               Continue with Google
             </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with email
-                </span>
-              </div>
-            </div>
+            {/* Hidden Email Signup Form - Preserved for future use */}
+            {isEmailFlowEnabled && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with email
+                    </span>
+                  </div>
+                </div>
 
-            {/* Email Signup Form */}
-            <form onSubmit={handleEmailSignup} className="space-y-4">
+                {/* Email Signup Form */}
+                <form onSubmit={handleEmailSignup} className="space-y-4">
               {errors.general && (
                 <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-signup-error">
                   {errors.general}
@@ -439,18 +444,41 @@ export default function Signup() {
               >
                 {isLoading ? 'Creating account...' : 'Create account'}
               </Button>
-            </form>
+                </form>
 
-            <div className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link 
-                to="/login" 
-                className="text-primary hover:text-primary/80 font-medium"
-                data-testid="link-login"
-              >
-                Sign in
-              </Link>
-            </div>
+                <div className="text-center text-sm text-muted-foreground">
+                  Already have an account?{' '}
+                  <Link 
+                    to="/login" 
+                    className="text-primary hover:text-primary/80 font-medium"
+                    data-testid="link-login"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {/* Message when email flow is disabled */}
+            {!isEmailFlowEnabled && (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Other signup options coming soon
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  For now, please use Google to sign up and we'll help you set up your pet's profile.
+                </p>
+                <div className="text-xs text-muted-foreground mt-2">
+                  <a 
+                    href="/?demo=true" 
+                    className="text-primary hover:text-primary/80 underline"
+                    data-testid="link-demo"
+                  >
+                    Try demo version
+                  </a>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
