@@ -5,7 +5,7 @@
 
 -- 1. Create users table for authentication
 CREATE TABLE IF NOT EXISTS users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   auth_method VARCHAR(10) NOT NULL CHECK (auth_method IN ('google', 'email')),
   
   -- Google OAuth fields
@@ -51,7 +51,7 @@ FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
 
 -- 5. Update cases table to reference users
 ALTER TABLE cases 
-ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS user_id TEXT REFERENCES users(id) ON DELETE SET NULL;
 
 -- 6. Create indexes for performance
 CREATE INDEX IF NOT EXISTS users_google_id_idx ON users (google_id);
