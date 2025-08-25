@@ -120,7 +120,7 @@ export default function Results({}: ResultsProps) {
         </div>
 
         {/* Enhanced Results content */}
-        <div className="grid grid-cols-1 gap-8">
+        <div className="space-y-8">
           {/* Main diagnosis */}
           <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">
@@ -190,7 +190,7 @@ export default function Results({}: ResultsProps) {
           </Card>
 
           {/* Card 3: Costs */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl lg:col-span-2">
+          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-4xl">💰</span>
