@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DynamicForm from "../components/DynamicForm";
-import BottomTabs from "../components/BottomTabs";
 import { Button } from "../components/ui/button";
-import { AppIcons, ArrowRight, ArrowLeft, AlertCircle } from "../components/icons";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Skeleton } from "../components/ui/skeleton";
+import DynamicForm from "../components/DynamicForm";
+import { AppIcons, ArrowLeft, ArrowRight, AlertCircle } from "../components/icons";
 
 interface BaseField {
   id: string;
@@ -48,7 +48,8 @@ export default function Questions() {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [debugMsg, setDebugMsg] = useState("");
 
   useEffect(() => {
     if (!caseId) {
@@ -58,23 +59,23 @@ export default function Questions() {
 
     // Fetch questions for this case
     console.log("🔍 Fetching questions for case:", caseId);
-    
+
     fetch(`/api/diagnose/questions/${caseId}`)
       .then(async res => {
         console.log("📡 Questions API response status:", res.status);
-        
+
         if (res.status === 404) {
           console.log("❌ Questions not found, redirecting home");
           navigate("/");
           return null;
         }
-        
+
         if (!res.ok) {
           const errorText = await res.text();
           console.log("❌ Questions API error:", errorText);
           throw new Error(`Questions API failed: ${res.status} - ${errorText}`);
         }
-        
+
         const data = await res.json();
         console.log("📋 Raw questions response:", data);
         return data;
@@ -84,7 +85,7 @@ export default function Questions() {
           console.log("✅ Questions data received:", data);
           const questions = data.questions || [];
           setQuestions(questions);
-          
+
           console.log(`📊 Found ${questions.length} questions`);
           if (questions.length === 0) {
             console.log("ℹ️ No questions found, allowing skip to results");
@@ -99,11 +100,13 @@ export default function Questions() {
       });
   }, [caseId, navigate]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setSubmitting(true);
+    setError(null);
+    setDebugMsg("📋 Processing your answers...");
 
     try {
+      setDebugMsg("🤖 Analyzing your pet's condition...");
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -115,20 +118,25 @@ export default function Questions() {
 
       if (!response.ok) throw new Error("Failed to get results");
 
+      setDebugMsg("✅ Analysis complete! Redirecting to results...");
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
       console.error("Results submission error:", err);
       setError(err.message);
+      setDebugMsg(`❌ Error: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
-  async function skipQuestions() {
+  const handleSkip = async () => {
     setSubmitting(true);
+    setError(null);
+    setDebugMsg("⚡ Skipping questions...");
 
     try {
+      setDebugMsg("🤖 Generating results with initial information...");
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -137,15 +145,17 @@ export default function Questions() {
 
       if (!response.ok) throw new Error("Failed to get results");
 
+      setDebugMsg("✅ Analysis complete! Redirecting to results...");
       const data = await response.json();
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
       console.error("Skip questions error:", err);
       setError(err.message);
+      setDebugMsg(`❌ Error: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -158,7 +168,7 @@ export default function Questions() {
             </div>
           </div>
         </header>
-        
+
         <main className="flex-1 flex items-center justify-center p-4">
           <div className="text-center space-y-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -242,7 +252,7 @@ export default function Questions() {
                       Try Different Photo
                     </Button>
                     <Button
-                      onClick={skipQuestions}
+                      onClick={handleSkip}
                       disabled={submitting}
                       className="flex-1"
                       data-testid="button-continue-results"
@@ -319,7 +329,7 @@ export default function Questions() {
                       Start Over
                     </Button>
                     <Button
-                      onClick={skipQuestions}
+                      onClick={handleSkip}
                       disabled={submitting}
                       variant="destructive"
                       className="flex-1"
@@ -359,22 +369,65 @@ export default function Questions() {
       </header>
 
       <main className="flex-1 pb-20 overflow-y-auto">
-        <div className="container max-w-2xl mx-auto p-4 space-y-6">
-          {/* Status indicator */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-muted"></div>
-              <span>Step 1</span>
+        <div className="container max-w-2xl mx-auto p-4 space-y-6 relative">
+          {/* Loading overlay */}
+          {submitting && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-xl">
+              <div className="bg-card p-8 rounded-2xl shadow-elevated max-w-sm w-full mx-4">
+                <div className="text-center space-y-4">
+                  <div className="relative mx-auto w-16 h-16">
+                    <div className="absolute inset-0 w-16 h-16 border-4 border-primary/20 rounded-full"></div>
+                    <div className="absolute inset-0 w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold">Generating Results</h3>
+                    <p className="text-sm text-muted-foreground">{debugMsg}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-primary/50 to-primary rounded-full animate-pulse"></div>
+                    </div>
+                    <Skeleton className="h-2 w-3/4 rounded-full mx-auto" />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="w-4 h-px bg-border"></div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-primary"></div>
-              <span>Step 2</span>
+          )}
+
+          {/* Back button */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/")}
+              className="p-2"
+              data-testid="button-back"
+            >
+              <ArrowLeft size={20} />
+            </Button>
+            <h1 className="text-xl font-bold">Questions</h1>
+          </div>
+
+          {/* Animated Progress indicator */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <span>Step 1</span>
+              </div>
+              <div className="w-4 h-px bg-border"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <span>Step 2</span>
+              </div>
+              <div className="w-4 h-px bg-border"></div>
+              <div className="flex items-center gap-1">
+                <div className={`w-2 h-2 rounded-full transition-colors duration-500 ${submitting ? 'bg-primary animate-pulse' : 'bg-muted'}`}></div>
+                <span>Step 3</span>
+              </div>
             </div>
-            <div className="w-4 h-px bg-border"></div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-muted"></div>
-              <span>Step 3</span>
+            <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full w-2/3 transition-all duration-1000 ease-out"></div>
             </div>
           </div>
 
@@ -390,7 +443,7 @@ export default function Questions() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={e => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
               <DynamicForm 
                 schema={questions} 
                 value={answers} 
@@ -404,43 +457,45 @@ export default function Questions() {
                 </div>
               )}
 
-              <div className="flex gap-3">
+              {/* Enhanced Action buttons */}
+              <div className="flex gap-3 pt-4">
                 <Button
-                  type="submit"
+                  variant="outline"
+                  onClick={handleSkip}
                   disabled={submitting}
-                  size="lg"
-                  className="flex-1 h-12 text-base font-medium shadow-md hover:shadow-lg transition-all"
-                  data-testid="button-get-results"
+                  className="flex-1 h-12 font-medium transition-all duration-300 hover:shadow-medium active:scale-95 disabled:hover:scale-100"
+                  data-testid="button-skip"
                 >
                   {submitting ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                      Analyzing...
+                      <span className="animate-pulse">Analyzing...</span>
+                    </div>
+                  ) : "Skip Questions"}
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 h-12 font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-soft hover:shadow-elevated transition-all duration-300 active:scale-95 disabled:hover:scale-100"
+                  data-testid="button-submit"
+                >
+                  {submitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                      <span className="animate-pulse">Analyzing...</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <ArrowRight size={20} />
+                    <div className="flex items-center gap-2 group">
+                      <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                       Get Results
                     </div>
                   )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={skipQuestions}
-                  disabled={submitting}
-                  size="lg"
-                  className="px-6 h-12"
-                  data-testid="button-skip-questions"
-                >
-                  Skip Questions
                 </Button>
               </div>
             </form>
           </div>
         </div>
       </main>
-      
+
       <BottomTabs navigate={navigate} activeTab="diagnose" />
     </div>
   );
