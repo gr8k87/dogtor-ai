@@ -6,9 +6,8 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { Skeleton, SkeletonCard } from "../components/ui/skeleton";
 import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
-
+import { Card, CardContent } from "../components/ui/card";
 import BottomTabs from "../components/BottomTabs";
-
 
 export default function DiagnoseTab() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -88,7 +87,6 @@ export default function DiagnoseTab() {
 
       setDebugMsg("✅ Case created! Redirecting to questions...");
       navigate(`/questions/${caseId}`);
-
     } catch (err: any) {
       console.error("❌ Case creation error", err);
       setDebugMsg(`❌ Error: ${err.message}`);
@@ -100,8 +98,6 @@ export default function DiagnoseTab() {
       setSubmitting(false);
     }
   }
-
-
 
   return (
     <div className="container max-w-2xl mx-auto p-4 space-y-8 relative min-h-screen gradient-hero transition-smooth">
@@ -131,7 +127,9 @@ export default function DiagnoseTab() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <div className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? 'bg-primary animate-pulse scale-110' : 'bg-primary'}`}></div>
+            <div
+              className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? "bg-primary animate-pulse scale-110" : "bg-primary"}`}
+            ></div>
             <span className="font-medium">Photo Upload</span>
           </div>
           <div className="flex-1 h-px bg-gradient-to-r from-primary to-muted"></div>
@@ -146,7 +144,9 @@ export default function DiagnoseTab() {
           </div>
         </div>
         <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
-          <div className={`h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out ${submitting ? 'w-1/3 animate-pulse' : 'w-1/3'}`}></div>
+          <div
+            className={`h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out ${submitting ? "w-1/3 animate-pulse" : "w-1/3"}`}
+          ></div>
         </div>
       </div>
 
@@ -173,11 +173,14 @@ export default function DiagnoseTab() {
                 Upload a clear photo of your pet for accurate analysis
               </p>
             </div>
-        
-        <ImagePicker onChange={setImageFile} />
+
+            <ImagePicker onChange={setImageFile} />
             {errors.image && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
-                <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+                <AlertCircle
+                  size={16}
+                  className="text-destructive mt-0.5 flex-shrink-0"
+                />
                 <p className="text-sm text-destructive">{errors.image}</p>
               </div>
             )}
@@ -199,8 +202,8 @@ export default function DiagnoseTab() {
                   Tell us about any symptoms, behaviors, or concerns (optional)
                 </p>
               </div>
-          
-          <Textarea
+
+              <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Describe what you've noticed about your pet's health..."
@@ -217,16 +220,24 @@ export default function DiagnoseTab() {
             <CardContent className="p-4">
               <div className="space-y-3">
                 <div className="flex items-start gap-2">
-                  <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+                  <AlertCircle
+                    size={16}
+                    className="text-destructive mt-0.5 flex-shrink-0"
+                  />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-destructive">Analysis Failed</p>
-                    <p className="text-sm text-destructive/80">{errors.submit}</p>
+                    <p className="text-sm font-medium text-destructive">
+                      Analysis Failed
+                    </p>
+                    <p className="text-sm text-destructive/80">
+                      {errors.submit}
+                    </p>
                   </div>
                 </div>
                 {errors.submit.includes("OpenAI") && (
                   <div className="p-3 rounded-md bg-muted/50">
                     <p className="text-xs text-muted-foreground">
-                      💡 This might be due to API key issues or account credits. Check your OpenAI configuration in the Secrets tab.
+                      💡 This might be due to API key issues or account credits.
+                      Check your OpenAI configuration in the Secrets tab.
                     </p>
                   </div>
                 )}
@@ -253,7 +264,10 @@ export default function DiagnoseTab() {
             </div>
           ) : (
             <div className="flex items-center gap-3 group">
-              <ArrowRight size={24} className="transition-transform group-hover:translate-x-2" />
+              <ArrowRight
+                size={24}
+                className="transition-transform group-hover:translate-x-2"
+              />
               <span>Continue Analysis</span>
             </div>
           )}

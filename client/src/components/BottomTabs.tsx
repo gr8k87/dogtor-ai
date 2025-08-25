@@ -1,7 +1,6 @@
 import React from "react";
 import { AppIcons } from "./icons";
 import { cn } from "../lib/utils";
-
 interface BottomTabsProps {
   navigate: any;
   activeTab: "diagnose" | "history" | "results" | "connect";
@@ -9,23 +8,23 @@ interface BottomTabsProps {
 
 export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
   const tabs = [
-    { 
-      id: "diagnose", 
-      label: "Diagnose", 
+    {
+      id: "diagnose",
+      label: "Diagnose",
       path: "/",
-      icon: AppIcons.diagnose 
+      icon: AppIcons.diagnose,
     },
-    { 
-      id: "history", 
-      label: "History", 
+    {
+      id: "history",
+      label: "History",
       path: "/history",
-      icon: AppIcons.history 
+      icon: AppIcons.history,
     },
-    { 
-      id: "connect", 
-      label: "Connect", 
+    {
+      id: "connect",
+      label: "Connect",
       path: "/connect",
-      icon: AppIcons.connect 
+      icon: AppIcons.connect,
     },
   ];
 
@@ -35,7 +34,7 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
-          
+
           return (
             <button
               key={tab.id}
@@ -43,23 +42,18 @@ export default function BottomTabs({ navigate, activeTab }: BottomTabsProps) {
               data-testid={`tab-${tab.id}`}
               className={cn(
                 "flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 min-w-[4rem]",
-                isActive 
-                  ? "bg-primary text-primary-foreground shadow-md scale-105" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent hover:scale-105"
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-md scale-105"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent hover:scale-105",
               )}
             >
-              <Icon 
-                size={20} 
-                className="transition-transform duration-200" 
-              />
-              <span className="text-xs font-medium">
-                {tab.label}
-              </span>
+              <Icon size={20} className="transition-transform duration-200" />
+              <span className="text-xs font-medium">{tab.label}</span>
             </button>
           );
         })}
       </div>
-      
+
       {/* Safe area padding for mobile devices */}
       <div className="h-safe-area-inset-bottom" />
     </div>

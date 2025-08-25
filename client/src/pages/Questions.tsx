@@ -4,6 +4,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Skeleton } from "../components/ui/skeleton";
 import DynamicForm from "../components/DynamicForm";
+import BottomTabs from "../components/BottomTabs";
 import { AppIcons, ArrowLeft, ArrowRight, AlertCircle } from "../components/icons";
 
 interface BaseField {
