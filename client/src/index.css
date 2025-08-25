@@ -421,4 +421,39 @@
     transform: translateY(0);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   }
+
+  /* Professional SaaS Styling Utilities */
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)/0.3) 100%);
+  }
+
+  .gradient-card {
+    background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--card)/0.95) 100%);
+  }
+
+  .shadow-medium {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-elevated {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-floating {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  .border-accent {
+    border-color: hsl(var(--border)/0.6);
+  }
+
+  /* Mobile safe area support */
+  .h-safe-area-inset-bottom {
+    height: env(safe-area-inset-bottom);
+  }
+
+  /* Enhanced card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98];
+  }
 }

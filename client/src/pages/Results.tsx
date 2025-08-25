@@ -79,28 +79,53 @@ export default function Results({}: ResultsProps) {
 
   return (
     <div className="min-h-screen gradient-hero transition-smooth">
-      <div className="container max-w-4xl mx-auto p-4 space-y-8">
-        {/* Header */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="p-2 transition-smooth hover:shadow-medium"
-            data-testid="button-back"
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          <h1 className="text-2xl font-bold">Analysis Results</h1>
+      <div className="container max-w-4xl mx-auto p-6 space-y-8 pb-24">
+        {/* Enhanced Header */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/")}
+              className="p-2 transition-smooth hover:shadow-medium rounded-xl"
+              data-testid="button-back"
+            >
+              <ArrowLeft size={20} />
+            </Button>
+            <h1 className="text-3xl font-bold">Analysis Complete</h1>
+          </div>
+          
+          {/* Progress Bar - Step 3 Complete */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-primary/60"></div>
+                <span>Photo Upload</span>
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary/60"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-primary/60"></div>
+                <span>Questions</span>
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-primary animate-pulse scale-110"></div>
+                <span className="font-medium text-primary">Results</span>
+              </div>
+            </div>
+            <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full w-full transition-all duration-1000 ease-out"></div>
+            </div>
+          </div>
         </div>
 
         {/* Enhanced Results content */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Main diagnosis */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating">
+          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <span className="text-3xl">🎯</span>
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <span className="text-4xl">🎯</span>
                 {cards.diagnosis?.title || "Diagnosis"}
               </CardTitle>
             </CardHeader>
@@ -138,10 +163,10 @@ export default function Results({}: ResultsProps) {
           </Card>
 
           {/* Enhanced Recommendations */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating">
+          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <span className="text-3xl">💡</span>
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <span className="text-4xl">💡</span>
                 {cards.care.title}
               </CardTitle>
             </CardHeader>
@@ -165,10 +190,10 @@ export default function Results({}: ResultsProps) {
           </Card>
 
           {/* Card 3: Costs */}
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <AppIcons.upload size={20} className="text-blue-500" />
+          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl lg:col-span-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-2xl flex items-center gap-3">
+                <span className="text-4xl">💰</span>
                 {cards.costs.title}
               </CardTitle>
             </CardHeader>
@@ -233,6 +258,8 @@ export default function Results({}: ResultsProps) {
           </Button>
         </div>
       </div>
+
+      <BottomTabs navigate={navigate} activeTab="results" />
     </div>
   );
 }

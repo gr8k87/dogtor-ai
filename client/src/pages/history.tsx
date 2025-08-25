@@ -51,12 +51,27 @@ export default function History() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <header className="p-4 text-center">
-          <h1 className="font-bold">Dogtor AI</h1>
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center justify-center px-4">
+            <h1 className="text-xl font-bold">Dogtor AI</h1>
+          </div>
         </header>
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-          <div className="text-sm text-gray-500">Loading...</div>
+        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-6 rounded-2xl border bg-card shadow-medium animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded-lg w-32"></div>
+                    <div className="h-5 bg-muted rounded-lg w-48"></div>
+                    <div className="h-3 bg-muted rounded-lg w-40"></div>
+                  </div>
+                  <div className="w-6 h-6 bg-muted rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </main>
         <BottomTabs navigate={navigate} activeTab="history" />
       </div>
@@ -65,12 +80,45 @@ export default function History() {
 
   if (error) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <header className="p-4 text-center">
-          <h1 className="font-bold">Dogtor AI</h1>
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center justify-center px-4">
+            <h1 className="text-xl font-bold">Dogtor AI</h1>
+          </div>
         </header>
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-          <div className="text-sm text-red-600">{error}</div>
+        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+          <div className="text-center py-16">
+            {/* Sad Dog Illustration for Error */}
+            <div className="flex justify-center mb-8">
+              <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-destructive/10 to-destructive/5 flex items-center justify-center shadow-elevated">
+                <svg width="64" height="64" viewBox="0 0 100 100" className="text-destructive">
+                  <circle cx="50" cy="45" r="25" fill="currentColor" opacity="0.1" />
+                  <circle cx="42" cy="40" r="3" fill="currentColor" />
+                  <circle cx="58" cy="40" r="3" fill="currentColor" />
+                  <ellipse cx="50" cy="48" rx="2" ry="3" fill="currentColor" />
+                  <path d="M45 54 Q50 50 55 54" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <circle cx="35" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                  <circle cx="65" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                  <path d="M35 32 Q32 27 30 32" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <path d="M65 32 Q68 27 70 32" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-destructive">Oops! Something went wrong</h2>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                We couldn't load your pet's history right now. Please try again.
+              </p>
+            </div>
+            <div className="mt-8">
+              <button
+                onClick={() => window.location.reload()}
+                className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 font-semibold text-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105 active:scale-95"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
         </main>
         <BottomTabs navigate={navigate} activeTab="history" />
       </div>
@@ -79,23 +127,46 @@ export default function History() {
 
   if (!items.length) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <header className="p-4 text-center">
-          <h1 className="font-bold">Dogtor AI</h1>
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center justify-center px-4">
+            <h1 className="text-xl font-bold">Dogtor AI</h1>
+          </div>
         </header>
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📋</div>
-            <h2 className="text-lg font-semibold mb-2">No History Yet</h2>
-            <p className="text-gray-500 text-sm mb-6">
-              Run a diagnosis first and it will appear here.
-            </p>
-            <button
-              onClick={() => navigate("/")}
-              className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800"
-            >
-              Start Diagnosis
-            </button>
+        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+          <div className="text-center py-16">
+            {/* Friendly Dog Illustration */}
+            <div className="flex justify-center mb-8">
+              <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-elevated">
+                <svg width="64" height="64" viewBox="0 0 100 100" className="text-primary">
+                  <circle cx="50" cy="45" r="25" fill="currentColor" opacity="0.1" />
+                  <circle cx="42" cy="40" r="3" fill="currentColor" />
+                  <circle cx="58" cy="40" r="3" fill="currentColor" />
+                  <ellipse cx="50" cy="48" rx="2" ry="3" fill="currentColor" />
+                  <path d="M45 52 Q50 56 55 52" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <circle cx="35" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                  <circle cx="65" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                  <path d="M35 30 Q32 25 30 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <path d="M65 30 Q68 25 70 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <ellipse cx="50" cy="65" rx="15" ry="8" fill="currentColor" opacity="0.08" />
+                  <path d="M45 58 Q50 62 55 58" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.6" />
+                </svg>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold">No records yet</h2>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                Start your pet's first checkup! Your diagnosis history will appear here.
+              </p>
+            </div>
+            <div className="mt-8">
+              <button
+                onClick={() => navigate("/")}
+                className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 font-semibold text-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105 active:scale-95"
+              >
+                Start Your Pet's First Checkup
+              </button>
+            </div>
           </div>
         </main>
         <BottomTabs navigate={navigate} activeTab="history" />
@@ -104,18 +175,20 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      <header className="p-4 text-center">
-        <h1 className="font-bold">Dogtor AI</h1>
+    <div className="min-h-dvh flex flex-col gradient-hero">
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-center px-4">
+          <h1 className="text-xl font-bold">Dogtor AI</h1>
+        </div>
       </header>
 
-      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">History</h2>
-          <span className="text-sm text-gray-500">{items.length} cases</span>
+      <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Pet Health History</h2>
+          <span className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">{items.length} records</span>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {items.map((item) => (
             <HistoryCard key={item.id} item={item} navigate={navigate} onDelete={handleDelete} />
           ))}
@@ -154,44 +227,62 @@ function HistoryCard({ item, navigate, onDelete }: { item: HistoryEntry; navigat
 
   return (
     <Card 
-      className={`transition-all ${cards ? 'cursor-pointer hover:shadow-md hover:border-gray-300' : ''}`}
+      className={`transition-all duration-300 border-accent rounded-2xl shadow-medium hover:shadow-elevated ${
+        cards ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''
+      }`}
       onClick={cards ? handleClick : undefined}
     >
-      <CardContent>
+      <CardContent className="p-6">
         {cards ? (
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs text-gray-500">{formatDate(item.created_at)}</span>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-xs text-muted-foreground font-medium">{formatDate(item.created_at)}</span>
                 {cards.diagnosis?.urgency && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                  <span className={`text-xs px-3 py-1 rounded-full font-medium ${
+                    cards.diagnosis.urgency.level === 'High' 
+                      ? 'bg-destructive/10 text-destructive border border-destructive/20'
+                      : cards.diagnosis.urgency.level === 'Medium'
+                      ? 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                      : 'bg-green-100 text-green-800 border border-green-200'
+                  }`}>
                     {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}
                   </span>
                 )}
               </div>
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-lg font-semibold text-foreground truncate mb-1">
                 {cards.diagnosis?.likely_condition || "Analysis complete"}
               </p>
-              <p className="text-xs text-gray-500 truncate mt-0.5">
+              <p className="text-sm text-muted-foreground truncate">
                 {item.prompt}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="text-gray-400 ml-2">
+            <div className="flex items-center gap-4 ml-4">
+              <div className="text-primary text-xl">
                 →
               </div>
-              <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
-                🗑️
+              <button 
+                onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} 
+                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-colors duration-200"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2"/>
+                  <line x1="10" y1="11" x2="10" y2="17"/>
+                  <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
               </button>
             </div>
           </div>
         ) : (
-          <div className="space-y-2">
-            <div className="text-xs text-gray-500">{formatDate(item.created_at)}</div>
-            <div className="text-sm font-medium text-gray-700">Raw Data</div>
-            <div className="text-xs text-gray-600 truncate">{item.prompt}</div>
-            <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-red-500 hover:text-red-700">
-              Delete
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground font-medium">{formatDate(item.created_at)}</div>
+            <div className="text-lg font-semibold text-muted-foreground">Raw Data</div>
+            <div className="text-sm text-muted-foreground truncate">{item.prompt}</div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} 
+              className="text-destructive hover:text-destructive/80 font-medium text-sm px-3 py-1 rounded-lg hover:bg-destructive/10 transition-colors duration-200"
+            >
+              Delete Record
             </button>
           </div>
         )}
