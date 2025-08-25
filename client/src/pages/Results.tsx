@@ -120,7 +120,7 @@ export default function Results({}: ResultsProps) {
         </div>
 
         {/* Enhanced Results content */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Main diagnosis */}
           <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">

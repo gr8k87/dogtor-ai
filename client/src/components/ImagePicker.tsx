@@ -118,25 +118,6 @@ export default function ImagePicker({ onChange, className }: Props) {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Friendly Pet Illustration */}
-          <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-medium">
-              <svg width="48" height="48" viewBox="0 0 100 100" className="text-primary">
-                {/* Friendly Dog SVG */}
-                <circle cx="50" cy="45" r="25" fill="currentColor" opacity="0.1" />
-                <circle cx="42" cy="40" r="3" fill="currentColor" />
-                <circle cx="58" cy="40" r="3" fill="currentColor" />
-                <ellipse cx="50" cy="48" rx="2" ry="3" fill="currentColor" />
-                <path d="M45 52 Q50 56 55 52" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <circle cx="35" cy="35" r="8" fill="currentColor" opacity="0.15" />
-                <circle cx="65" cy="35" r="8" fill="currentColor" opacity="0.15" />
-                <path d="M35 30 Q32 25 30 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <path d="M65 30 Q68 25 70 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <ellipse cx="50" cy="65" rx="15" ry="8" fill="currentColor" opacity="0.08" />
-              </svg>
-            </div>
-          </div>
-          
           {/* Upload area */}
           <div className="group relative overflow-hidden rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300 shadow-medium hover:shadow-elevated">
             <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
@@ -162,8 +143,19 @@ export default function ImagePicker({ onChange, className }: Props) {
               ) : (
                 <div className="space-y-6">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                      <AppIcons.camera size={32} className="text-primary" />
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                      <svg width="48" height="48" viewBox="0 0 100 100" className="text-primary">
+                        <circle cx="50" cy="45" r="25" fill="currentColor" opacity="0.1" />
+                        <circle cx="42" cy="40" r="3" fill="currentColor" />
+                        <circle cx="58" cy="40" r="3" fill="currentColor" />
+                        <ellipse cx="50" cy="48" rx="2" ry="3" fill="currentColor" />
+                        <path d="M45 52 Q50 56 55 52" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                        <circle cx="35" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                        <circle cx="65" cy="35" r="8" fill="currentColor" opacity="0.15" />
+                        <path d="M35 30 Q32 25 30 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                        <path d="M65 30 Q68 25 70 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                        <ellipse cx="50" cy="65" rx="15" ry="8" fill="currentColor" opacity="0.08" />
+                      </svg>
                     </div>
                   </div>
                   

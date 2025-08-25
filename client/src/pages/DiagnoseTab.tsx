@@ -100,7 +100,15 @@ export default function DiagnoseTab() {
   }
 
   return (
-    <div className="container max-w-2xl mx-auto p-4 space-y-8 relative min-h-screen gradient-hero transition-smooth">
+    <div className="min-h-dvh flex flex-col gradient-hero">
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-center px-4">
+          <h1 className="text-xl font-bold">Dogtor AI</h1>
+        </div>
+      </header>
+
+      <main className="flex-1 pb-24 overflow-y-auto">
+        <div className="container max-w-2xl mx-auto p-6 space-y-8 relative">
       {/* Loading overlay */}
       {submitting && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-xl">
@@ -273,6 +281,9 @@ export default function DiagnoseTab() {
           )}
         </Button>
       </form>
+        </div>
+      </main>
+      <BottomTabs navigate={navigate} activeTab="diagnose" />
     </div>
   );
 }

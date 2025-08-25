@@ -9,9 +9,16 @@ import {
 
 export default function ConnectTab() {
   return (
-    <div className="container max-w-2xl mx-auto p-4 space-y-6">
-      {/* Find a Vet Card */}
-      <Card className="opacity-75">
+    <div className="min-h-dvh gradient-hero">
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-center px-4">
+          <h1 className="text-xl font-bold">Connect with Vets</h1>
+        </div>
+      </header>
+      
+      <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
+        {/* Find a Vet Card */}
+        <Card className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
         <CardHeader>
           <CardTitle>
             <div className="flex items-center gap-3 mb-4">
@@ -107,8 +114,8 @@ export default function ConnectTab() {
         </CardContent>
       </Card>
 
-      {/* Call TeleVet Card */}
-      <Card className="opacity-75">
+        {/* Call TeleVet Card */}
+        <Card className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
         <CardHeader>
           <CardTitle>
             <div className="flex items-center gap-3 mb-4">
@@ -161,6 +168,7 @@ export default function ConnectTab() {
           </div>
         </CardContent>
       </Card>
+      </main>
     </div>
   );
 }
