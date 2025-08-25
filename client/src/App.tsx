@@ -4,11 +4,15 @@ import DiagnoseTab from "./pages/DiagnoseTab";
 import ConnectTab from "./pages/ConnectTab";
 import Questions from "./pages/Questions";
 import Results from "./pages/Results";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Profile from "./pages/Profile";
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
 import BottomTabs from "./components/BottomTabs";
 import { ThemeProvider } from "./lib/theme-provider";
 import { ThemeToggle } from "./components/theme-toggle";
+import { ProfileButton } from "./components/ProfileButton";
 import { AppIcons } from "./components/icons";
 
 import React, { useState } from "react";
@@ -72,8 +76,9 @@ function AppContent() {
     setStarted(true);
   }
 
-  // Hide navigation on question and result pages
-  const hideNav = location.pathname.includes("/questions/") || location.pathname.includes("/results/");
+  // Hide navigation on question, result, and auth pages
+  const hideNav = location.pathname.includes("/questions/") || location.pathname.includes("/results/") || 
+                  location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/profile";
 
   if (!started) return <Splash onStart={begin} />;
 
@@ -82,6 +87,12 @@ function AppContent() {
       <OfflineBadge />
 
       <Routes>
+        {/* Authentication Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/profile" element={<Profile />} />
+        
+        {/* Main App Routes */}
         <Route path="/" element={
           <>
             <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -90,7 +101,10 @@ function AppContent() {
                   <AppIcons.logo size={32} className="text-primary" />
                   <h1 className="text-xl font-bold">Dogtor AI</h1>
                 </div>
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                  <ProfileButton />
+                  <ThemeToggle />
+                </div>
               </div>
             </header>
             <main className="flex-1 pb-20 overflow-y-auto">
@@ -106,7 +120,10 @@ function AppContent() {
                   <AppIcons.logo size={32} className="text-primary" />
                   <h1 className="text-xl font-bold">Dogtor AI</h1>
                 </div>
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                  <ProfileButton />
+                  <ThemeToggle />
+                </div>
               </div>
             </header>
             <main className="flex-1 pb-20 overflow-y-auto">
@@ -122,7 +139,10 @@ function AppContent() {
                   <AppIcons.logo size={32} className="text-primary" />
                   <h1 className="text-xl font-bold">Dogtor AI</h1>
                 </div>
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                  <ProfileButton />
+                  <ThemeToggle />
+                </div>
               </div>
             </header>
             <main className="flex-1 pb-20 overflow-y-auto">

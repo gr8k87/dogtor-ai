@@ -325,14 +325,15 @@ app.get('/api/auth/user', getCurrentUser, (req, res) => {
 // Update user profile
 app.put('/api/auth/profile', isAuthenticated, async (req, res) => {
   try {
-    const { pet_name, pet_breed, pet_age, pet_gender, first_name, last_name } = req.body;
+    const { pet_name, pet_breed, pet_birth_month, pet_birth_year, pet_gender, first_name, last_name } = req.body;
     
     const { data: updatedUser, error } = await supabase
       .from('users')
       .update({
         pet_name,
         pet_breed,
-        pet_age,
+        pet_birth_month,
+        pet_birth_year,
         pet_gender,
         first_name,
         last_name,
@@ -347,7 +348,7 @@ app.put('/api/auth/profile', isAuthenticated, async (req, res) => {
       return res.status(500).json({ error: 'Failed to update profile' });
     }
 
-    const { password_hash, ...userWithoutPassword } = updatedUser.data;
+    const { password_hash, ...userWithoutPassword } = updatedUser;
     res.json(userWithoutPassword);
   } catch (error) {
     console.error('❌ Profile update error:', error);

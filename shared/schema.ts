@@ -22,7 +22,8 @@ export interface User {
   // Pet information fields
   pet_name?: string;
   pet_breed?: string;
-  pet_age?: number;
+  pet_birth_month?: number; // 1-12
+  pet_birth_year?: number; // e.g., 2020
   pet_gender?: string;
   
   // System fields
@@ -45,7 +46,8 @@ export interface UserInsert {
   password_hash?: string;
   pet_name?: string;
   pet_breed?: string;
-  pet_age?: number;
+  pet_birth_month?: number; // 1-12
+  pet_birth_year?: number; // e.g., 2020
   pet_gender?: string;
 }
 
@@ -58,7 +60,8 @@ export interface UserUpdate {
   profile_image_url?: string;
   pet_name?: string;
   pet_breed?: string;
-  pet_age?: number;
+  pet_birth_month?: number; // 1-12
+  pet_birth_year?: number; // e.g., 2020
   pet_gender?: string;
   last_login_at?: string;
   is_active?: boolean;
@@ -134,14 +137,64 @@ export interface EmailSignupData {
   password: string;
   pet_name: string;
   pet_breed: string;
+  pet_birth_month: number; // 1-12
+  pet_birth_year: number; // e.g., 2020
+  pet_gender?: string;
 }
 
 // Profile completion form data
 export interface ProfileCompletionData {
   pet_name: string;
   pet_breed: string;
-  pet_age?: number;
+  pet_birth_month: number; // 1-12
+  pet_birth_year: number; // e.g., 2020
   pet_gender?: string;
+}
+
+// ================================================
+// Utility Functions
+// ================================================
+
+// Calculate pet age from birth month and year
+export function calculatePetAge(birthMonth: number, birthYear: number): number {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+  
+  let age = currentYear - birthYear;
+  
+  // If we haven't passed the birth month this year, subtract 1
+  if (currentMonth < birthMonth) {
+    age--;
+  }
+  
+  return Math.max(0, age); // Ensure non-negative age
+}
+
+// Format pet age for display (e.g., "3 years old", "8 months old")
+export function formatPetAge(birthMonth: number, birthYear: number): string {
+  const age = calculatePetAge(birthMonth, birthYear);
+  
+  if (age === 0) {
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    
+    let monthsOld = (currentYear - birthYear) * 12 + (currentMonth - birthMonth);
+    monthsOld = Math.max(0, monthsOld);
+    
+    if (monthsOld === 0) {
+      return "Less than 1 month old";
+    } else if (monthsOld === 1) {
+      return "1 month old";
+    } else {
+      return `${monthsOld} months old`;
+    }
+  } else if (age === 1) {
+    return "1 year old";
+  } else {
+    return `${age} years old`;
+  }
 }
 
 // ================================================

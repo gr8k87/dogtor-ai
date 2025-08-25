@@ -20,6 +20,67 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY,
 );
 
+// Helper function to calculate pet age from birth month/year
+function calculatePetAge(birthMonth, birthYear) {
+  if (!birthMonth || !birthYear) return null;
+  
+  const today = new Date();
+  const birthDate = new Date(birthYear, birthMonth - 1, 1); // Month is 0-indexed
+  
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+  
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  
+  if (years > 0) {
+    return months > 0 ? `${years} years, ${months} months` : `${years} years`;
+  } else {
+    return months > 0 ? `${months} months` : 'Less than 1 month';
+  }
+}
+
+// Helper function to get pet context for prompts
+async function getPetContext(currentUser) {
+  if (!currentUser?.id) return '';
+  
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('pet_name, pet_breed, pet_birth_month, pet_birth_year, pet_gender')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (error || !user) return '';
+
+    const petInfo = [];
+    
+    if (user.pet_name) {
+      petInfo.push(`Pet name: ${user.pet_name}`);
+    }
+    
+    if (user.pet_breed) {
+      petInfo.push(`Breed: ${user.pet_breed}`);
+    }
+    
+    if (user.pet_birth_month && user.pet_birth_year) {
+      const age = calculatePetAge(user.pet_birth_month, user.pet_birth_year);
+      petInfo.push(`Age: ${age}`);
+    }
+    
+    if (user.pet_gender) {
+      petInfo.push(`Gender: ${user.pet_gender}`);
+    }
+
+    return petInfo.length > 0 ? `\n\nPet Information: ${petInfo.join(', ')}` : '';
+  } catch (error) {
+    console.error('Error fetching pet context:', error);
+    return '';
+  }
+}
+
 // Create a new case and generate questions
 r.post("/cases", async (req, res) => {
   const { symptoms, imageUrl } = req.body || {};
@@ -46,6 +107,9 @@ r.post("/cases", async (req, res) => {
 
     const caseId = caseData.id;
     console.log("✅ Case created with ID:", caseId);
+
+    // Get pet context for personalized questions
+    const petContext = await getPetContext(req.currentUser);
 
     // Generate questions using existing logic
     const prompt = {
@@ -78,9 +142,11 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
     };
 
     let messages = [prompt];
-    const userPrompt = imageUrl
+    const basePrompt = imageUrl
       ? `Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`
       : `Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
+    
+    const userPrompt = basePrompt + petContext;
 
     if (imageUrl) {
       const imagePath = path.join(__dirname, "..", imageUrl);
@@ -422,6 +488,9 @@ r.post("/results", async (req, res) => {
       }
     }
 
+    // Get pet context for personalized diagnosis
+    const petContext = await getPetContext(req.currentUser);
+
     // Generate 3 separate prompts for the 3 cards
     const prompt = {
       role: "system",
@@ -475,7 +544,7 @@ r.post("/results", async (req, res) => {
     `,
     };
 
-    let userPrompt = finalImageUrl
+    let basePrompt = finalImageUrl
       ? `Analyze this pet image for health concerns. Symptoms: ${finalSymptoms || "none provided"}`
       : `Pet health analysis based on symptoms: ${finalSymptoms || "none provided"}`;
 
@@ -483,8 +552,11 @@ r.post("/results", async (req, res) => {
       const answerText = Object.entries(answers)
         .map(([key, value]) => `${key}: ${value}`)
         .join(", ");
-      userPrompt += `. Additional information from follow-up questions: ${answerText}`;
+      basePrompt += `. Additional information from follow-up questions: ${answerText}`;
     }
+
+    // Add pet context to personalize the diagnosis
+    const userPrompt = basePrompt + petContext;
 
     // Call OpenAI
     const cards = {};
