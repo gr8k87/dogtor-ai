@@ -28,7 +28,7 @@ export default function ImagePicker({ onChange, className }: Props) {
       setSelectedFile(null);
     }
     
-    setTimeout(() => setIsLoading(false), 300); // Small delay for better UX
+    setTimeout(() => setIsLoading(false), 600); // Slightly longer for better perceived performance
   }
 
   React.useEffect(() => {
@@ -88,7 +88,7 @@ export default function ImagePicker({ onChange, className }: Props) {
             variant="destructive"
             size="sm"
             onClick={handleRemoveFile}
-            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-lg"
+            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-elevated hover:shadow-floating hover:scale-110 transition-all duration-200"
             data-testid="button-remove-image"
           >
             <X size={16} />
@@ -122,9 +122,23 @@ export default function ImagePicker({ onChange, className }: Props) {
           <div className="group relative overflow-hidden rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300">
             <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
               {isLoading ? (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-sm text-muted-foreground">Processing...</p>
+                <div className="space-y-6 w-full">
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-muted rounded-lg w-32 mx-auto animate-pulse" />
+                      <div className="h-3 bg-muted/60 rounded-lg w-24 mx-auto animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="h-[200px] bg-gradient-to-r from-muted via-muted/50 to-muted rounded-xl relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_1.5s_infinite] translate-x-[-100%]" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="h-10 bg-muted rounded-lg animate-pulse" />
+                    <div className="h-10 bg-muted rounded-lg animate-pulse" />
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -160,20 +174,20 @@ export default function ImagePicker({ onChange, className }: Props) {
               onClick={handleCameraCapture}
               variant="default"
               size="lg"
-              className="h-12 space-x-2"
+              className="h-12 space-x-2 group relative overflow-hidden"
               data-testid="button-take-photo"
             >
-              <Camera size={20} />
+              <Camera size={20} className="transition-transform group-hover:scale-110" />
               <span>Take Photo</span>
             </Button>
             <Button
               onClick={handleGalleryUpload}
               variant="secondary"
               size="lg"
-              className="h-12 space-x-2"
+              className="h-12 space-x-2 group relative overflow-hidden"
               data-testid="button-choose-gallery"
             >
-              <Upload size={20} />
+              <Upload size={20} className="transition-transform group-hover:scale-110" />
               <span>Choose File</span>
             </Button>
           </div>

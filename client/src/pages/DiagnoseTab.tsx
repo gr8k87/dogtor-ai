@@ -4,6 +4,7 @@ import ImagePicker from "../components/ImagePicker";
 import { useHistory } from "../state/historyContext";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
+import { Skeleton, SkeletonCard } from "../components/ui/skeleton";
 import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 
 import BottomTabs from "../components/BottomTabs";
@@ -103,11 +104,33 @@ export default function DiagnoseTab() {
 
 
   return (
-    <div className="container max-w-2xl mx-auto p-4 space-y-6">
+    <div className="container max-w-2xl mx-auto p-4 space-y-6 relative">
+      {/* Loading overlay */}
+      {submitting && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-xl">
+          <div className="bg-card p-8 rounded-2xl shadow-elevated max-w-sm w-full mx-4">
+            <div className="text-center space-y-4">
+              <div className="relative mx-auto w-16 h-16">
+                <div className="absolute inset-0 w-16 h-16 border-4 border-primary/20 rounded-full"></div>
+                <div className="absolute inset-0 w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Analyzing Your Pet</h3>
+                <p className="text-sm text-muted-foreground">{debugMsg}</p>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-2 w-full rounded-full" />
+                <Skeleton className="h-2 w-3/4 rounded-full mx-auto" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Status indicator */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-primary"></div>
+          <div className={`w-2 h-2 rounded-full transition-colors ${submitting ? 'bg-primary animate-pulse' : 'bg-primary'}`}></div>
           <span>Step 1</span>
         </div>
         <div className="w-4 h-px bg-border"></div>
@@ -200,17 +223,20 @@ export default function DiagnoseTab() {
           type="submit"
           disabled={submitting}
           size="lg"
-          className="w-full h-12 text-base font-medium shadow-md hover:shadow-lg transition-all"
+          className="w-full h-12 text-base font-medium shadow-soft hover:shadow-medium transition-all duration-300 active:scale-95 disabled:hover:scale-100"
           data-testid="button-continue"
         >
           {submitting ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-              Analyzing...
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                <div className="absolute inset-0 w-5 h-5 border-2 border-current/30 rounded-full"></div>
+              </div>
+              <span className="animate-pulse">Analyzing your pet...</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <ArrowRight size={20} />
+            <div className="flex items-center gap-2 group">
+              <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
               Continue Analysis
             </div>
           )}
