@@ -10,66 +10,6 @@ import {
 export default function ConnectTab() {
   return (
     <div className="container max-w-2xl mx-auto p-4 space-y-6">
-      {/* Emergency Contact Card */}
-      <Card className="opacity-75">
-        <CardHeader>
-          <CardTitle>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl">🚨</span>
-              <h2 className="text-xl font-semibold text-foreground">
-                Emergency Contact
-              </h2>
-              <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
-                Coming Soon
-              </span>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="p-3 border border-red-200 rounded-lg bg-red-50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-red-800">
-                    24/7 Emergency Clinic
-                  </h3>
-
-                  <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
-                    Coming Soon
-                  </span>
-                </div>
-                <button
-                  disabled
-                  className="btn btn-outline border-red-300 text-red-600 opacity-50 cursor-not-allowed"
-                >
-                  Call Now
-                </button>
-              </div>
-            </div>
-
-            <div className="p-3 border border-orange-200 rounded-lg bg-orange-50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-orange-800">
-                    Pet Poison Helpline
-                  </h3>
-
-                  <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
-                    Coming Soon
-                  </span>
-                </div>
-                <button
-                  disabled
-                  className="btn btn-outline border-orange-300 text-orange-600 opacity-50 cursor-not-allowed"
-                >
-                  Call
-                </button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Find a Vet Card */}
       <Card className="opacity-75">
         <CardHeader>
@@ -218,57 +158,9 @@ export default function ConnectTab() {
                 </button>
               </div>
             </div>
-
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="font-medium text-blue-800 text-sm mb-2">
-                Available Services:
-              </h3>
-              <ul className="text-xs text-blue-700 space-y-1">
-                <li>• Symptom assessment and guidance</li>
-                <li>• Medication questions</li>
-                <li>• Behavioral concerns</li>
-                <li>• Follow-up consultations</li>
-                <li>• Second opinions</li>
-              </ul>
-            </div>
-
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span className="text-sm text-green-700">
-                3 veterinarians available now
-              </span>
-            </div>
-
-            <button
-              disabled
-              className="btn btn-primary w-full opacity-50 cursor-not-allowed"
-            >
-              Connect with Vet Now
-            </button>
-
-            <p className="text-xs text-center text-muted-foreground">
-              Average response time: 2 minutes
-            </p>
           </div>
         </CardContent>
       </Card>
-
-      {/* Disclaimer */}
-      <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <span className="text-orange-500 text-lg">⚠️</span>
-          <div>
-            <h3 className="font-medium text-orange-800 mb-1">
-              Important Disclaimer
-            </h3>
-            <p className="text-orange-700 text-sm">
-              Telemedicine consultations are not suitable for emergency
-              situations. For urgent cases, please contact your local emergency
-              veterinary clinic immediately.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
