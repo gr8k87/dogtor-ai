@@ -187,24 +187,22 @@ export default function Questions() {
               <p className="text-muted-foreground text-lg">
                 Analyzing your pet's condition...
               </p>
-              {/* Modern Progress indicator */}
+              {/* Enhanced Progress indicator */}
               <div className="space-y-4 max-w-md mx-auto">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                    <span>Share Details</span>
+                    <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
+                    <span>Photo Upload</span>
                   </div>
                   <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse scale-110"></div>
-                    <span className="font-medium text-primary">
-                      Follow-Up Questions
-                    </span>
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse scale-110 transition-all duration-500"></div>
+                    <span className="font-medium text-primary">Questions</span>
                   </div>
                   <div className="flex-1 h-px bg-muted"></div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-muted"></div>
-                    <span>Guidance</span>
+                    <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
+                    <span>Results</span>
                   </div>
                 </div>
                 <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -231,24 +229,22 @@ export default function Questions() {
 
         <main className="flex-1 pb-24 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-6 space-y-8">
-            {/* Modern Progress indicator */}
+            {/* Enhanced Progress indicator */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                  <span>Share Details</span>
+                  <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
+                  <span>Photo Upload</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-primary"></div>
-                  <span className="font-medium text-primary">
-                    Follow-Up Questions
-                  </span>
+                  <div className="w-3 h-3 rounded-full bg-primary transition-all duration-500"></div>
+                  <span className="font-medium text-primary">Questions</span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-muted"></div>
-                  <span>Guidance</span>
+                  <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
+                  <span>Results</span>
                 </div>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -326,21 +322,26 @@ export default function Questions() {
 
         <main className="flex-1 pb-20 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-4 space-y-6">
-            {/* Status indicator */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-muted"></div>
-                <span>Step 1</span>
+            {/* Enhanced Progress indicator */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
+                  <span>Photo Upload</span>
+                </div>
+                <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-destructive"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-destructive transition-all duration-500"></div>
+                  <span className="font-medium text-destructive">Questions</span>
+                </div>
+                <div className="flex-1 h-px bg-muted"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
+                  <span>Results</span>
+                </div>
               </div>
-              <div className="w-4 h-px bg-border"></div>
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-destructive"></div>
-                <span>Step 2</span>
-              </div>
-              <div className="w-4 h-px bg-border"></div>
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-muted"></div>
-                <span>Step 3</span>
+              <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-primary/60 to-destructive rounded-full w-2/3 transition-all duration-1000 ease-out"></div>
               </div>
             </div>
 
@@ -445,28 +446,28 @@ export default function Questions() {
             <h1 className="text-xl font-bold">Questions</h1>
           </div>
 
-          {/* Animated Progress indicator */}
-          <div className="space-y-3">
+          {/* Enhanced Progress indicator */}
+          <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <span>Step 1</span>
+                <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
+                <span>Photo Upload</span>
               </div>
-              <div className="w-4 h-px bg-border"></div>
+              <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
               <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <span>Step 2</span>
+                <div className="w-3 h-3 rounded-full bg-primary transition-all duration-500"></div>
+                <span className="font-medium text-primary">Questions</span>
               </div>
-              <div className="w-4 h-px bg-border"></div>
+              <div className="flex-1 h-px bg-gradient-to-r from-primary to-muted"></div>
               <div className="flex items-center gap-1">
                 <div
-                  className={`w-2 h-2 rounded-full transition-colors duration-500 ${submitting ? "bg-primary animate-pulse" : "bg-muted"}`}
+                  className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? "bg-primary animate-pulse scale-110" : "bg-muted"}`}
                 ></div>
-                <span>Step 3</span>
+                <span className={submitting ? "font-medium text-primary" : ""}>Results</span>
               </div>
             </div>
-            <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full w-2/3 transition-all duration-1000 ease-out"></div>
+            <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
+              <div className={`h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out ${submitting ? "w-full animate-pulse" : "w-2/3"}`}></div>
             </div>
           </div>
 
