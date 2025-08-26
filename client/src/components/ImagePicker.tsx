@@ -3,21 +3,24 @@ import { Button } from "./ui/button";
 import { AppIcons, Camera, Upload, X, Image as ImageIcon } from "./icons";
 import { cn } from "../lib/utils";
 
-type Props = { 
+type Props = {
   onChange: (file: File | null) => void;
   className?: string;
 };
 
 export default function ImagePicker({ onChange, className }: Props) {
   const [preview, setPreview] = React.useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = React.useState<{ file: File; preview: string } | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   function handle(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setIsLoading(true);
-    
+
     onChange(f);
     if (f) {
       const previewUrl = URL.createObjectURL(f);
@@ -27,7 +30,7 @@ export default function ImagePicker({ onChange, className }: Props) {
       setPreview(null);
       setSelectedFile(null);
     }
-    
+
     setTimeout(() => setIsLoading(false), 600); // Slightly longer for better perceived performance
   }
 
@@ -68,7 +71,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               data-testid="img-preview"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-            
+
             {/* Overlay info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
               <div className="flex items-center justify-between text-white">
@@ -82,7 +85,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               </div>
             </div>
           </div>
-          
+
           {/* Remove button */}
           <Button
             variant="destructive"
@@ -93,7 +96,7 @@ export default function ImagePicker({ onChange, className }: Props) {
           >
             <X size={16} />
           </Button>
-          
+
           {/* Replace button */}
           <div className="flex gap-2 mt-4">
             <Button
@@ -142,30 +145,18 @@ export default function ImagePicker({ onChange, className }: Props) {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                      <svg width="48" height="48" viewBox="0 0 100 100" className="text-primary">
-                        <circle cx="50" cy="45" r="25" fill="currentColor" opacity="0.1" />
-                        <circle cx="42" cy="40" r="3" fill="currentColor" />
-                        <circle cx="58" cy="40" r="3" fill="currentColor" />
-                        <ellipse cx="50" cy="48" rx="2" ry="3" fill="currentColor" />
-                        <path d="M45 52 Q50 56 55 52" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                        <circle cx="35" cy="35" r="8" fill="currentColor" opacity="0.15" />
-                        <circle cx="65" cy="35" r="8" fill="currentColor" opacity="0.15" />
-                        <path d="M35 30 Q32 25 30 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                        <path d="M65 30 Q68 25 70 30" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                        <ellipse cx="50" cy="65" rx="15" ry="8" fill="currentColor" opacity="0.08" />
-                      </svg>
-                    </div>
-                  </div>
-                  
+                  <AppIcons.camera size={48} className="text-primary" />
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Add Your Pet's Photo</h3>
+                    <h3 className="text-lg font-medium">
+                      Upload or Take a Photo
+                    </h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      Take a clear photo of your pet or upload from your device. Better photos lead to more accurate analysis.
+                      Add a photo of the area you’re concerned about (like a
+                      rash, lump, or sore). A clear, focused image will help us
+                      give you a more accurate analysis.
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-green-500" />
@@ -178,7 +169,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               )}
             </div>
           </div>
-          
+
           {/* Action buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button
@@ -188,7 +179,10 @@ export default function ImagePicker({ onChange, className }: Props) {
               className="h-12 space-x-2 group relative overflow-hidden"
               data-testid="button-take-photo"
             >
-              <Camera size={20} className="transition-transform group-hover:scale-110" />
+              <Camera
+                size={20}
+                className="transition-transform group-hover:scale-110"
+              />
               <span>Take Photo</span>
             </Button>
             <Button
@@ -198,13 +192,16 @@ export default function ImagePicker({ onChange, className }: Props) {
               className="h-12 space-x-2 group relative overflow-hidden"
               data-testid="button-choose-gallery"
             >
-              <Upload size={20} className="transition-transform group-hover:scale-110" />
+              <Upload
+                size={20}
+                className="transition-transform group-hover:scale-110"
+              />
               <span>Choose File</span>
             </Button>
           </div>
         </div>
       )}
-      
+
       <input
         type="file"
         accept="image/*"

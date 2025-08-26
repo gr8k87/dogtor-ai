@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/card";
 import { Skeleton } from "../components/ui/skeleton";
 import DynamicForm from "../components/DynamicForm";
 import BottomTabs from "../components/BottomTabs";
-import { AppIcons, ArrowLeft, ArrowRight, AlertCircle } from "../components/icons";
+import {
+  AppIcons,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+} from "../components/icons";
 
 interface BaseField {
   id: string;
@@ -15,32 +25,35 @@ interface BaseField {
 }
 
 interface RadioField extends BaseField {
-  type: 'radio';
+  type: "radio";
   options: string[];
 }
 
 interface CheckboxField extends BaseField {
-  type: 'checkbox';
+  type: "checkbox";
   options: string[];
 }
 
 interface DropdownField extends BaseField {
-  type: 'dropdown';
+  type: "dropdown";
   options: string[];
 }
 
-
-
 interface YesNoField extends BaseField {
-  type: 'yesno';
+  type: "yesno";
 }
 
 interface SelectField extends BaseField {
-  type: 'select';
+  type: "select";
   options: string[];
 }
 
-type FormQuestion = RadioField | CheckboxField | DropdownField | YesNoField | SelectField;
+type FormQuestion =
+  | RadioField
+  | CheckboxField
+  | DropdownField
+  | YesNoField
+  | SelectField;
 
 export default function Questions() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -62,7 +75,7 @@ export default function Questions() {
     console.log("🔍 Fetching questions for case:", caseId);
 
     fetch(`/api/diagnose/questions/${caseId}`)
-      .then(async res => {
+      .then(async (res) => {
         console.log("📡 Questions API response status:", res.status);
 
         if (res.status === 404) {
@@ -81,7 +94,7 @@ export default function Questions() {
         console.log("📋 Raw questions response:", data);
         return data;
       })
-      .then(data => {
+      .then((data) => {
         if (data) {
           console.log("✅ Questions data received:", data);
           const questions = data.questions || [];
@@ -89,12 +102,11 @@ export default function Questions() {
 
           console.log(`📊 Found ${questions.length} questions`);
           if (questions.length === 0) {
-            console.log("ℹ️ No questions found, allowing skip to results");
           }
         }
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("❌ Questions fetch error:", err);
         setError(err.message || "Failed to load questions");
         setLoading(false);
@@ -113,8 +125,8 @@ export default function Questions() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseId,
-          answers
-        })
+          answers,
+        }),
       });
 
       if (!response.ok) throw new Error("Failed to get results");
@@ -141,7 +153,7 @@ export default function Questions() {
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caseId })
+        body: JSON.stringify({ caseId }),
       });
 
       if (!response.ok) throw new Error("Failed to get results");
@@ -172,23 +184,27 @@ export default function Questions() {
             <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Preparing Questions</h2>
-              <p className="text-muted-foreground text-lg">Analyzing your pet's condition...</p>
+              <p className="text-muted-foreground text-lg">
+                Analyzing your pet's condition...
+              </p>
               {/* Modern Progress indicator */}
               <div className="space-y-4 max-w-md mx-auto">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                    <span>Photo Upload</span>
+                    <span>Share Details</span>
                   </div>
                   <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 rounded-full bg-primary animate-pulse scale-110"></div>
-                    <span className="font-medium text-primary">Questions</span>
+                    <span className="font-medium text-primary">
+                      Follow-Up Questions
+                    </span>
                   </div>
                   <div className="flex-1 h-px bg-muted"></div>
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 rounded-full bg-muted"></div>
-                    <span>Results</span>
+                    <span>Guidance</span>
                   </div>
                 </div>
                 <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -220,17 +236,19 @@ export default function Questions() {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                  <span>Photo Upload</span>
+                  <span>Share Details</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary"></div>
-                  <span className="font-medium text-primary">Questions</span>
+                  <span className="font-medium text-primary">
+                    Follow-Up Questions
+                  </span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-muted"></div>
-                  <span>Results</span>
+                  <span>Guidance</span>
                 </div>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -245,9 +263,13 @@ export default function Questions() {
                     <AlertCircle size={24} className="text-amber-600" />
                   </div>
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-amber-800">No Follow-up Questions</h3>
+                    <h3 className="font-semibold text-amber-800">
+                      o Follow-Up Questions Needed
+                    </h3>
                     <p className="text-amber-700 text-sm">
-                      We couldn't generate specific follow-up questions, but we can still analyze your pet's image and symptoms.
+                      We didn’t identify any additional questions for this case.
+                      Don’t worry — we can still analyze your pet’s photo and
+                      notes to provide guidance.
                     </p>
 
                     <div className="flex gap-3 pt-2">
@@ -324,9 +346,14 @@ export default function Questions() {
 
             <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6">
               <div className="flex items-start gap-3">
-                <AlertCircle size={24} className="text-destructive flex-shrink-0 mt-0.5" />
+                <AlertCircle
+                  size={24}
+                  className="text-destructive flex-shrink-0 mt-0.5"
+                />
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-destructive">Error Loading Questions</h3>
+                  <h3 className="font-semibold text-destructive">
+                    Error Loading Questions
+                  </h3>
                   <p className="text-destructive/80 text-sm">{error}</p>
 
                   <div className="flex gap-3 pt-2">
@@ -388,7 +415,9 @@ export default function Questions() {
                     <div className="absolute inset-0 w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">Generating Results</h3>
+                    <h3 className="text-lg font-semibold">
+                      Generating Results
+                    </h3>
                     <p className="text-sm text-muted-foreground">{debugMsg}</p>
                   </div>
                   <div className="space-y-2">
@@ -430,7 +459,9 @@ export default function Questions() {
               </div>
               <div className="w-4 h-px bg-border"></div>
               <div className="flex items-center gap-1">
-                <div className={`w-2 h-2 rounded-full transition-colors duration-500 ${submitting ? 'bg-primary animate-pulse' : 'bg-muted'}`}></div>
+                <div
+                  className={`w-2 h-2 rounded-full transition-colors duration-500 ${submitting ? "bg-primary animate-pulse" : "bg-muted"}`}
+                ></div>
                 <span>Step 3</span>
               </div>
             </div>
@@ -445,24 +476,34 @@ export default function Questions() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-3">
-                    <AppIcons.medical size={24} className="text-primary" />
-                    Follow-up Questions
+                    <AppIcons.medical size={24} className="text-primary" />A Few
+                    More Questions
                   </h2>
                   <p className="text-muted-foreground">
-                    Please answer these questions to help improve the diagnosis
+                    Just a few quick questions to help us understand your pet’s
+                    concern more clearly
                   </p>
                 </div>
 
-                <form onSubmit={e => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
-                  <DynamicForm 
-                    schema={questions} 
-                    value={answers} 
-                    onChange={setAnswers} 
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                  className="space-y-6"
+                >
+                  <DynamicForm
+                    schema={questions}
+                    value={answers}
+                    onChange={setAnswers}
                   />
 
                   {error && (
                     <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                      <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+                      <AlertCircle
+                        size={16}
+                        className="text-destructive mt-0.5 flex-shrink-0"
+                      />
                       <p className="text-sm text-destructive">{error}</p>
                     </div>
                   )}
@@ -481,7 +522,9 @@ export default function Questions() {
                           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                           <span className="animate-pulse">Analyzing...</span>
                         </div>
-                      ) : "Skip Questions"}
+                      ) : (
+                        "Skip Questions"
+                      )}
                     </Button>
                     <Button
                       type="submit"
@@ -495,8 +538,11 @@ export default function Questions() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-3 group">
-                          <ArrowRight size={20} className="transition-transform group-hover:translate-x-2" />
-                          Get Results
+                          <ArrowRight
+                            size={20}
+                            className="transition-transform group-hover:translate-x-2"
+                          />
+                          Get Advice
                         </div>
                       )}
                     </Button>
