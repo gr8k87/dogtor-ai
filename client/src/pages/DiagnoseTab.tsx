@@ -101,12 +101,6 @@ export default function DiagnoseTab() {
 
   return (
     <div className="min-h-dvh flex flex-col gradient-hero">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-center px-4">
-          <h1 className="text-xl font-bold">Dogtor AI</h1>
-        </div>
-      </header>
-
       <main className="flex-1 pb-24 overflow-y-auto">
         <div className="container max-w-2xl mx-auto p-6 space-y-8 relative">
           {/* Loading overlay */}
@@ -140,17 +134,17 @@ export default function DiagnoseTab() {
                 <div
                   className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? "bg-primary animate-pulse scale-110" : "bg-primary"}`}
                 ></div>
-                <span className="font-medium">Photo Upload</span>
+                <span className="font-medium">Your Pet’s Concerns</span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary to-muted"></div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
-                <span>Questions</span>
+                <span>A Few More Questions</span>
               </div>
               <div className="flex-1 h-px bg-muted"></div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
-                <span>Results</span>
+                <span>Guidance</span>
               </div>
             </div>
             <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">

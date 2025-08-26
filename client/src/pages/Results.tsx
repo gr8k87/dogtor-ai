@@ -1,7 +1,12 @@
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/card";
 import BottomTabs from "../components/BottomTabs";
 import { AppIcons, ArrowLeft, AlertTriangle } from "../components/icons";
 
@@ -59,7 +64,7 @@ export default function Results({}: ResultsProps) {
                   We couldn't generate results for this diagnosis
                 </p>
               </div>
-              <Button
+              {/* <Button
                 onClick={handleNewDiagnosis}
                 variant="default"
                 className="mt-6"
@@ -67,7 +72,7 @@ export default function Results({}: ResultsProps) {
               >
                 <ArrowLeft size={16} className="mr-2" />
                 Back to Diagnose
-              </Button>
+              </Button> */}
             </div>
           </div>
         </main>
@@ -82,35 +87,22 @@ export default function Results({}: ResultsProps) {
       <div className="container max-w-4xl mx-auto p-6 space-y-8 pb-24">
         {/* Enhanced Header */}
         <div className="space-y-6">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/")}
-              className="p-2 transition-smooth hover:shadow-medium rounded-xl"
-              data-testid="button-back"
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <h1 className="text-3xl font-bold">Analysis Complete</h1>
-          </div>
-          
           {/* Progress Bar - Step 3 Complete */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                <span>Photo Upload</span>
+                <span>Your Pet’s Concerns</span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary/60"></div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                <span>Questions</span>
+                <span>A Few More Questions</span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary animate-pulse scale-110"></div>
-                <span className="font-medium text-primary">Results</span>
+                <span className="font-medium text-primary">Guidance</span>
               </div>
             </div>
             <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -139,14 +131,23 @@ export default function Results({}: ResultsProps) {
 
               {cards.diagnosis?.other_possibilities && (
                 <div>
-                  <h4 className="font-medium text-sm mb-2">Other possibilities:</h4>
+                  <h4 className="font-medium text-sm mb-2">
+                    Other possibilities:
+                  </h4>
                   <ul className="space-y-1">
-                    {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
-                      <li key={i} className="text-sm text-muted-foreground flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"></div>
-                        <span>{p.name} ({p.likelihood} likelihood)</span>
-                      </li>
-                    ))}
+                    {cards.diagnosis.other_possibilities.map(
+                      (p: any, i: number) => (
+                        <li
+                          key={i}
+                          className="text-sm text-muted-foreground flex items-center gap-2"
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"></div>
+                          <span>
+                            {p.name} ({p.likelihood} likelihood)
+                          </span>
+                        </li>
+                      ),
+                    )}
                   </ul>
                 </div>
               )}
@@ -155,7 +156,9 @@ export default function Results({}: ResultsProps) {
                 <div className="p-3 rounded-md bg-muted/50 border">
                   <h4 className="font-medium text-sm mb-1">Urgency Level:</h4>
                   <p className="text-sm">
-                    {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
+                    {cards.diagnosis.urgency.badge}{" "}
+                    {cards.diagnosis.urgency.level} Urgency —{" "}
+                    {cards.diagnosis.urgency.note}
                   </p>
                 </div>
               )}
@@ -174,7 +177,10 @@ export default function Results({}: ResultsProps) {
               {cards.care.tips && (
                 <ul className="space-y-3">
                   {cards.care.tips.map((tip: any, i: number) => (
-                    <li key={i} className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100">
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100"
+                    >
                       <span className="text-lg flex-shrink-0">{tip.icon}</span>
                       <span className="text-sm text-green-800">{tip.text}</span>
                     </li>
@@ -206,9 +212,14 @@ export default function Results({}: ResultsProps) {
               {cards.costs.steps && (
                 <div className="space-y-3">
                   {cards.costs.steps.map((step: any, i: number) => (
-                    <div key={i} className="border border-border rounded-lg p-4 bg-card">
+                    <div
+                      key={i}
+                      className="border border-border rounded-lg p-4 bg-card"
+                    >
                       <div className="flex items-start gap-3">
-                        <span className="text-lg flex-shrink-0">{step.icon}</span>
+                        <span className="text-lg flex-shrink-0">
+                          {step.icon}
+                        </span>
                         <div className="flex-1 space-y-1">
                           <div className="flex justify-between items-start">
                             <h4 className="font-medium text-sm">{step.name}</h4>
@@ -216,7 +227,9 @@ export default function Results({}: ResultsProps) {
                               {step.cost}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground">{step.desc}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {step.desc}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             Likelihood: {step.likelihood}
                           </p>
@@ -233,12 +246,18 @@ export default function Results({}: ResultsProps) {
         {/* Disclaimer */}
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+            <AlertTriangle
+              size={20}
+              className="text-amber-600 flex-shrink-0 mt-0.5"
+            />
             <div className="space-y-1">
-              <h3 className="font-medium text-amber-800 text-sm">Important Disclaimer</h3>
+              <h3 className="font-medium text-amber-800 text-sm">
+                Important Disclaimer
+              </h3>
               <p className="text-amber-700 text-sm">
-                This AI diagnosis is for informational purposes only and should not replace professional veterinary care.
-                Always consult with a qualified veterinarian for accurate diagnosis and treatment.
+                This AI diagnosis is for informational purposes only and should
+                not replace professional veterinary care. Always consult with a
+                qualified veterinarian for accurate diagnosis and treatment.
               </p>
             </div>
           </div>

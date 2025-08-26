@@ -173,12 +173,6 @@ export default function Questions() {
   if (loading) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-center px-4">
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
-          </div>
-        </header>
-
         <main className="flex-1 flex items-center justify-center p-6">
           <div className="text-center space-y-6">
             <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -221,12 +215,6 @@ export default function Questions() {
   if (questions.length === 0 && !loading) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-center px-4">
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
-          </div>
-        </header>
-
         <main className="flex-1 pb-24 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-6 space-y-8">
             {/* Enhanced Progress indicator */}
@@ -234,17 +222,19 @@ export default function Questions() {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
-                  <span>Photo Upload</span>
+                  <span>Your Pet’s Concerns</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary transition-all duration-500"></div>
-                  <span className="font-medium text-primary">Questions</span>
+                  <span className="font-medium text-primary">
+                    A Few More Questions
+                  </span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
-                  <span>Results</span>
+                  <span>Guidance</span>
                 </div>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -260,7 +250,7 @@ export default function Questions() {
                   </div>
                   <div className="space-y-3">
                     <h3 className="font-semibold text-amber-800">
-                      o Follow-Up Questions Needed
+                      Follow-Up Questions Needed
                     </h3>
                     <p className="text-amber-700 text-sm">
                       We didn’t identify any additional questions for this case.
@@ -332,7 +322,9 @@ export default function Questions() {
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-destructive"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-destructive transition-all duration-500"></div>
-                  <span className="font-medium text-destructive">Questions</span>
+                  <span className="font-medium text-destructive">
+                    Questions
+                  </span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
                 <div className="flex items-center gap-1">
@@ -419,7 +411,6 @@ export default function Questions() {
                     <h3 className="text-lg font-semibold">
                       Generating Results
                     </h3>
-                    <p className="text-sm text-muted-foreground">{debugMsg}</p>
                   </div>
                   <div className="space-y-2">
                     <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
@@ -463,11 +454,15 @@ export default function Questions() {
                 <div
                   className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? "bg-primary animate-pulse scale-110" : "bg-muted"}`}
                 ></div>
-                <span className={submitting ? "font-medium text-primary" : ""}>Results</span>
+                <span className={submitting ? "font-medium text-primary" : ""}>
+                  Results
+                </span>
               </div>
             </div>
             <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
-              <div className={`h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out ${submitting ? "w-full animate-pulse" : "w-2/3"}`}></div>
+              <div
+                className={`h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-out ${submitting ? "w-full animate-pulse" : "w-2/3"}`}
+              ></div>
             </div>
           </div>
 
