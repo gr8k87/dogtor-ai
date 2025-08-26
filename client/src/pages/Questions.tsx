@@ -323,19 +323,19 @@ export default function Questions() {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
-                  <span>Photo Upload</span>
+                  <span>Your Pet’s Concerns</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-destructive"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-destructive transition-all duration-500"></div>
                   <span className="font-medium text-destructive">
-                    Questions
+                    A Few More Questions
                   </span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-muted transition-all duration-500"></div>
-                  <span>Results</span>
+                  <span>Guidance</span>
                 </div>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden">
@@ -436,31 +436,19 @@ export default function Questions() {
             </div>
           )}
 
-          {/* Back button */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate("/")}
-              className="p-2"
-              data-testid="button-back"
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <h1 className="text-xl font-bold">Questions</h1>
-          </div>
-
           {/* Enhanced Progress indicator */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
-                <span>Photo Upload</span>
+                <span>Your Pet’s Concerns</span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary transition-all duration-500"></div>
-                <span className="font-medium text-primary">Questions</span>
+                <span className="font-medium text-primary">
+                  A Few More Questions
+                </span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary to-muted"></div>
               <div className="flex items-center gap-1">
@@ -468,7 +456,7 @@ export default function Questions() {
                   className={`w-3 h-3 rounded-full transition-all duration-500 ${submitting ? "bg-primary animate-pulse scale-110" : "bg-muted"}`}
                 ></div>
                 <span className={submitting ? "font-medium text-primary" : ""}>
-                  Results
+                  Guidance
                 </span>
               </div>
             </div>
