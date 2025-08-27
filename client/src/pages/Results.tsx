@@ -129,7 +129,7 @@ export default function Results({}: ResultsProps) {
           </div>
         </div>
 
-        {/* Enhanced Results content */}
+        {/* Card 1: Diagnosis  */}
         <div className="space-y-8">
           {/* Main diagnosis */}
           <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
@@ -183,37 +183,7 @@ export default function Results({}: ResultsProps) {
             </CardContent>
           </Card>
 
-          {/* Enhanced Recommendations */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-2xl">
-                <span className="text-4xl">💡</span>
-                {cards.care.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {cards.care.tips && (
-                <ul className="space-y-3">
-                  {cards.care.tips.map((tip: any, i: number) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100"
-                    >
-                      <span className="text-lg flex-shrink-0">{tip.icon}</span>
-                      <span className="text-sm text-green-800">{tip.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {cards.care.disclaimer && (
-                <p className="text-xs text-muted-foreground italic p-2 bg-muted/30 rounded">
-                  {cards.care.disclaimer}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Card 3: Costs */}
+          {/* Card 2: Costs */}
           <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl flex items-center gap-3">
@@ -256,6 +226,36 @@ export default function Results({}: ResultsProps) {
                     </div>
                   ))}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Card 3: General Care Tips */}
+          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <span className="text-4xl">💡</span>
+                {cards.care.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {cards.care.tips && (
+                <ul className="space-y-3">
+                  {cards.care.tips.map((tip: any, i: number) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100"
+                    >
+                      <span className="text-lg flex-shrink-0">{tip.icon}</span>
+                      <span className="text-sm text-green-800">{tip.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {cards.care.disclaimer && (
+                <p className="text-xs text-muted-foreground italic p-2 bg-muted/30 rounded">
+                  {cards.care.disclaimer}
+                </p>
               )}
             </CardContent>
           </Card>
