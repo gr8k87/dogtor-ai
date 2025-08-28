@@ -10,7 +10,7 @@ import { Card, CardContent } from "../components/ui/card";
 import BottomTabs from "../components/BottomTabs";
 
 export default function DiagnoseTab() {
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>(""); // Changed from imageFile
   const [notes, setNotes] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -19,7 +19,7 @@ export default function DiagnoseTab() {
 
   function validate() {
     const e: Record<string, string> = {};
-    if (!imageFile) e.image = "Please add a photo";
+    if (!imageUrl) e.image = "Please add a photo"; // Changed from imageFile
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -37,32 +37,7 @@ export default function DiagnoseTab() {
     setErrors({});
 
     try {
-      let uploadedImageUrl = "";
-
-      // Upload image
-      if (imageFile) {
-        const uploadStart = Date.now();
-        setDebugMsg("📤 Uploading image...");
-        const formDataToSend = new FormData();
-        formDataToSend.append("image", imageFile);
-
-        const uploadResp = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataToSend,
-        });
-
-        if (!uploadResp.ok) {
-          const errorText = await uploadResp.text();
-          throw new Error(
-            `Image upload failed: ${uploadResp.status} - ${errorText}`,
-          );
-        }
-
-        const uploadJson = await uploadResp.json();
-        uploadedImageUrl = uploadJson.imageUrl;
-        const uploadTime = Date.now() - uploadStart;
-        setDebugMsg(`✅ Image uploaded (${uploadTime}ms), creating case...`);
-      }
+      // Removed image upload logic as ImagePicker now handles it and returns a URL
 
       // Create case and generate questions
       setDebugMsg("❓ Creating case and generating questions...");
@@ -71,7 +46,7 @@ export default function DiagnoseTab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           symptoms: notes || "general health check",
-          imageUrl: uploadedImageUrl,
+          imageUrl: imageUrl, // Use imageUrl directly
         }),
       });
 
@@ -179,7 +154,10 @@ export default function DiagnoseTab() {
                   </p>
                 </div>
 
-                <ImagePicker onChange={setImageFile} />
+                <ImagePicker
+        onChange={setImageUrl} // Changed to setImageUrl
+        className="mb-6"
+      />
                 {errors.image && (
                   <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
                     <AlertCircle

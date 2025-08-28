@@ -22,7 +22,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.15",
     "@sendgrid/mail": "^8.1.5",
-    "@supabase/supabase-js": "^2.55.0",
+    "@supabase/supabase-js": "^2.56.0",
     "@types/memoizee": "^0.4.12",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",

@@ -2,9 +2,10 @@ import * as React from "react";
 import { Button } from "./ui/button";
 import { AppIcons, Camera, Upload, X, Image as ImageIcon } from "./icons";
 import { cn } from "../lib/utils";
+import { uploadImageToSupabase } from "../lib/supabase";
 
 type Props = {
-  onChange: (file: File | null) => void;
+  onChange: (imageUrl: string | null) => void;
   className?: string;
 };
 
@@ -13,25 +14,40 @@ export default function ImagePicker({ onChange, className }: Props) {
   const [selectedFile, setSelectedFile] = React.useState<{
     file: File;
     preview: string;
+    uploadedUrl?: string;
   } | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [uploadError, setUploadError] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  function handle(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handle(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setIsLoading(true);
+    setUploadError(null);
 
-    onChange(f);
     if (f) {
       const previewUrl = URL.createObjectURL(f);
       setPreview(previewUrl);
       setSelectedFile({ file: f, preview: previewUrl });
+
+      try {
+        // Upload to Supabase Storage
+        const uploadedUrl = await uploadImageToSupabase(f);
+        
+        setSelectedFile(prev => prev ? { ...prev, uploadedUrl } : null);
+        onChange(uploadedUrl);
+      } catch (error) {
+        console.error('Upload failed:', error);
+        setUploadError(error instanceof Error ? error.message : 'Upload failed');
+        onChange(null);
+      }
     } else {
       setPreview(null);
       setSelectedFile(null);
+      onChange(null);
     }
 
-    setTimeout(() => setIsLoading(false), 600); // Slightly longer for better perceived performance
+    setIsLoading(false);
   }
 
   React.useEffect(() => {
@@ -45,6 +61,7 @@ export default function ImagePicker({ onChange, className }: Props) {
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setPreview(null);
+    setUploadError(null);
     onChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -86,16 +103,24 @@ export default function ImagePicker({ onChange, className }: Props) {
             </div>
           </div>
 
-          {/* Remove button */}
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleRemoveFile}
-            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-elevated hover:shadow-floating hover:scale-110 transition-all duration-200"
-            data-testid="button-remove-image"
-          >
-            <X size={16} />
-          </Button>
+          {/* Upload status */}
+            {selectedFile?.uploadedUrl && (
+              <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1">
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                Uploaded
+              </div>
+            )}
+
+            {/* Remove button */}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleRemoveFile}
+              className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-elevated hover:shadow-floating hover:scale-110 transition-all duration-200"
+              data-testid="button-remove-image"
+            >
+              <X size={16} />
+            </Button>
 
           {/* Replace button */}
           <div className="flex gap-2 mt-4">
@@ -118,6 +143,16 @@ export default function ImagePicker({ onChange, className }: Props) {
               Choose Different
             </Button>
           </div>
+
+          {/* Upload error message */}
+          {uploadError && (
+            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="flex items-center gap-2">
+                <X size={16} />
+                <span>{uploadError}</span>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-4">

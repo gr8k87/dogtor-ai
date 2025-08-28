@@ -23,18 +23,18 @@ const supabase = createClient(
 // Helper function to calculate pet age from birth month/year
 function calculatePetAge(birthMonth, birthYear) {
   if (!birthMonth || !birthYear) return null;
-  
+
   const today = new Date();
   const birthDate = new Date(birthYear, birthMonth - 1, 1); // Month is 0-indexed
-  
+
   let years = today.getFullYear() - birthDate.getFullYear();
   let months = today.getMonth() - birthDate.getMonth();
-  
+
   if (months < 0) {
     years--;
     months += 12;
   }
-  
+
   if (years > 0) {
     return months > 0 ? `${years} years, ${months} months` : `${years} years`;
   } else {
@@ -45,7 +45,7 @@ function calculatePetAge(birthMonth, birthYear) {
 // Helper function to get pet context for prompts
 async function getPetContext(currentUser) {
   if (!currentUser?.id) return '';
-  
+
   try {
     const { data: user, error } = await supabase
       .from('users')
@@ -56,20 +56,20 @@ async function getPetContext(currentUser) {
     if (error || !user) return '';
 
     const petInfo = [];
-    
+
     if (user.pet_name) {
       petInfo.push(`Pet name: ${user.pet_name}`);
     }
-    
+
     if (user.pet_breed) {
       petInfo.push(`Breed: ${user.pet_breed}`);
     }
-    
+
     if (user.pet_birth_month && user.pet_birth_year) {
       const age = calculatePetAge(user.pet_birth_month, user.pet_birth_year);
       petInfo.push(`Age: ${age}`);
     }
-    
+
     if (user.pet_gender) {
       petInfo.push(`Gender: ${user.pet_gender}`);
     }
@@ -145,14 +145,32 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
     const basePrompt = imageUrl
       ? `Generate 3 diagnostic questions based on this pet image. Symptoms noted: ${symptoms || "none provided"}`
       : `Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
-    
+
     const userPrompt = basePrompt + petContext;
 
     if (imageUrl) {
-      const imagePath = path.join(__dirname, "..", imageUrl);
-      if (fs.existsSync(imagePath)) {
-        let imageBuffer = fs.readFileSync(imagePath);
+      let imageBuffer;
 
+      if (imageUrl.startsWith('http')) {
+        // Handle Supabase Storage URL
+        try {
+          const response = await fetch(imageUrl);
+          if (!response.ok) throw new Error(`Failed to fetch image: ${response.status}`);
+          const arrayBuffer = await response.arrayBuffer();
+          imageBuffer = Buffer.from(arrayBuffer);
+        } catch (fetchError) {
+          console.error('Failed to fetch image from URL:', fetchError);
+          messages.push({ role: "user", content: userPrompt });
+        }
+      } else {
+        // Handle local file path (legacy)
+        const imagePath = path.join(__dirname, "..", imageUrl);
+        if (fs.existsSync(imagePath)) {
+          imageBuffer = fs.readFileSync(imagePath);
+        }
+      }
+
+      if (imageBuffer) {
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
           .resize(1024, 1024, { 
@@ -185,7 +203,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
     try {
       // Use Gemini for questions generation
       const model = geminiClient.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
+
       const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
 
 Return ONLY JSON in this exact format:
@@ -219,10 +237,28 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
       let result;
 
       if (imageUrl) {
-        const imagePath = path.join(__dirname, "..", imageUrl);
-        if (fs.existsSync(imagePath)) {
-          let imageBuffer = fs.readFileSync(imagePath);
-          
+        let imageBuffer;
+
+        if (imageUrl.startsWith('http')) {
+          // Handle Supabase Storage URL
+          try {
+            const response = await fetch(imageUrl);
+            if (!response.ok) throw new Error(`Failed to fetch image: ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            imageBuffer = Buffer.from(arrayBuffer);
+          } catch (fetchError) {
+            console.error('Failed to fetch image from URL:', fetchError);
+            messages.push({ role: "user", content: userPrompt });
+          }
+        } else {
+          // Handle local file path (legacy)
+          const imagePath = path.join(__dirname, "..", imageUrl);
+          if (fs.existsSync(imagePath)) {
+            imageBuffer = fs.readFileSync(imagePath);
+          }
+        }
+
+        if (imageBuffer) {
           // Optimize image for Gemini
           imageBuffer = await sharp(imageBuffer)
             .resize(1024, 1024, { 
@@ -338,7 +374,7 @@ r.get("/questions/:caseId", async (req, res) => {
 
     const questions = caseData.questions || [];
     console.log("✅ Returning questions:", questions);
-    
+
     res.json({ 
       questions,
       caseStatus: caseData.status,
@@ -389,10 +425,28 @@ r.post("/questions", async (req, res) => {
       : `Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general health check"}`;
 
     if (imageUrl) {
-      const imagePath = path.join(__dirname, "..", imageUrl);
-      if (fs.existsSync(imagePath)) {
-        let imageBuffer = fs.readFileSync(imagePath);
+      let imageBuffer;
 
+      if (imageUrl.startsWith('http')) {
+        // Handle Supabase Storage URL
+        try {
+          const response = await fetch(imageUrl);
+          if (!response.ok) throw new Error(`Failed to fetch image: ${response.status}`);
+          const arrayBuffer = await response.arrayBuffer();
+          imageBuffer = Buffer.from(arrayBuffer);
+        } catch (fetchError) {
+          console.error('Failed to fetch image from URL:', fetchError);
+          messages.push({ role: "user", content: userPrompt });
+        }
+      } else {
+        // Handle local file path (legacy)
+        const imagePath = path.join(__dirname, "..", imageUrl);
+        if (fs.existsSync(imagePath)) {
+          imageBuffer = fs.readFileSync(imagePath);
+        }
+      }
+
+      if (imageBuffer) {
         // Optimize image
         imageBuffer = await sharp(imageBuffer)
           .resize(1024, 1024, { 
@@ -564,11 +618,28 @@ r.post("/results", async (req, res) => {
 
       if (finalImageUrl) {
       const fileReadStart = Date.now();
-      const imagePath = path.join(__dirname, "..", finalImageUrl);
+      let imageBuffer;
 
-      if (fs.existsSync(imagePath)) {
-        let imageBuffer = fs.readFileSync(imagePath);
+      if (finalImageUrl.startsWith('http')) {
+        // Handle Supabase Storage URL
+        try {
+          const response = await fetch(finalImageUrl);
+          if (!response.ok) throw new Error(`Failed to fetch image: ${response.status}`);
+          const arrayBuffer = await response.arrayBuffer();
+          imageBuffer = Buffer.from(arrayBuffer);
+        } catch (fetchError) {
+          console.error('Failed to fetch image from URL:', fetchError);
+          messages.push({ role: "user", content: userPrompt });
+        }
+      } else {
+        // Handle local file path (legacy)
+        const imagePath = path.join(__dirname, "..", finalImageUrl);
+        if (fs.existsSync(imagePath)) {
+          imageBuffer = fs.readFileSync(imagePath);
+        }
+      }
 
+      if (imageBuffer) {
         // Optimize image: convert to JPEG and resize to max 1024x1024
         const optimizeStart = Date.now();
         console.log("🖼️ Optimizing image...");
@@ -737,11 +808,32 @@ Return ONLY valid JSON structured as:
 
     // Handle image
     if (imageUrl) {
-      const imagePath = path.join(__dirname, "..", imageUrl);
-      console.log("📸 Reading image from:", imagePath);
+      let imageBuffer;
 
-      if (fs.existsSync(imagePath)) {
-        const imageBuffer = fs.readFileSync(imagePath);
+      if (imageUrl.startsWith('http')) {
+        // Handle Supabase Storage URL
+        try {
+          const response = await fetch(imageUrl);
+          if (!response.ok) throw new Error(`Failed to fetch image: ${response.status}`);
+          const arrayBuffer = await response.arrayBuffer();
+          imageBuffer = Buffer.from(arrayBuffer);
+        } catch (fetchError) {
+          console.error('Failed to fetch image from URL:', fetchError);
+          messages.push({ role: "user", content: `Pet health analysis based on notes: ${notes || "No notes provided"}` });
+        }
+      } else {
+        // Handle local file path (legacy)
+        const imagePath = path.join(__dirname, "..", imageUrl);
+        console.log("📸 Reading image from:", imagePath);
+
+        if (fs.existsSync(imagePath)) {
+          imageBuffer = fs.readFileSync(imagePath);
+        } else {
+          return res.status(400).json({ error: "Image file not found" });
+        }
+      }
+
+      if (imageBuffer) {
         const base64Image = imageBuffer.toString("base64");
         const mimeType = imageUrl.toLowerCase().includes(".png")
           ? "image/png"
@@ -763,7 +855,8 @@ Return ONLY valid JSON structured as:
           ],
         });
       } else {
-        return res.status(400).json({ error: "Image file not found" });
+        // If fetching or reading image failed, fallback to text-only
+        messages.push({ role: "user", content: `Pet health analysis based on notes: ${notes || "No notes provided"}` });
       }
     } else {
       messages.push({
