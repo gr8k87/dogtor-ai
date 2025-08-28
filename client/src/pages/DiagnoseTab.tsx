@@ -10,7 +10,7 @@ import { Card, CardContent } from "../components/ui/card";
 import BottomTabs from "../components/BottomTabs";
 
 export default function DiagnoseTab() {
-  const [imageUrl, setImageUrl] = useState<string>(""); // Changed from imageFile
+  const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
   const [notes, setNotes] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
