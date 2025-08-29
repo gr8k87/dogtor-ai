@@ -44,6 +44,7 @@ export default function DiagnoseTab() {
       const caseResp = await fetch("/api/diagnose/cases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({
           symptoms: notes || "general health check",
           imageUrl: imageUrl, // Use imageUrl directly

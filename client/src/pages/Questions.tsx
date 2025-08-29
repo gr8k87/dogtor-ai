@@ -76,7 +76,9 @@ export default function Questions() {
     // Fetch questions for this case
     console.log("🔍 Fetching questions for case:", caseId);
 
-    fetch(`/api/diagnose/questions/${caseId}`)
+    fetch(`/api/diagnose/questions/${caseId}`, {
+      credentials: 'include'
+    })
       .then(async (res) => {
         console.log("📡 Questions API response status:", res.status);
 
@@ -125,6 +127,7 @@ export default function Questions() {
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({
           caseId,
           answers,
@@ -155,6 +158,7 @@ export default function Questions() {
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({ caseId }),
       });
 

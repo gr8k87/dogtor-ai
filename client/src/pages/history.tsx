@@ -19,7 +19,9 @@ export default function History() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/api/history/list")
+    fetch("/api/history/list", {
+      credentials: 'include'
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load history");
         return res.json();
@@ -39,7 +41,10 @@ export default function History() {
     if (
       window.confirm("Are you sure you want to delete this history record?")
     ) {
-      fetch(`/api/history/delete/${id}`, { method: "DELETE" })
+      fetch(`/api/history/delete/${id}`, { 
+        method: "DELETE",
+        credentials: 'include'
+      })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to delete history");
           setItems(items.filter((item) => item.id !== id));
