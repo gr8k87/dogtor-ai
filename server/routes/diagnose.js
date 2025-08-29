@@ -754,6 +754,7 @@ r.post("/results", async (req, res) => {
         {
           prompt: finalSymptoms || "Image analysis",
           response: JSON.stringify(cards),
+          user_id: req.currentUser?.id,
           created_at: new Date().toISOString(),
         },
       ])
