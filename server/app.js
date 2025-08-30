@@ -1,7 +1,5 @@
 import express from "express";
-import multer from "multer";
 import path from "path";
-import fs from "fs";
 import { fileURLToPath } from "url";
 import diagnose from "./routes/diagnose.js";
 
@@ -37,25 +35,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log("✅ Created uploads directory:", uploadsDir);
-}
-
-// --- Multer storage setup ---
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "uploads"));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
 
 // health + api  
 app.get("/health", (_req, res) => res.json({ ok: true }));
@@ -521,34 +500,7 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
   }
 });
 
-// --- Upload route ---
-app.post("/api/upload", upload.single("image"), (req, res) => {
-  const uploadStart = Date.now();
-  console.log("📤 Upload request received at:", new Date(uploadStart).toISOString());
-  
-  if (!req.file) {
-    console.log("❌ No file in upload request");
-    return res.status(400).json({ error: "No file uploaded" });
-  }
 
-  const uploadEnd = Date.now();
-  const uploadTime = uploadEnd - uploadStart;
-  const imageUrl = `/uploads/${req.file.filename}`;
-  
-  console.log("✅ File uploaded successfully:", {
-    originalName: req.file.originalname,
-    filename: req.file.filename,
-    size: req.file.size,
-    path: req.file.path,
-    imageUrl: imageUrl,
-    uploadTime: uploadTime + "ms"
-  });
-
-  res.json({ imageUrl, uploadTime });
-});
-
-// --- Serve uploaded files ---
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // serve client build
 app.use(express.static(path.join(__dirname, "..", "client", "build")));
