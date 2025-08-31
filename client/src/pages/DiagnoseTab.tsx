@@ -41,7 +41,8 @@ export default function DiagnoseTab() {
 
       // Create case and generate questions
       setDebugMsg("❓ Creating case and generating questions...");
-      const caseResp = await fetch("/api/diagnose/cases", {
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const caseResp = await fetch(`${apiUrl}/api/diagnose/cases`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',

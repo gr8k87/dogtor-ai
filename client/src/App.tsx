@@ -89,7 +89,8 @@ function AppContent() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/auth/user`, {
         credentials: 'include'
       });
       
@@ -113,7 +114,8 @@ function AppContent() {
 
   const handleDemoAccess = async () => {
     try {
-      const response = await fetch('/auth/demo', {
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const response = await fetch(`${apiUrl}/auth/demo`, {
         method: 'POST',
         credentials: 'include'
       });
