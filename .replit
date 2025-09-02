@@ -57,4 +57,3 @@ task = "shell.exec"
 args = "concurrently \"npm run dev --prefix server\" \"cd client && npm start\""
 
 [agent]
-integrations = ["javascript_log_in_with_replit==1.0.0", "javascript_sendgrid==1.0.0", "javascript_database==1.0.0"]
