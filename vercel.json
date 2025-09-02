@@ -16,10 +16,5 @@
       "src": "/(.*)",
       "dest": "/server/app.js"
     }
-  ],
-  "functions": {
-    "server/app.js": {
-      "includeFiles": "client/build/**"
-    }
-  }
+  ]
 }
