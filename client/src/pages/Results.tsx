@@ -26,8 +26,6 @@ export default function Results({}: ResultsProps) {
   if (!cards) {
     return (
       <div className="min-h-dvh flex flex-col bg-background">
-        <GlobalHeader title="Results" />
-
         <main className="flex-1 pb-20 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-4 space-y-6">
             {/* Status indicator */}
@@ -71,7 +69,7 @@ export default function Results({}: ResultsProps) {
           </div>
         </main>
 
-        <BottomTabs navigate={navigate} activeTab="results" />
+        <BottomTabs navigate={navigate} activeTab="diagnose" />
       </div>
     );
   }
@@ -109,7 +107,10 @@ export default function Results({}: ResultsProps) {
         {/* Card 1: Diagnosis  */}
         <div className="space-y-8">
           {/* Main diagnosis */}
-          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard
+            colorIndex={2}
+            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
+          >
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">🎯</span>
@@ -161,7 +162,10 @@ export default function Results({}: ResultsProps) {
           </HealthCard>
 
           {/* Card 2: Costs */}
-          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard
+            colorIndex={2}
+            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
+          >
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-4xl">💰</span>
@@ -208,7 +212,10 @@ export default function Results({}: ResultsProps) {
           </HealthCard>
 
           {/* Card 3: General Care Tips */}
-          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard
+            colorIndex={2}
+            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
+          >
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">💡</span>
@@ -273,7 +280,7 @@ export default function Results({}: ResultsProps) {
         </div>
       </div>
 
-      <BottomTabs navigate={navigate} activeTab="results" />
+      <BottomTabs navigate={navigate} activeTab="diagnose" />
     </div>
   );
 }

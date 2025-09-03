@@ -7,7 +7,13 @@ import Results from "./pages/Results";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Button } from "./components/ui/button";
 import BottomTabs from "./components/BottomTabs";
 import { ThemeProvider } from "./lib/theme-provider";
@@ -38,7 +44,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
           <div className="flex justify-center">
             <AppIcons.logoVertical size={80} />
           </div>
-          
+
           <div className="space-y-2">
             <p className="text-lg text-muted-foreground">
               Not a vet, just your first step.
@@ -51,7 +57,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
             <AppIcons.safety size={16} />
             <span>AI-powered pet health guidance</span>
           </div>
-          
+
           {/* Loading indicator */}
           <div className="flex justify-center">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -86,11 +92,11 @@ function AppContent() {
 
   const checkAuthStatus = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || "";
       const response = await fetch(`${apiUrl}/api/auth/user`, {
-        credentials: 'include'
+        credentials: "include",
       });
-      
+
       if (response.ok) {
         setIsAuthenticated(true);
       } else {
@@ -104,36 +110,40 @@ function AppContent() {
   // Handle demo user access
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('demo') === 'true') {
+    if (urlParams.get("demo") === "true") {
       handleDemoAccess();
     }
   }, []);
 
   const handleDemoAccess = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || "";
       const response = await fetch(`${apiUrl}/auth/demo`, {
-        method: 'POST',
-        credentials: 'include'
+        method: "POST",
+        credentials: "include",
       });
-      
+
       if (response.ok) {
         setIsAuthenticated(true);
         setShowSplash(false);
-        navigate('/', { replace: true });
+        navigate("/", { replace: true });
       }
     } catch (error) {
-      console.error('Demo access failed:', error);
+      console.error("Demo access failed:", error);
     }
   };
 
   // Hide navigation on question, result, and auth pages
-  const hideNav = location.pathname.includes("/questions/") || location.pathname.includes("/results/") || 
-                  location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/profile";
+  const hideNav =
+    location.pathname.includes("/questions/") ||
+    location.pathname.includes("/results/") ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/profile";
 
   // Show splash screen first
   if (showSplash) return <Splash onComplete={handleSplashComplete} />;
-  
+
   // If authentication status is still loading, show a loading screen
   if (isAuthenticated === null) {
     return (
@@ -142,9 +152,9 @@ function AppContent() {
       </div>
     );
   }
-  
+
   // If not authenticated, redirect to login (except for auth pages)
-  if (!isAuthenticated && !['/login', '/signup'].includes(location.pathname)) {
+  if (!isAuthenticated && !["/login", "/signup"].includes(location.pathname)) {
     return <Login />;
   }
 
@@ -157,76 +167,86 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
-        
+
         {/* Main App Routes */}
-        <Route path="/" element={
-          <>
-            <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-3">
-                  <AppIcons.logo size={32} className="text-primary" />
-
+        <Route
+          path="/"
+          element={
+            <>
+              <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center justify-between px-4">
+                  <div className="flex items-center gap-3">
+                    <AppIcons.logo size={32} className="text-primary" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ProfileButton />
+                    <ThemeToggle />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <ProfileButton />
-                  <ThemeToggle />
+              </header>
+              <main className="flex-1 pb-20 overflow-y-auto">
+                <DiagnoseTab />
+              </main>
+            </>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <>
+              <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center justify-between px-4">
+                  <div className="flex items-center gap-3">
+                    <AppIcons.logo size={32} className="text-primary" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ProfileButton />
+                    <ThemeToggle />
+                  </div>
                 </div>
-              </div>
-            </header>
-            <main className="flex-1 pb-20 overflow-y-auto">
-              <DiagnoseTab />
-            </main>
-          </>
-        } />
-        <Route path="/history" element={
-          <>
-            <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-3">
-                  <AppIcons.logo size={32} className="text-primary" />
-
+              </header>
+              <main className="flex-1 pb-20 overflow-y-auto">
+                <History />
+              </main>
+            </>
+          }
+        />
+        <Route
+          path="/connect"
+          element={
+            <>
+              <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center justify-between px-4">
+                  <div className="flex items-center gap-3">
+                    <AppIcons.logo size={32} className="text-primary" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ProfileButton />
+                    <ThemeToggle />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <ProfileButton />
-                  <ThemeToggle />
-                </div>
-              </div>
-            </header>
-            <main className="flex-1 pb-20 overflow-y-auto">
-              <History />
-            </main>
-          </>
-        } />
-        <Route path="/connect" element={
-          <>
-            <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-3">
-                  <AppIcons.logo size={32} className="text-primary" />
-
-                </div>
-                <div className="flex items-center gap-2">
-                  <ProfileButton />
-                  <ThemeToggle />
-                </div>
-              </div>
-            </header>
-            <main className="flex-1 pb-20 overflow-y-auto">
-              <ConnectTab />
-            </main>
-          </>
-        } />
+              </header>
+              <main className="flex-1 pb-20 overflow-y-auto">
+                <ConnectTab />
+              </main>
+            </>
+          }
+        />
         <Route path="/questions/:caseId" element={<Questions />} />
         <Route path="/results/:caseId" element={<Results />} />
       </Routes>
 
       {!hideNav && (
-        <BottomTabs 
-          navigate={navigate} 
+        <BottomTabs
+          navigate={navigate}
           activeTab={
-            location.pathname === "/" ? "diagnose" :
-            location.pathname === "/history" ? "history" :
-            location.pathname === "/connect" ? "results" : "diagnose"
+            location.pathname === "/"
+              ? "diagnose"
+              : location.pathname === "/history"
+                ? "history"
+                : location.pathname === "/connect"
+                  ? "connect"
+                  : "diagnose"
           }
         />
       )}

@@ -1,90 +1,102 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from '../components/ui/health-card';
-import BreedSelector from '../components/BreedSelector';
-import { AppIcons } from '../components/icons';
-import { EmailSignupData } from '../../../shared/schema';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
+import BreedSelector from "../components/BreedSelector";
+import { AppIcons } from "../components/icons";
+import { EmailSignupData } from "../../../shared/schema";
 
-interface SignupFormData extends Omit<EmailSignupData, 'pet_birth_month' | 'pet_birth_year'> {
+interface SignupFormData
+  extends Omit<EmailSignupData, "pet_birth_month" | "pet_birth_year"> {
   confirmPassword: string;
   pet_birth_month: string; // Keep as string for form handling
   pet_birth_year: string; // Keep as string for form handling
 }
 
 const MONTHS = [
-  { value: '1', label: 'January' },
-  { value: '2', label: 'February' },
-  { value: '3', label: 'March' },
-  { value: '4', label: 'April' },
-  { value: '5', label: 'May' },
-  { value: '6', label: 'June' },
-  { value: '7', label: 'July' },
-  { value: '8', label: 'August' },
-  { value: '9', label: 'September' },
-  { value: '10', label: 'October' },
-  { value: '11', label: 'November' },
-  { value: '12', label: 'December' },
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
 ];
 
 // Generate years from current year back to 25 years ago
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 26 }, (_, i) => ({
   value: (currentYear - i).toString(),
-  label: (currentYear - i).toString()
+  label: (currentYear - i).toString(),
 }));
 
 const GENDERS = [
-  { value: 'Male', label: 'Male' },
-  { value: 'Female', label: 'Female' },
-  { value: 'Unknown', label: 'Unknown' },
+  { value: "Male", label: "Male" },
+  { value: "Female", label: "Female" },
+  { value: "Unknown", label: "Unknown" },
 ];
 
 export default function Signup() {
   const navigate = useNavigate();
   const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup
-  
+
   const [formData, setFormData] = useState<SignupFormData>({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    pet_name: '',
-    pet_breed: '',
-    pet_birth_month: '',
-    pet_birth_year: '',
-    pet_gender: ''
+    email: "",
+    password: "",
+    confirmPassword: "",
+    pet_name: "",
+    pet_breed: "",
+    pet_birth_month: "",
+    pet_birth_year: "",
+    pet_gender: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const handleSelectChange = (field: string) => (value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     // Clear error when user makes selection
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
   };
@@ -94,40 +106,40 @@ export default function Signup() {
 
     // Email validation
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
     // Password validation
     if (!formData.password.trim()) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     // Confirm password validation
     if (!formData.confirmPassword.trim()) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     // Pet information validation
     if (!formData.pet_name.trim()) {
-      newErrors.pet_name = 'Pet name is required';
+      newErrors.pet_name = "Pet name is required";
     }
 
     if (!formData.pet_breed.trim()) {
-      newErrors.pet_breed = 'Pet breed is required';
+      newErrors.pet_breed = "Pet breed is required";
     }
 
     if (!formData.pet_birth_month) {
-      newErrors.pet_birth_month = 'Birth month is required';
+      newErrors.pet_birth_month = "Birth month is required";
     }
 
     if (!formData.pet_birth_year) {
-      newErrors.pet_birth_year = 'Birth year is required';
+      newErrors.pet_birth_year = "Birth year is required";
     }
 
     setErrors(newErrors);
@@ -136,11 +148,11 @@ export default function Signup() {
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
+
     try {
       // Convert string dates to numbers for API
       const signupData: EmailSignupData = {
@@ -150,13 +162,13 @@ export default function Signup() {
         pet_breed: formData.pet_breed,
         pet_birth_month: parseInt(formData.pet_birth_month),
         pet_birth_year: parseInt(formData.pet_birth_year),
-        pet_gender: formData.pet_gender || undefined
+        pet_gender: formData.pet_gender || undefined,
       };
 
-      const response = await fetch('/auth/email/signup', {
-        method: 'POST',
+      const response = await fetch("/auth/email/signup", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(signupData),
       });
@@ -165,16 +177,16 @@ export default function Signup() {
 
       if (response.ok) {
         // Successful signup - redirect to main app
-        navigate('/');
+        navigate("/");
         window.location.reload(); // Refresh to update auth state
       } else {
         setErrors({
-          general: data.error || 'Signup failed. Please try again.'
+          general: data.error || "Signup failed. Please try again.",
         });
       }
     } catch (error) {
       setErrors({
-        general: 'Network error. Please check your connection and try again.'
+        general: "Network error. Please check your connection and try again.",
       });
     } finally {
       setIsLoading(false);
@@ -183,7 +195,7 @@ export default function Signup() {
 
   const handleGoogleSignup = () => {
     // Redirect to Google OAuth
-    window.location.href = '/auth/google';
+    window.location.href = "/auth/google";
   };
 
   return (
@@ -201,13 +213,15 @@ export default function Signup() {
 
         <HealthCard colorIndex={2}>
           <HealthCardHeader className="space-y-1">
-            <HealthCardTitle className="text-xl text-center">Sign up</HealthCardTitle>
+            <HealthCardTitle className="text-xl text-center">
+              Sign up
+            </HealthCardTitle>
           </HealthCardHeader>
           <HealthCardContent className="space-y-4">
             {/* Google OAuth Button */}
             <Button
               onClick={handleGoogleSignup}
-              variant="outline"
+              variant="default"
               className="w-full h-12 text-base"
               disabled={isLoading}
               data-testid="button-google-signup"
@@ -249,204 +263,249 @@ export default function Signup() {
 
                 {/* Email Signup Form */}
                 <form onSubmit={handleEmailSignup} className="space-y-4">
-              {errors.general && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-signup-error">
-                  {errors.general}
-                </div>
-              )}
-
-              {/* Account Information */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground border-b pb-2">
-                  Account Information
-                </h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={errors.email ? "border-red-500" : ""}
-                    disabled={isLoading}
-                    data-testid="input-email"
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500" data-testid="text-email-error">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Create a password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={errors.password ? "border-red-500" : ""}
-                    disabled={isLoading}
-                    data-testid="input-password"
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-red-500" data-testid="text-password-error">
-                      {errors.password}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={errors.confirmPassword ? "border-red-500" : ""}
-                    disabled={isLoading}
-                    data-testid="input-confirm-password"
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-sm text-red-500" data-testid="text-confirm-password-error">
-                      {errors.confirmPassword}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Pet Information */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground border-b pb-2">
-                  Pet Information
-                </h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="pet_name">Pet Name <span className="text-red-500">*</span></Label>
-                  <Input
-                    id="pet_name"
-                    name="pet_name"
-                    placeholder="Enter your pet's name"
-                    value={formData.pet_name}
-                    onChange={handleInputChange}
-                    className={errors.pet_name ? "border-red-500" : ""}
-                    disabled={isLoading}
-                    data-testid="input-pet-name"
-                  />
-                  {errors.pet_name && (
-                    <p className="text-sm text-red-500" data-testid="text-pet-name-error">
-                      {errors.pet_name}
-                    </p>
-                  )}
-                </div>
-
-                <BreedSelector
-                  value={formData.pet_breed}
-                  onChange={handleSelectChange('pet_breed')}
-                  required
-                  error={errors.pet_breed}
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Birth Month <span className="text-red-500">*</span></Label>
-                    <Select 
-                      value={formData.pet_birth_month} 
-                      onValueChange={handleSelectChange('pet_birth_month')}
-                      disabled={isLoading}
+                  {errors.general && (
+                    <div
+                      className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md"
+                      data-testid="text-signup-error"
                     >
-                      <SelectTrigger 
-                        className={errors.pet_birth_month ? "border-red-500" : ""}
-                        data-testid="select-birth-month"
-                      >
-                        <SelectValue placeholder="Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {MONTHS.map((month) => (
-                          <SelectItem key={month.value} value={month.value} data-testid={`option-month-${month.value}`}>
-                            {month.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.pet_birth_month && (
-                      <p className="text-sm text-red-500" data-testid="text-birth-month-error">
-                        {errors.pet_birth_month}
-                      </p>
-                    )}
+                      {errors.general}
+                    </div>
+                  )}
+
+                  {/* Account Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-medium text-muted-foreground border-b pb-2">
+                      Account Information
+                    </h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={errors.email ? "border-red-500" : ""}
+                        disabled={isLoading}
+                        data-testid="input-email"
+                      />
+                      {errors.email && (
+                        <p
+                          className="text-sm text-red-500"
+                          data-testid="text-email-error"
+                        >
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={errors.password ? "border-red-500" : ""}
+                        disabled={isLoading}
+                        data-testid="input-password"
+                      />
+                      {errors.password && (
+                        <p
+                          className="text-sm text-red-500"
+                          data-testid="text-password-error"
+                        >
+                          {errors.password}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className={
+                          errors.confirmPassword ? "border-red-500" : ""
+                        }
+                        disabled={isLoading}
+                        data-testid="input-confirm-password"
+                      />
+                      {errors.confirmPassword && (
+                        <p
+                          className="text-sm text-red-500"
+                          data-testid="text-confirm-password-error"
+                        >
+                          {errors.confirmPassword}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Birth Year <span className="text-red-500">*</span></Label>
-                    <Select 
-                      value={formData.pet_birth_year} 
-                      onValueChange={handleSelectChange('pet_birth_year')}
-                      disabled={isLoading}
-                    >
-                      <SelectTrigger 
-                        className={errors.pet_birth_year ? "border-red-500" : ""}
-                        data-testid="select-birth-year"
-                      >
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {YEARS.map((year) => (
-                          <SelectItem key={year.value} value={year.value} data-testid={`option-year-${year.value}`}>
-                            {year.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.pet_birth_year && (
-                      <p className="text-sm text-red-500" data-testid="text-birth-year-error">
-                        {errors.pet_birth_year}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                  {/* Pet Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-medium text-muted-foreground border-b pb-2">
+                      Pet Information
+                    </h3>
 
-                <div className="space-y-2">
-                  <Label>Gender (optional)</Label>
-                  <Select 
-                    value={formData.pet_gender} 
-                    onValueChange={handleSelectChange('pet_gender')}
+                    <div className="space-y-2">
+                      <Label htmlFor="pet_name">
+                        Pet Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="pet_name"
+                        name="pet_name"
+                        placeholder="Enter your pet's name"
+                        value={formData.pet_name}
+                        onChange={handleInputChange}
+                        className={errors.pet_name ? "border-red-500" : ""}
+                        disabled={isLoading}
+                        data-testid="input-pet-name"
+                      />
+                      {errors.pet_name && (
+                        <p
+                          className="text-sm text-red-500"
+                          data-testid="text-pet-name-error"
+                        >
+                          {errors.pet_name}
+                        </p>
+                      )}
+                    </div>
+
+                    <BreedSelector
+                      value={formData.pet_breed}
+                      onChange={handleSelectChange("pet_breed")}
+                      required
+                      error={errors.pet_breed}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>
+                          Birth Month <span className="text-red-500">*</span>
+                        </Label>
+                        <Select
+                          value={formData.pet_birth_month}
+                          onValueChange={handleSelectChange("pet_birth_month")}
+                          disabled={isLoading}
+                        >
+                          <SelectTrigger
+                            className={
+                              errors.pet_birth_month ? "border-red-500" : ""
+                            }
+                            data-testid="select-birth-month"
+                          >
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {MONTHS.map((month) => (
+                              <SelectItem
+                                key={month.value}
+                                value={month.value}
+                                data-testid={`option-month-${month.value}`}
+                              >
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.pet_birth_month && (
+                          <p
+                            className="text-sm text-red-500"
+                            data-testid="text-birth-month-error"
+                          >
+                            {errors.pet_birth_month}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>
+                          Birth Year <span className="text-red-500">*</span>
+                        </Label>
+                        <Select
+                          value={formData.pet_birth_year}
+                          onValueChange={handleSelectChange("pet_birth_year")}
+                          disabled={isLoading}
+                        >
+                          <SelectTrigger
+                            className={
+                              errors.pet_birth_year ? "border-red-500" : ""
+                            }
+                            data-testid="select-birth-year"
+                          >
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {YEARS.map((year) => (
+                              <SelectItem
+                                key={year.value}
+                                value={year.value}
+                                data-testid={`option-year-${year.value}`}
+                              >
+                                {year.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.pet_birth_year && (
+                          <p
+                            className="text-sm text-red-500"
+                            data-testid="text-birth-year-error"
+                          >
+                            {errors.pet_birth_year}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Gender (optional)</Label>
+                      <Select
+                        value={formData.pet_gender}
+                        onValueChange={handleSelectChange("pet_gender")}
+                        disabled={isLoading}
+                      >
+                        <SelectTrigger data-testid="select-gender">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {GENDERS.map((gender) => (
+                            <SelectItem
+                              key={gender.value}
+                              value={gender.value}
+                              data-testid={`option-gender-${gender.value.toLowerCase()}`}
+                            >
+                              {gender.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={isLoading}
+                    data-testid="button-email-signup"
                   >
-                    <SelectTrigger data-testid="select-gender">
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GENDERS.map((gender) => (
-                        <SelectItem key={gender.value} value={gender.value} data-testid={`option-gender-${gender.value.toLowerCase()}`}>
-                          {gender.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-                data-testid="button-email-signup"
-              >
-                {isLoading ? 'Creating account...' : 'Create account'}
-              </Button>
+                    {isLoading ? "Creating account..." : "Create account"}
+                  </Button>
                 </form>
 
                 <div className="text-center text-sm text-muted-foreground">
-                  Already have an account?{' '}
-                  <Link 
-                    to="/login" 
+                  Already have an account?{" "}
+                  <Link
+                    to="/login"
                     className="text-primary hover:text-primary/80 font-medium"
                     data-testid="link-login"
                   >
@@ -463,11 +522,12 @@ export default function Signup() {
                   Other signup options coming soon
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  For now, please use Google to sign up and we'll help you set up your pet's profile.
+                  For now, please use Google to sign up and we'll help you set
+                  up your pet's profile.
                 </p>
                 <div className="text-xs text-muted-foreground mt-2">
-                  <a 
-                    href="/?demo=true" 
+                  <a
+                    href="/?demo=true"
                     className="text-primary hover:text-primary/80 underline"
                     data-testid="link-demo"
                   >

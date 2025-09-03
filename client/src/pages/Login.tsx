@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from '../components/ui/health-card';
-import { AppIcons } from '../components/icons';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
+import { AppIcons } from "../components/icons";
 
 interface LoginFormData {
   email: string;
@@ -14,23 +19,23 @@ interface LoginFormData {
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -39,13 +44,13 @@ export default function Login() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password.trim()) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
@@ -54,16 +59,16 @@ export default function Login() {
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/auth/email/login', {
-        method: 'POST',
+      const response = await fetch("/auth/email/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -72,16 +77,16 @@ export default function Login() {
 
       if (response.ok) {
         // Successful login - redirect to main app
-        navigate('/');
+        navigate("/");
         window.location.reload(); // Refresh to update auth state
       } else {
         setErrors({
-          general: data.error || 'Login failed. Please try again.'
+          general: data.error || "Login failed. Please try again.",
         });
       }
     } catch (error) {
       setErrors({
-        general: 'Network error. Please check your connection and try again.'
+        general: "Network error. Please check your connection and try again.",
       });
     } finally {
       setIsLoading(false);
@@ -90,7 +95,7 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth
-    window.location.href = '/auth/google';
+    window.location.href = "/auth/google";
   };
 
   const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup
@@ -110,13 +115,15 @@ export default function Login() {
 
         <HealthCard colorIndex={2}>
           <HealthCardHeader className="space-y-1">
-            <HealthCardTitle className="text-xl text-center">Sign in</HealthCardTitle>
+            <HealthCardTitle className="text-xl text-center">
+              Sign in
+            </HealthCardTitle>
           </HealthCardHeader>
           <HealthCardContent className="space-y-4">
             {/* Google OAuth Button */}
             <Button
               onClick={handleGoogleLogin}
-              variant="outline"
+              variant="default"
               className="w-full h-12 text-base"
               disabled={isLoading}
               data-testid="button-google-login"
@@ -159,7 +166,10 @@ export default function Login() {
                 {/* Email Login Form */}
                 <form onSubmit={handleEmailLogin} className="space-y-4">
                   {errors.general && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-login-error">
+                    <div
+                      className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md"
+                      data-testid="text-login-error"
+                    >
                       {errors.general}
                     </div>
                   )}
@@ -178,7 +188,10 @@ export default function Login() {
                       data-testid="input-email"
                     />
                     {errors.email && (
-                      <p className="text-sm text-red-500" data-testid="text-email-error">
+                      <p
+                        className="text-sm text-red-500"
+                        data-testid="text-email-error"
+                      >
                         {errors.email}
                       </p>
                     )}
@@ -198,7 +211,10 @@ export default function Login() {
                       data-testid="input-password"
                     />
                     {errors.password && (
-                      <p className="text-sm text-red-500" data-testid="text-password-error">
+                      <p
+                        className="text-sm text-red-500"
+                        data-testid="text-password-error"
+                      >
                         {errors.password}
                       </p>
                     )}
@@ -210,14 +226,14 @@ export default function Login() {
                     disabled={isLoading}
                     data-testid="button-email-login"
                   >
-                    {isLoading ? 'Signing in...' : 'Sign in'}
+                    {isLoading ? "Signing in..." : "Sign in"}
                   </Button>
                 </form>
 
                 <div className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{' '}
-                  <Link 
-                    to="/signup" 
+                  Don't have an account?{" "}
+                  <Link
+                    to="/signup"
                     className="text-primary hover:text-primary/80 font-medium"
                     data-testid="link-signup"
                   >
@@ -234,8 +250,8 @@ export default function Login() {
                   Other signup options coming soon
                 </p>
                 <div className="text-xs text-muted-foreground">
-                  <a 
-                    href="/?demo=true" 
+                  <a
+                    href="/?demo=true"
                     className="text-primary hover:text-primary/80 underline"
                     data-testid="link-demo"
                   >
