@@ -18,6 +18,7 @@ export default function ImagePicker({ onChange, className }: Props) {
   } | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const cameraInputRef = React.useRef<HTMLInputElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   async function handle(e: React.ChangeEvent<HTMLInputElement>) {
@@ -66,10 +67,13 @@ export default function ImagePicker({ onChange, className }: Props) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = "";
+    }
   };
 
   const handleCameraCapture = () => {
-    fileInputRef.current?.click();
+    cameraInputRef.current?.click();
   };
 
   const handleGalleryUpload = () => {
@@ -237,10 +241,21 @@ export default function ImagePicker({ onChange, className }: Props) {
         </div>
       )}
 
+      {/* Camera input - opens native camera */}
       <input
         type="file"
         accept="image/*"
         capture="environment"
+        onChange={handle}
+        ref={cameraInputRef}
+        className="sr-only"
+        data-testid="input-camera"
+      />
+      
+      {/* File input - opens file picker */}
+      <input
+        type="file"
+        accept="image/*"
         onChange={handle}
         ref={fileInputRef}
         className="sr-only"
