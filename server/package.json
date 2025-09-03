@@ -6,12 +6,14 @@
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.56.1",
     "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^9.0.1",
     "express": "^4.21.2",
     "express-session": "^1.18.2",
     "openai": "^5.16.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "pg": "^8.13.1",
     "sharp": "^0.34.3"
   },
   "scripts": {
