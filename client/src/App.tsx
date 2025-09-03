@@ -47,7 +47,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
 
           <div className="space-y-2">
             <p className="text-lg text-muted-foreground">
-              Not a vet, just your first step.
+              Your first step before the vet.
             </p>
           </div>
         </div>
@@ -55,7 +55,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
         <div className="space-y-4">
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <AppIcons.safety size={16} />
-            <span>AI-powered pet health guidance</span>
+            <span>Smart guidance for your dog’s health.</span>
           </div>
 
           {/* Loading indicator */}
@@ -66,7 +66,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
 
         <div className="pt-4 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            For guidance only. Not a veterinary service.
+            For guidance only. If you’re worried, always check with your vet.
           </p>
         </div>
       </div>

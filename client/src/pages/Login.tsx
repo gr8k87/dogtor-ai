@@ -114,11 +114,6 @@ export default function Login() {
         </div>
 
         <HealthCard colorIndex={2}>
-          <HealthCardHeader className="space-y-1">
-            <HealthCardTitle className="text-xl text-center">
-              Sign in
-            </HealthCardTitle>
-          </HealthCardHeader>
           <HealthCardContent className="space-y-4">
             {/* Google OAuth Button */}
             <Button
@@ -243,12 +238,9 @@ export default function Login() {
               </>
             )}
 
-            {/* Message when email flow is disabled */}
+            {/* Message when email  flow is disabled */}
             {!isEmailFlowEnabled && (
               <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Other signup options coming soon
-                </p>
                 <div className="text-xs text-muted-foreground">
                   <a
                     href="/?demo=true"
