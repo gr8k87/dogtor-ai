@@ -29,10 +29,10 @@ const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
 function Splash({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
-    // Auto-transition to login after 2 seconds
+    // Auto-transition to login after 2.5 seconds
     const timer = setTimeout(() => {
       onComplete();
-    }, 2000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -141,7 +141,7 @@ function AppContent() {
     location.pathname === "/signup" ||
     location.pathname === "/profile";
 
-  // Show splash screen first for all users
+  // Show splash screen first
   if (showSplash) return <Splash onComplete={handleSplashComplete} />;
 
   // If authentication status is still loading, show a loading screen
