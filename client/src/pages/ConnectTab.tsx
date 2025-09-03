@@ -12,7 +12,7 @@ export default function ConnectTab() {
     <div className="min-h-dvh gradient-hero">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
         {/* Find a Vet Card */}
-        <HealthCard colorIndex={1} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+        <HealthCard colorIndex={2} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
@@ -109,7 +109,7 @@ export default function ConnectTab() {
         </HealthCard>
 
         {/* Call TeleVet Card */}
-        <HealthCard colorIndex={1} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+        <HealthCard colorIndex={2} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">

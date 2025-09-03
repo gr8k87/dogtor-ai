@@ -267,7 +267,7 @@ export default function Profile() {
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
         {/* User Summary Card */}
-        <HealthCard colorIndex={5}>
+        <HealthCard colorIndex={2}>
           <HealthCardHeader>
             <HealthCardTitle className="flex items-center gap-2">
               <User size={20} />
@@ -294,7 +294,7 @@ export default function Profile() {
         {/* Profile Form */}
         <form onSubmit={handleSave} className="space-y-6">
           {/* Personal Information */}
-          <HealthCard colorIndex={5}>
+          <HealthCard colorIndex={2}>
             <HealthCardHeader>
               <HealthCardTitle>Personal Information</HealthCardTitle>
             </HealthCardHeader>
@@ -355,7 +355,7 @@ export default function Profile() {
           </HealthCard>
 
           {/* Pet Information */}
-          <HealthCard colorIndex={5}>
+          <HealthCard colorIndex={2}>
             <HealthCardHeader>
               <HealthCardTitle>Pet Information</HealthCardTitle>
             </HealthCardHeader>

@@ -109,7 +109,7 @@ export default function Results({}: ResultsProps) {
         {/* Card 1: Diagnosis  */}
         <div className="space-y-8">
           {/* Main diagnosis */}
-          <HealthCard colorIndex={1} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">🎯</span>
@@ -161,7 +161,7 @@ export default function Results({}: ResultsProps) {
           </HealthCard>
 
           {/* Card 2: Costs */}
-          <HealthCard colorIndex={4} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-4xl">💰</span>
@@ -208,7 +208,7 @@ export default function Results({}: ResultsProps) {
           </HealthCard>
 
           {/* Card 3: General Care Tips */}
-          <HealthCard colorIndex={3} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
             <HealthCardHeader className="pb-4">
               <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">💡</span>

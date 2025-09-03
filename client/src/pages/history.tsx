@@ -64,9 +64,10 @@ export default function History() {
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div
+              <HealthCard
                 key={i}
-                className="p-6 rounded-2xl border bg-card shadow-medium animate-pulse"
+                colorIndex={2}
+                className="animate-pulse"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 space-y-2">
@@ -76,7 +77,7 @@ export default function History() {
                   </div>
                   <div className="w-6 h-6 bg-muted rounded"></div>
                 </div>
-              </div>
+              </HealthCard>
             ))}
           </div>
         </main>
@@ -333,7 +334,7 @@ function HistoryCard({
   };
 
   return (
-    <HealthCard colorIndex={8}
+    <HealthCard colorIndex={2}
       className={`transition-all duration-300 border-accent rounded-2xl shadow-medium hover:shadow-elevated ${
         cards ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98]" : ""
       }`}

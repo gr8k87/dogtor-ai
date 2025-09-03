@@ -203,7 +203,7 @@ export default function DiagnoseTab() {
 
             {/* Error message */}
             {errors.submit && (
-              <HealthCard colorIndex={6} className="border-destructive/20 bg-destructive/5 transition-smooth">
+              <HealthCard colorIndex={2} className="border-destructive/20 bg-destructive/5 transition-smooth">
                 <HealthCardContent className="p-4">
                   <div className="space-y-3">
                     <div className="flex items-start gap-2">

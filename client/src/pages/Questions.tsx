@@ -247,7 +247,7 @@ export default function Questions() {
               </div>
             </div>
 
-            <HealthCard colorIndex={1} className="border-accent gradient-card rounded-2xl shadow-elevated">
+            <HealthCard colorIndex={2} className="border-accent gradient-card rounded-2xl shadow-elevated">
               <HealthCardContent className="p-6">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">

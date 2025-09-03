@@ -199,7 +199,7 @@ export default function Signup() {
           </p>
         </div>
 
-        <HealthCard colorIndex={0}>
+        <HealthCard colorIndex={2}>
           <HealthCardHeader className="space-y-1">
             <HealthCardTitle className="text-xl text-center">Sign up</HealthCardTitle>
           </HealthCardHeader>

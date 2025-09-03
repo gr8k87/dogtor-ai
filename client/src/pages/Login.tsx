@@ -108,7 +108,7 @@ export default function Login() {
           </p>
         </div>
 
-        <HealthCard colorIndex={0}>
+        <HealthCard colorIndex={2}>
           <HealthCardHeader className="space-y-1">
             <HealthCardTitle className="text-xl text-center">Sign in</HealthCardTitle>
           </HealthCardHeader>
