@@ -71,17 +71,17 @@ app.use(
     store: new pgSession({
       pool: pgPool,
       tableName: "session",
-      createTableIfMissing: false, // We already created the table
+      createTableIfMissing: true, // Auto-create session table
     }),
     secret:
       process.env.SESSION_SECRET || "dogtor-ai-secret-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Always false for Replit development
+      secure: process.env.NODE_ENV === "production", // True for HTTPS (Vercel)
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: "lax", // Always lax for Replit
+      sameSite: "lax",
     },
   }),
 );
