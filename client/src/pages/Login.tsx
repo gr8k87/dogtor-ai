@@ -102,10 +102,10 @@ export default function Login() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
-              <AppIcons.logo size={48} className="text-primary" />
+              <AppIcons.logoVertical size={48} />
             </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome to Dogtor AI</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back!</h1>
           <p className="text-muted-foreground mt-2">
             Sign in to get personalized pet health guidance
           </p>

@@ -5,80 +5,67 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string
 }
 
-// DogtorAI Logo - Paws with Plus Sign
-export const DogtorLogo: React.FC<IconProps> = ({ 
-  size = 24, 
+interface LogoProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: number | string
+  className?: string
+}
+
+// DogtorAI Logo - Vertical layout for splash screens
+export const DogtorLogoVertical: React.FC<LogoProps> = ({ 
+  size = 48, 
   className = "", 
   ...props 
 }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 48 48" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    {...props}
-  >
-    {/* Paw Print Base */}
-    <path 
-      d="M16 28c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4 4 1.8 4 4z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
+  <div className={`flex flex-col items-center gap-2 ${className}`} {...props}>
+    <img 
+      src="/logo-dog.svg" 
+      alt="Dogtor Logo" 
+      width={size} 
+      height={size}
+      className="drop-shadow-sm"
     />
-    <path 
-      d="M40 28c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4 4 1.8 4 4z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path 
-      d="M20 20c0 1.7-1.3 3-3 3s-3-1.3-3-3 1.3-3 3-3 3 1.3 3 3z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path 
-      d="M34 20c0 1.7-1.3 3-3 3s-3-1.3-3-3 1.3-3 3-3 3 1.3 3 3z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path 
-      d="M28 15c0 1.7-1.3 3-3 3s-3-1.3-3-3 1.3-3 3-3 3 1.3 3 3z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path 
-      d="M30 35c0 2.8-2.2 5-5 5s-5-2.2-5-5 2.2-5 5-5 5 2.2 5 5z" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    
-    {/* Medical Cross */}
-    <path 
-      d="M24 6v12M18 12h12" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round"
-    />
-  </svg>
+    <span 
+      className="text-[#FF5A5F] font-semibold tracking-tight"
+      style={{ 
+        fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+        fontWeight: 600,
+        fontSize: typeof size === 'number' ? `${size * 0.3}px` : '14px'
+      }}
+    >
+      dogtor
+    </span>
+  </div>
 )
+
+// DogtorAI Logo - Horizontal layout for headers
+export const DogtorLogoHorizontal: React.FC<LogoProps> = ({ 
+  size = 32, 
+  className = "", 
+  ...props 
+}) => (
+  <div className={`flex items-center gap-2 ${className}`} {...props}>
+    <img 
+      src="/logo-dog.svg" 
+      alt="Dogtor Logo" 
+      width={size} 
+      height={size}
+      className="drop-shadow-sm"
+    />
+    <span 
+      className="text-[#FF5A5F] font-semibold tracking-tight"
+      style={{ 
+        fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+        fontWeight: 600,
+        fontSize: typeof size === 'number' ? `${size * 0.5}px` : '16px'
+      }}
+    >
+      dogtor
+    </span>
+  </div>
+)
+
+// Backward compatibility - defaults to horizontal layout
+export const DogtorLogo: React.FC<LogoProps> = DogtorLogoHorizontal
 
 // Stethoscope Icon
 export const Stethoscope: React.FC<IconProps> = ({ 

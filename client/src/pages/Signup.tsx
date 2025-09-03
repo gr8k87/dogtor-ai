@@ -193,10 +193,10 @@ export default function Signup() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
-              <AppIcons.logo size={48} className="text-primary" />
+              <AppIcons.logoVertical size={48} />
             </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Join Dogtor AI</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome!</h1>
           <p className="text-muted-foreground mt-2">
             Sign up with Google to get personalized pet health guidance
           </p>

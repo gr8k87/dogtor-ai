@@ -36,13 +36,12 @@ function Splash({ onComplete }: { onComplete: () => void }) {
       <div className="max-w-md mx-auto space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
-            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 animate-pulse">
-              <AppIcons.logo size={64} className="text-primary" />
+            <div className="p-6 rounded-2xl bg-primary/10 border border-primary/20 animate-pulse">
+              <AppIcons.logoVertical size={64} />
             </div>
           </div>
           
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Dogtor AI</h1>
             <p className="text-lg text-muted-foreground">
               Not a vet, just your first step.
             </p>

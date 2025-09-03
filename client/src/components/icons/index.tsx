@@ -3,6 +3,8 @@
 
 import {
   DogtorLogo,
+  DogtorLogoVertical,
+  DogtorLogoHorizontal,
   Stethoscope,
   PetHealth,
   CameraPlus,
@@ -15,6 +17,8 @@ import {
 
 export {
   DogtorLogo,
+  DogtorLogoVertical,
+  DogtorLogoHorizontal,
   Stethoscope,
   PetHealth,
   CameraPlus,
@@ -96,7 +100,9 @@ export {
 // Icon configuration - Change these to switch icon sets globally
 export const AppIcons = {
   // App Branding
-  logo: DogtorLogo,
+  logo: DogtorLogoHorizontal,        // Default for headers
+  logoVertical: DogtorLogoVertical,  // For splash screens
+  logoHorizontal: DogtorLogoHorizontal, // For headers (explicit)
   
   // Main Navigation
   diagnose: DiagnosisIcon,
