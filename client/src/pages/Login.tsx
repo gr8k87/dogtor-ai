@@ -78,7 +78,7 @@ export default function Login() {
       if (response.ok) {
         // Successful login - redirect to main app
         navigate("/");
-        window.location.reload(); // Refresh to update auth state
+        // Let the App component re-check auth status automatically
       } else {
         setErrors({
           general: data.error || "Login failed. Please try again.",

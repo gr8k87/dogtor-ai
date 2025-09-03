@@ -85,10 +85,17 @@ function AppContent() {
     setShowSplash(false);
   }
 
-  // Check authentication status on mount
+  // Check authentication status on mount and route changes
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  // Re-check auth when returning to main routes from auth pages
+  useEffect(() => {
+    if (location.pathname === '/' || location.pathname === '/history' || location.pathname === '/connect') {
+      checkAuthStatus();
+    }
+  }, [location.pathname]);
 
   const checkAuthStatus = async () => {
     try {
@@ -127,9 +134,15 @@ function AppContent() {
         setIsAuthenticated(true);
         setShowSplash(false);
         navigate("/", { replace: true });
+      } else {
+        // Retry demo access once if it fails
+        console.warn("Demo access failed, retrying...");
+        setTimeout(() => handleDemoAccess(), 1000);
       }
     } catch (error) {
       console.error("Demo access failed:", error);
+      // Retry once on network error
+      setTimeout(() => handleDemoAccess(), 2000);
     }
   };
 

@@ -50,8 +50,25 @@ const supabase = createClient(
 // Session Management & Authentication Setup
 // ================================================
 
-// Configure session management
+// Configure PostgreSQL session store
+import ConnectPgSimple from 'connect-pg-simple';
+import pg from 'pg';
+
+const pgSession = ConnectPgSimple(session);
+
+// Create PostgreSQL connection pool for sessions
+const pgPool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Configure session management with PostgreSQL store
 app.use(session({
+  store: new pgSession({
+    pool: pgPool,
+    tableName: 'session',
+    createTableIfMissing: false // We already created the table
+  }),
   secret: process.env.SESSION_SECRET || 'dogtor-ai-secret-change-in-production',
   resave: false,
   saveUninitialized: false,

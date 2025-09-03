@@ -178,7 +178,7 @@ export default function Signup() {
       if (response.ok) {
         // Successful signup - redirect to main app
         navigate("/");
-        window.location.reload(); // Refresh to update auth state
+        // Let the App component re-check auth status automatically
       } else {
         setErrors({
           general: data.error || "Signup failed. Please try again.",
