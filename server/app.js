@@ -61,11 +61,8 @@ const pgSession = ConnectPgSimple(session);
 
 // Create PostgreSQL connection pool for sessions
 const pgPool = new pg.Pool({
-  connectionString: process.env.SUPABASE_DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false,
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
 // Configure session management with PostgreSQL store

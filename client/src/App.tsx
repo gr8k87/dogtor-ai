@@ -38,8 +38,8 @@ function Splash({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-background to-muted/20">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
         <div className="space-y-4">
           <div className="flex justify-center">
             <AppIcons.logoVertical size={150} />
