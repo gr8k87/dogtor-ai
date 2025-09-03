@@ -1,0 +1,103 @@
+2025-09-03T17:36:43.815Z [error] error: there is no unique or exclusion constraint matching the ON CONFLICT specification
+    at /var/task/server/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PGStore._asyncQuery (/var/task/server/node_modules/connect-pg-simple/index.js:321:21)
+2025-09-03T17:36:43.831Z [error] Uncaught Exception: error: {:shutdown, :db_termination}
+    at Parser.parseErrorMessage (/var/task/server/node_modules/pg-protocol/dist/parser.js:285:98)
+    at Parser.handlePacket (/var/task/server/node_modules/pg-protocol/dist/parser.js:122:29)
+    at Parser.parse (/var/task/server/node_modules/pg-protocol/dist/parser.js:35:38)
+    at TLSSocket.<anonymous> (/var/task/server/node_modules/pg-protocol/dist/index.js:11:42)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:189:23)
+    at TLSWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: Client {
+    _events: [Object: null prototype] { error: [Function (anonymous)] },
+    _eventsCount: 1,
+    _maxListeners: undefined,
+    connectionParameters: ConnectionParameters {
+      user: 'postgres.tytsakvmvjumhzqomzxz',
+      database: 'postgres',
+      port: 5432,
+      host: 'aws-1-us-east-2.pooler.supabase.com',
+      binary: false,
+      options: undefined,
+      ssl: [Object],
+      client_encoding: '',
+      replication: undefined,
+      isDomainSocket: false,
+      application_name: undefined,
+      fallback_application_name: undefined,
+      statement_timeout: false,
+      lock_timeout: false,
+      idle_in_transaction_session_timeout: false,
+      query_timeout: false,
+      connect_timeout: 0
+    },
+    user: 'postgres.tytsakvmvjumhzqomzxz',
+    database: 'postgres',
+    port: 5432,
+    host: 'aws-1-us-east-2.pooler.supabase.com',
+    replication: undefined,
+    _Promise: [Function: Promise],
+    _types: TypeOverrides { _types: [Object], text: {}, binary: {} },
+    _ending: true,
+    _ended: false,
+    _connecting: false,
+    _connected: true,
+    _connectionError: false,
+    _queryable: false,
+    enableChannelBinding: false,
+    connection: Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 23,
+      _maxListeners: undefined,
+      stream: [TLSSocket],
+      _keepAlive: false,
+      _keepAliveInitialDelayMillis: 0,
+      lastBuffer: false,
+      parsedStatements: {},
+      ssl: [Object],
+      _ending: true,
+      _emitMessage: false,
+      _connecting: true,
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    queryQueue: [],
+    binary: false,
+    processID: 17040925,
+    secretKey: 238380743,
+    ssl: { rejectUnauthorized: false },
+    _connectionTimeoutMillis: 0,
+    _connectionCallback: null,
+    saslSession: null,
+    release: [Function (anonymous)],
+    activeQuery: null,
+    readyForQuery: true,
+    hasExecuted: true,
+    _poolUseCount: 6,
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false
+  }
+}
+2025-09-03T17:36:43.831Z [fatal] Node.js process exited with exit status: 129. The logs above can help with debugging the issue.

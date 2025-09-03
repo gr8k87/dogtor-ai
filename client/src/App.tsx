@@ -46,7 +46,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
           </div>
 
           <div className="space-y-2">
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground flex items-center justify-center">
               Your first step before the vet.
             </p>
           </div>
