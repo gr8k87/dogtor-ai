@@ -16,20 +16,20 @@ export const DogtorLogoVertical: React.FC<LogoProps> = ({
   className = "", 
   ...props 
 }) => (
-  <div className={`flex flex-col items-center gap-2 ${className}`} {...props}>
+  <div className={`flex flex-col items-center gap-3 ${className}`} {...props}>
     <img 
       src="/logo-dog.svg" 
       alt="Dogtor Logo" 
       width={size} 
       height={size}
-      className="drop-shadow-sm"
+      className="drop-shadow-sm rounded-2xl"
     />
     <span 
-      className="text-[#FF5A5F] font-semibold tracking-tight"
+      className="text-[#FF5A5F] font-bold tracking-tight"
       style={{ 
         fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-        fontWeight: 600,
-        fontSize: typeof size === 'number' ? `${size * 0.3}px` : '14px'
+        fontWeight: 700,
+        fontSize: typeof size === 'number' ? `${size * 0.45}px` : '20px'
       }}
     >
       dogtor
@@ -43,20 +43,20 @@ export const DogtorLogoHorizontal: React.FC<LogoProps> = ({
   className = "", 
   ...props 
 }) => (
-  <div className={`flex items-center gap-2 ${className}`} {...props}>
+  <div className={`flex items-center gap-3 ${className}`} {...props}>
     <img 
       src="/logo-dog.svg" 
       alt="Dogtor Logo" 
       width={size} 
       height={size}
-      className="drop-shadow-sm"
+      className="drop-shadow-sm rounded-xl"
     />
     <span 
-      className="text-[#FF5A5F] font-semibold tracking-tight"
+      className="text-[#FF5A5F] font-bold tracking-tight"
       style={{ 
         fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-        fontWeight: 600,
-        fontSize: typeof size === 'number' ? `${size * 0.5}px` : '16px'
+        fontWeight: 700,
+        fontSize: typeof size === 'number' ? `${size * 0.65}px` : '20px'
       }}
     >
       dogtor

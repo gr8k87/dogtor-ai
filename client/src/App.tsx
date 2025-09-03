@@ -36,9 +36,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
       <div className="max-w-md mx-auto space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
-            <div className="p-6 rounded-2xl bg-primary/10 border border-primary/20 animate-pulse">
-              <AppIcons.logoVertical size={64} />
-            </div>
+            <AppIcons.logoVertical size={80} />
           </div>
           
           <div className="space-y-2">
@@ -167,7 +165,7 @@ function AppContent() {
               <div className="flex h-16 items-center justify-between px-4">
                 <div className="flex items-center gap-3">
                   <AppIcons.logo size={32} className="text-primary" />
-                  <h1 className="text-xl font-bold">Dogtor AI</h1>
+
                 </div>
                 <div className="flex items-center gap-2">
                   <ProfileButton />
@@ -186,7 +184,7 @@ function AppContent() {
               <div className="flex h-16 items-center justify-between px-4">
                 <div className="flex items-center gap-3">
                   <AppIcons.logo size={32} className="text-primary" />
-                  <h1 className="text-xl font-bold">Dogtor AI</h1>
+
                 </div>
                 <div className="flex items-center gap-2">
                   <ProfileButton />
@@ -205,7 +203,7 @@ function AppContent() {
               <div className="flex h-16 items-center justify-between px-4">
                 <div className="flex items-center gap-3">
                   <AppIcons.logo size={32} className="text-primary" />
-                  <h1 className="text-xl font-bold">Dogtor AI</h1>
+
                 </div>
                 <div className="flex items-center gap-2">
                   <ProfileButton />

@@ -311,7 +311,6 @@ export default function Questions() {
           <div className="flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-3">
               <AppIcons.logo size={32} className="text-primary" />
-              <h1 className="text-xl font-bold">Dogtor AI</h1>
             </div>
             <div className="flex items-center gap-2">
               <ProfileButton />

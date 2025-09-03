@@ -61,7 +61,7 @@ export default function History() {
       <div className="min-h-dvh flex flex-col gradient-hero">
         <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex h-16 items-center justify-center px-4">
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
+
           </div>
         </header>
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
@@ -93,7 +93,7 @@ export default function History() {
       <div className="min-h-dvh flex flex-col gradient-hero">
         <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex h-16 items-center justify-center px-4">
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
+
           </div>
         </header>
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
@@ -183,7 +183,7 @@ export default function History() {
       <div className="min-h-dvh flex flex-col gradient-hero">
         <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex h-16 items-center justify-center px-4">
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
+
           </div>
         </header>
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">

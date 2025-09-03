@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from '../components/ui/health-card';
 import BreedSelector from '../components/BreedSelector';
 import { AppIcons } from '../components/icons';
 import { EmailSignupData } from '../../../shared/schema';
@@ -191,22 +191,19 @@ export default function Signup() {
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
-              <AppIcons.logoVertical size={48} />
-            </div>
+          <div className="flex justify-center mb-6">
+            <AppIcons.logoVertical size={72} />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome!</h1>
           <p className="text-muted-foreground mt-2">
             Sign up with Google to get personalized pet health guidance
           </p>
         </div>
 
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">Sign up</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <HealthCard colorIndex={1}>
+          <HealthCardHeader className="space-y-1">
+            <HealthCardTitle className="text-xl text-center">Sign up</HealthCardTitle>
+          </HealthCardHeader>
+          <HealthCardContent className="space-y-4">
             {/* Google OAuth Button */}
             <Button
               onClick={handleGoogleSignup}
@@ -479,8 +476,8 @@ export default function Signup() {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </HealthCardContent>
+        </HealthCard>
 
         {/* Footer */}
         <div className="text-center mt-8">
