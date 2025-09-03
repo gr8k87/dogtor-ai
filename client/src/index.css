@@ -27,19 +27,41 @@
     --radius: 0.75rem;
 
     /* Health Card Palette - Global Variables */
-    /* Change between 'emerald' and 'pink' themes by switching these values */
+    /* EMERALD THEME - Bright Apple-style gradients */
+    --health-card-0: linear-gradient(135deg, hsl(357 100% 75%) 0%, hsl(357 100% 68%) 100%); /* Brand coral */
+    --health-card-1: linear-gradient(135deg, hsl(200 98% 73%) 0%, hsl(200 98% 60%) 100%); /* Sky blue */
+    --health-card-2: linear-gradient(135deg, hsl(160 84% 75%) 0%, hsl(160 84% 65%) 100%); /* Emerald green */
+    --health-card-3: linear-gradient(135deg, hsl(262 83% 75%) 0%, hsl(262 83% 65%) 100%); /* Violet */
+    --health-card-4: linear-gradient(135deg, hsl(25 95% 73%) 0%, hsl(25 95% 63%) 100%); /* Orange */
+    --health-card-5: linear-gradient(135deg, hsl(189 94% 73%) 0%, hsl(189 94% 63%) 100%); /* Cyan */
+    --health-card-6: linear-gradient(135deg, hsl(239 84% 75%) 0%, hsl(239 84% 65%) 100%); /* Indigo */
+    --health-card-7: linear-gradient(135deg, hsl(330 81% 73%) 0%, hsl(330 81% 63%) 100%); /* Pink */
+    --health-card-8: linear-gradient(135deg, hsl(48 96% 73%) 0%, hsl(48 96% 63%) 100%); /* Yellow (history) */
+    --health-card-9: linear-gradient(135deg, hsl(215 28% 73%) 0%, hsl(215 28% 63%) 100%); /* Gray */
     
-    /* EMERALD THEME - Uncomment for emerald/green palette */
-    --health-primary: 160 84% 39%; /* emerald-600 */
-    --health-secondary: 165 83% 53%; /* emerald-500 */
-    --health-tertiary: 167 85% 65%; /* emerald-400 */
-    --health-quaternary: 158 78% 75%; /* emerald-300 */
+    /* Borders for each card */
+    --health-border-0: hsl(357 100% 65%);
+    --health-border-1: hsl(200 98% 55%);
+    --health-border-2: hsl(160 84% 60%);
+    --health-border-3: hsl(262 83% 60%);
+    --health-border-4: hsl(25 95% 58%);
+    --health-border-5: hsl(189 94% 58%);
+    --health-border-6: hsl(239 84% 60%);
+    --health-border-7: hsl(330 81% 58%);
+    --health-border-8: hsl(48 96% 58%);
+    --health-border-9: hsl(215 28% 58%);
     
-    /* PINK THEME - Comment out emerald above and uncomment below for pink palette */
-    /* --health-primary: 330 81% 60%; /* pink-500 */
-    /* --health-secondary: 327 73% 73%; /* pink-400 */
-    /* --health-tertiary: 325 78% 85%; /* pink-300 */
-    /* --health-quaternary: 322 87% 92%; /* pink-200 */
+    /* Text colors for contrast */
+    --health-text-0: hsl(0 0% 100%);  /* White text on coral */
+    --health-text-1: hsl(0 0% 100%);  /* White text on blue */
+    --health-text-2: hsl(0 0% 100%);  /* White text on green */
+    --health-text-3: hsl(0 0% 100%);  /* White text on violet */
+    --health-text-4: hsl(0 0% 100%);  /* White text on orange */
+    --health-text-5: hsl(0 0% 100%);  /* White text on cyan */
+    --health-text-6: hsl(0 0% 100%);  /* White text on indigo */
+    --health-text-7: hsl(0 0% 100%);  /* White text on pink */
+    --health-text-8: hsl(222.2 84% 4.9%); /* Dark text on yellow */
+    --health-text-9: hsl(0 0% 100%);  /* White text on gray */
   }
 
   .dark {
@@ -62,6 +84,42 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 357 100% 68%; /* Match primary */
+    
+    /* Health Card Palette - Dark Mode */
+    --health-card-0: linear-gradient(135deg, hsl(357 85% 65%) 0%, hsl(357 85% 55%) 100%); /* Brand coral - darker */
+    --health-card-1: linear-gradient(135deg, hsl(200 85% 65%) 0%, hsl(200 85% 55%) 100%); /* Sky blue - darker */
+    --health-card-2: linear-gradient(135deg, hsl(160 75% 65%) 0%, hsl(160 75% 55%) 100%); /* Emerald green - darker */
+    --health-card-3: linear-gradient(135deg, hsl(262 75% 65%) 0%, hsl(262 75% 55%) 100%); /* Violet - darker */
+    --health-card-4: linear-gradient(135deg, hsl(25 85% 65%) 0%, hsl(25 85% 55%) 100%); /* Orange - darker */
+    --health-card-5: linear-gradient(135deg, hsl(189 85% 65%) 0%, hsl(189 85% 55%) 100%); /* Cyan - darker */
+    --health-card-6: linear-gradient(135deg, hsl(239 75% 65%) 0%, hsl(239 75% 55%) 100%); /* Indigo - darker */
+    --health-card-7: linear-gradient(135deg, hsl(330 75% 65%) 0%, hsl(330 75% 55%) 100%); /* Pink - darker */
+    --health-card-8: linear-gradient(135deg, hsl(48 85% 65%) 0%, hsl(48 85% 55%) 100%); /* Yellow - darker */
+    --health-card-9: linear-gradient(135deg, hsl(215 25% 55%) 0%, hsl(215 25% 45%) 100%); /* Gray - darker */
+    
+    /* Borders for dark mode */
+    --health-border-0: hsl(357 85% 50%);
+    --health-border-1: hsl(200 85% 50%);
+    --health-border-2: hsl(160 75% 50%);
+    --health-border-3: hsl(262 75% 50%);
+    --health-border-4: hsl(25 85% 50%);
+    --health-border-5: hsl(189 85% 50%);
+    --health-border-6: hsl(239 75% 50%);
+    --health-border-7: hsl(330 75% 50%);
+    --health-border-8: hsl(48 85% 50%);
+    --health-border-9: hsl(215 25% 40%);
+    
+    /* Text colors for dark mode - all white for good contrast */
+    --health-text-0: hsl(0 0% 100%);
+    --health-text-1: hsl(0 0% 100%);
+    --health-text-2: hsl(0 0% 100%);
+    --health-text-3: hsl(0 0% 100%);
+    --health-text-4: hsl(0 0% 100%);
+    --health-text-5: hsl(0 0% 100%);
+    --health-text-6: hsl(0 0% 100%);
+    --health-text-7: hsl(0 0% 100%);
+    --health-text-8: hsl(0 0% 100%);  /* White text on darker yellow */
+    --health-text-9: hsl(0 0% 100%);
   }
 
   /* Health Card Palette Quick Switch Instructions:
