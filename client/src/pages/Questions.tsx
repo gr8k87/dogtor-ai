@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../components/ui/card";
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
 import { Skeleton } from "../components/ui/skeleton";
 import DynamicForm from "../components/DynamicForm";
 import BottomTabs from "../components/BottomTabs";
-import { ProfileButton } from "../components/ProfileButton";
-import { ThemeToggle } from "../components/theme-toggle";
+import { GlobalHeader } from "../components/GlobalHeader";
 import {
   AppIcons,
   ArrowLeft,
@@ -248,8 +247,8 @@ export default function Questions() {
               </div>
             </div>
 
-            <Card className="border-accent gradient-card rounded-2xl shadow-elevated">
-              <CardContent className="p-6">
+            <HealthCard colorIndex={1} className="border-accent gradient-card rounded-2xl shadow-elevated">
+              <HealthCardContent className="p-6">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                     <AlertCircle size={24} className="text-amber-600" />
@@ -295,8 +294,8 @@ export default function Questions() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </HealthCardContent>
+            </HealthCard>
           </div>
         </main>
         <BottomTabs navigate={navigate} activeTab="diagnose" />
@@ -307,17 +306,7 @@ export default function Questions() {
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col bg-background">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-between px-4">
-            <div className="flex items-center gap-3">
-              <AppIcons.logo size={32} className="text-primary" />
-            </div>
-            <div className="flex items-center gap-2">
-              <ProfileButton />
-              <ThemeToggle />
-            </div>
-          </div>
-        </header>
+        <GlobalHeader title="Questions" />
 
         <main className="flex-1 pb-20 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-4 space-y-6">
@@ -399,18 +388,7 @@ export default function Questions() {
 
   return (
     <div className="min-h-dvh flex flex-col gradient-hero">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <AppIcons.logo size={32} className="text-primary" />
-            <h1 className="text-xl font-bold">Dogtor AI</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <ProfileButton />
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <GlobalHeader title="Questions" />
 
       <main className="flex-1 pb-24 overflow-y-auto">
         <div className="container max-w-2xl mx-auto p-6 space-y-8 relative">
@@ -471,8 +449,8 @@ export default function Questions() {
           </div>
 
           {/* Questions form */}
-          <Card className="border-accent gradient-card rounded-2xl shadow-elevated">
-            <CardContent className="p-6">
+          <HealthCard colorIndex={2} className="border-accent gradient-card rounded-2xl shadow-elevated">
+            <HealthCardContent className="p-6">
               <div className="space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-3">
@@ -549,8 +527,8 @@ export default function Questions() {
                   </div>
                 </form>
               </div>
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
         </div>
       </main>
 

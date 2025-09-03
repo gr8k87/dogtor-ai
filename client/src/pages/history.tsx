@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
+import { GlobalHeader } from "../components/GlobalHeader";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -59,11 +60,7 @@ export default function History() {
   if (loading) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-center px-4">
-
-          </div>
-        </header>
+        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -91,11 +88,7 @@ export default function History() {
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-center px-4">
-
-          </div>
-        </header>
+        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Sad Dog Illustration for Error */}
@@ -181,11 +174,7 @@ export default function History() {
   if (!items.length) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="flex h-16 items-center justify-center px-4">
-
-          </div>
-        </header>
+        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Friendly Dog Illustration */}

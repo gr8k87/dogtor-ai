@@ -8,6 +8,7 @@ import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from
 import { Separator } from '../components/ui/separator';
 import BreedSelector from '../components/BreedSelector';
 import { ArrowLeft, User, Save } from '../components/icons';
+import { GlobalHeader } from '../components/GlobalHeader';
 
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
@@ -258,23 +259,11 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="p-2"
-              data-testid="button-back"
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <h1 className="text-xl font-bold">Profile</h1>
-          </div>
-        </div>
-      </header>
+      <GlobalHeader 
+        title="Profile" 
+        showBackButton={true} 
+        onBackClick={() => navigate('/')} 
+      />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
         {/* User Summary Card */}
