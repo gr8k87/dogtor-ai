@@ -41,11 +41,11 @@ export default function DiagnoseTab() {
 
       // Create case and generate questions
       setDebugMsg("❓ Creating case and generating questions...");
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || "";
       const caseResp = await fetch(`${apiUrl}/api/diagnose/cases`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({
           symptoms: notes || "general health check",
           imageUrl: imageUrl, // Use imageUrl directly
@@ -142,24 +142,26 @@ export default function DiagnoseTab() {
           )}
 */}
           {/* Enhanced Photo upload section */}
-          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-elevated">
+          <HealthCard
+            colorIndex={2}
+            className="border-accent gradient-card transition-smooth hover:shadow-elevated"
+          >
             <HealthCardContent className="p-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                     <AppIcons.camera size={24} className="text-primary" />
                     What’s Worrying You?
                   </h2>
                   <p className="text-muted-foreground">
-                    Upload a clear photo so we can take a closer look and
-                    provide helpful guidance.
+                    Upload a clear photo for analysis.
                   </p>
                 </div>
 
                 <ImagePicker
-        onChange={setImageUrl} // Changed to setImageUrl
-        className="mb-6"
-      />
+                  onChange={setImageUrl} // Changed to setImageUrl
+                  className="mb-6"
+                />
                 {errors.image && (
                   <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
                     <AlertCircle
@@ -175,25 +177,27 @@ export default function DiagnoseTab() {
 
           {/* Enhanced Notes section */}
           <form onSubmit={onInitialSubmit} className="space-y-8">
-            <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-elevated">
+            <HealthCard
+              colorIndex={2}
+              className="border-accent gradient-card transition-smooth hover:shadow-elevated"
+            >
               <HealthCardContent className="p-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={24} className="text-primary" />
-                      Describe What You’ve Noticed{" "}
+                      What Have You Noticed?
                     </h2>
                     <p className="text-muted-foreground">
-                      Share any changes in your pet’s health, behavior, or
-                      anything else that concerns you. Even small details can
-                      help us understand better.
+                      Describe any changes in your pet’s health or behavior.
+                      Even small details can help.
                     </p>
                   </div>
 
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="For example: ‘Red bump on right paw, noticed yesterday. Dog has been licking it more than usual."
+                    placeholder="e.g. Red bump on paw, started yesterday. Dog keeps licking it."
                     className="min-h-[100px] resize-none transition-smooth focus:shadow-medium"
                     data-testid="textarea-symptoms"
                   />
@@ -203,7 +207,10 @@ export default function DiagnoseTab() {
 
             {/* Error message */}
             {errors.submit && (
-              <HealthCard colorIndex={2} className="border-destructive/20 bg-destructive/5 transition-smooth">
+              <HealthCard
+                colorIndex={2}
+                className="border-destructive/20 bg-destructive/5 transition-smooth"
+              >
                 <HealthCardContent className="p-4">
                   <div className="space-y-3">
                     <div className="flex items-start gap-2">

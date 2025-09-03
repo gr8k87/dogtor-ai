@@ -12,7 +12,10 @@ export default function ConnectTab() {
     <div className="min-h-dvh gradient-hero">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
         {/* Find a Vet Card */}
-        <HealthCard colorIndex={2} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+        <HealthCard
+          colorIndex={2}
+          className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated"
+        >
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
@@ -40,40 +43,12 @@ export default function ConnectTab() {
                 </span>
               </div>
 
-              <div className="flex gap-2 flex-wrap">
-                <button
-                  disabled
-                  className="btn btn-outline text-xs opacity-50 cursor-not-allowed"
-                >
-                  General Practice
-                </button>
-                <button
-                  disabled
-                  className="btn btn-outline text-xs opacity-50 cursor-not-allowed"
-                >
-                  Emergency
-                </button>
-                <button
-                  disabled
-                  className="btn btn-outline text-xs opacity-50 cursor-not-allowed"
-                >
-                  Specialist
-                </button>
-                <button
-                  disabled
-                  className="btn btn-outline text-xs opacity-50 cursor-not-allowed"
-                >
-                  24/7
-                </button>
-              </div>
-
               <div className="space-y-3">
                 {[
                   {
                     name: "Happy Paws Veterinary",
                     rating: "4.8",
                     distance: "1.2 km",
-                    specialty: "General Practice",
                   },
                 ].map((vet, i) => (
                   <div key={i} className="p-3 border border-border rounded-lg">
@@ -89,17 +64,11 @@ export default function ConnectTab() {
                           <span className="text-sm text-muted-foreground">
                             • {vet.distance}
                           </span>
-                          <span className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
-                            {vet.specialty}
-                          </span>
                         </div>
                       </div>
-                      <button
-                        disabled
-                        className="btn btn-primary text-sm opacity-50 cursor-not-allowed"
-                      >
+                      <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
                         Book
-                      </button>
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -109,7 +78,10 @@ export default function ConnectTab() {
         </HealthCard>
 
         {/* Call TeleVet Card */}
-        <HealthCard colorIndex={2} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+        <HealthCard
+          colorIndex={2}
+          className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated"
+        >
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
@@ -137,12 +109,9 @@ export default function ConnectTab() {
                     Chat Consultation
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1">$25 CAD</p>
-                  <button
-                    disabled
-                    className="btn btn-outline w-full mt-2 text-xs opacity-50 cursor-not-allowed"
-                  >
+                  <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
                     Start Chat
-                  </button>
+                  </span>
                 </div>
 
                 <div className="p-3 border border-border rounded-lg text-center">
@@ -151,12 +120,9 @@ export default function ConnectTab() {
                     Video Call
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1">$45 CAD</p>
-                  <button
-                    disabled
-                    className="btn btn-outline w-full mt-2 text-xs opacity-50 cursor-not-allowed"
-                  >
+                  <span className="ml-auto px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
                     Start Video
-                  </button>
+                  </span>
                 </div>
               </div>
             </div>

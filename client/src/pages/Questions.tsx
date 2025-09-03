@@ -76,7 +76,7 @@ export default function Questions() {
     console.log("🔍 Fetching questions for case:", caseId);
 
     fetch(`/api/diagnose/questions/${caseId}`, {
-      credentials: 'include'
+      credentials: "include",
     })
       .then(async (res) => {
         console.log("📡 Questions API response status:", res.status);
@@ -126,7 +126,7 @@ export default function Questions() {
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({
           caseId,
           answers,
@@ -157,7 +157,7 @@ export default function Questions() {
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({ caseId }),
       });
 
@@ -247,7 +247,10 @@ export default function Questions() {
               </div>
             </div>
 
-            <HealthCard colorIndex={2} className="border-accent gradient-card rounded-2xl shadow-elevated">
+            <HealthCard
+              colorIndex={2}
+              className="border-accent gradient-card rounded-2xl shadow-elevated"
+            >
               <HealthCardContent className="p-6">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
@@ -449,7 +452,10 @@ export default function Questions() {
           </div>
 
           {/* Questions form */}
-          <HealthCard colorIndex={2} className="border-accent gradient-card rounded-2xl shadow-elevated">
+          <HealthCard
+            colorIndex={2}
+            className="border-accent gradient-card rounded-2xl shadow-elevated"
+          >
             <HealthCardContent className="p-6">
               <div className="space-y-6">
                 <div className="space-y-2">

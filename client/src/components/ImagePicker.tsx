@@ -34,12 +34,14 @@ export default function ImagePicker({ onChange, className }: Props) {
       try {
         // Upload to Supabase Storage
         const uploadedUrl = await uploadImageToSupabase(f);
-        
-        setSelectedFile(prev => prev ? { ...prev, uploadedUrl } : null);
+
+        setSelectedFile((prev) => (prev ? { ...prev, uploadedUrl } : null));
         onChange(uploadedUrl);
       } catch (error) {
-        console.error('Upload failed:', error);
-        setUploadError(error instanceof Error ? error.message : 'Upload failed');
+        console.error("Upload failed:", error);
+        setUploadError(
+          error instanceof Error ? error.message : "Upload failed",
+        );
         onChange(null);
       }
     } else {
@@ -108,28 +110,28 @@ export default function ImagePicker({ onChange, className }: Props) {
           </div>
 
           {/* Upload status */}
-            {selectedFile?.uploadedUrl && (
-              <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                Uploaded
-              </div>
-            )}
+          {selectedFile?.uploadedUrl && (
+            <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              Uploaded
+            </div>
+          )}
 
-            {/* Remove button */}
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleRemoveFile}
-              className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-elevated hover:shadow-floating hover:scale-110 transition-all duration-200"
-              data-testid="button-remove-image"
-            >
-              <X size={16} />
-            </Button>
+          {/* Remove button */}
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleRemoveFile}
+            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-elevated hover:shadow-floating hover:scale-110 transition-all duration-200"
+            data-testid="button-remove-image"
+          >
+            <X size={16} />
+          </Button>
 
           {/* Replace button */}
           <div className="flex gap-2 mt-4">
             <Button
-              variant="outline"
+              variant="default"
               onClick={handleCameraCapture}
               className="flex-1"
               data-testid="button-retake-photo"
@@ -138,7 +140,7 @@ export default function ImagePicker({ onChange, className }: Props) {
               Retake
             </Button>
             <Button
-              variant="outline"
+              variant="default"
               onClick={handleGalleryUpload}
               className="flex-1"
               data-testid="button-choose-different"
@@ -183,16 +185,14 @@ export default function ImagePicker({ onChange, className }: Props) {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  <AppIcons.camera size={48} className="text-primary" />
+                <div className="space-y-4 flex flex-col items-center">
+                  <AppIcons.camera size={24} className="text-primary" />
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">
+                    <h3 className="text-lg font-medium text-foreground">
                       Upload or Take a Photo
                     </h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      Add a photo of the area you’re concerned about (like a
-                      rash, lump, or sore). A clear, focused image will help us
-                      give you a more accurate analysis.
+                      A focused image helps us give you better guidance.
                     </p>
                   </div>
 
@@ -226,7 +226,7 @@ export default function ImagePicker({ onChange, className }: Props) {
             </Button>
             <Button
               onClick={handleGalleryUpload}
-              variant="secondary"
+              variant="default"
               size="lg"
               className="h-12 space-x-2 group relative overflow-hidden"
               data-testid="button-choose-gallery"
@@ -251,7 +251,7 @@ export default function ImagePicker({ onChange, className }: Props) {
         className="sr-only"
         data-testid="input-camera"
       />
-      
+
       {/* File input - opens file picker */}
       <input
         type="file"

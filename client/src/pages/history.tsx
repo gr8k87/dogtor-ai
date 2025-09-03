@@ -21,7 +21,7 @@ export default function History() {
 
   useEffect(() => {
     fetch("/api/history/list", {
-      credentials: 'include'
+      credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load history");
@@ -42,9 +42,9 @@ export default function History() {
     if (
       window.confirm("Are you sure you want to delete this history record?")
     ) {
-      fetch(`/api/history/delete/${id}`, { 
+      fetch(`/api/history/delete/${id}`, {
         method: "DELETE",
-        credentials: 'include'
+        credentials: "include",
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to delete history");
@@ -60,15 +60,10 @@ export default function History() {
   if (loading) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <HealthCard
-                key={i}
-                colorIndex={2}
-                className="animate-pulse"
-              >
+              <HealthCard key={i} colorIndex={2} className="animate-pulse">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 space-y-2">
                     <div className="h-4 bg-muted rounded-lg w-32"></div>
@@ -334,7 +329,8 @@ function HistoryCard({
   };
 
   return (
-    <HealthCard colorIndex={2}
+    <HealthCard
+      colorIndex={2}
       className={`transition-all duration-300 border-accent rounded-2xl shadow-medium hover:shadow-elevated ${
         cards ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98]" : ""
       }`}
