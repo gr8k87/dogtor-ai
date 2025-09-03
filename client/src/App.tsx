@@ -42,7 +42,7 @@ function Splash({ onComplete }: { onComplete: () => void }) {
       <div className="max-w-md mx-auto space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
-            <AppIcons.logoVertical size={80} />
+            <AppIcons.logoVertical size={150} />
           </div>
 
           <div className="space-y-2">
@@ -92,7 +92,11 @@ function AppContent() {
 
   // Re-check auth when returning to main routes from auth pages
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname === '/history' || location.pathname === '/connect') {
+    if (
+      location.pathname === "/" ||
+      location.pathname === "/history" ||
+      location.pathname === "/connect"
+    ) {
       checkAuthStatus();
     }
   }, [location.pathname]);
@@ -189,7 +193,7 @@ function AppContent() {
               <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="flex h-16 items-center justify-between px-4">
                   <div className="flex items-center gap-3">
-                    <AppIcons.logo size={32} className="text-primary" />
+                    <AppIcons.logo size={48} className="text-primary" />
                   </div>
                   <div className="flex items-center gap-2">
                     <ProfileButton />

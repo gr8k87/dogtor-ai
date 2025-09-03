@@ -106,7 +106,7 @@ export default function Login() {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <AppIcons.logoVertical size={72} />
+            <AppIcons.logoVertical size={150} />
           </div>
           <p className="text-muted-foreground mt-2">
             Sign in to get personalized pet health guidance
