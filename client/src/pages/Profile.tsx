@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from '../components/ui/health-card';
 import { Separator } from '../components/ui/separator';
 import BreedSelector from '../components/BreedSelector';
 import { ArrowLeft, User, Save } from '../components/icons';
@@ -278,14 +278,14 @@ export default function Profile() {
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
         {/* User Summary Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <HealthCard colorIndex={5}>
+          <HealthCardHeader>
+            <HealthCardTitle className="flex items-center gap-2">
               <User size={20} />
               Account Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </HealthCardTitle>
+          </HealthCardHeader>
+          <HealthCardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
               <div>
                 <p className="font-medium">{user.email}</p>
@@ -299,17 +299,17 @@ export default function Profile() {
                 <p className="text-xs text-muted-foreground">{getPetAge()}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </HealthCardContent>
+        </HealthCard>
 
         {/* Profile Form */}
         <form onSubmit={handleSave} className="space-y-6">
           {/* Personal Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <HealthCard colorIndex={5}>
+            <HealthCardHeader>
+              <HealthCardTitle>Personal Information</HealthCardTitle>
+            </HealthCardHeader>
+            <HealthCardContent className="space-y-4">
               {errors.general && (
                 <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-profile-error">
                   {errors.general}
@@ -362,15 +362,15 @@ export default function Profile() {
                   Email address cannot be changed
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
 
           {/* Pet Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Pet Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <HealthCard colorIndex={5}>
+            <HealthCardHeader>
+              <HealthCardTitle>Pet Information</HealthCardTitle>
+            </HealthCardHeader>
+            <HealthCardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="pet_name">Pet Name <span className="text-red-500">*</span></Label>
                 <Input
@@ -483,8 +483,8 @@ export default function Profile() {
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
 
           {/* Save Button */}
           <div className="flex justify-end">

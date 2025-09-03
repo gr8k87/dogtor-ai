@@ -3,15 +3,15 @@ import { cn } from "../../lib/utils"
 
 // Apple Health-inspired pastel colors
 const healthCardColors = [
-  'bg-gradient-to-br from-pink-100 to-rose-200 border-pink-200', // Soft pink
-  'bg-gradient-to-br from-blue-100 to-sky-200 border-sky-200',   // Soft blue
+  'bg-gradient-to-br from-red-100 to-rose-200 border-rose-200',    // Soft red (brand color)
+  'bg-gradient-to-br from-blue-100 to-sky-200 border-sky-200',     // Soft blue
   'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-200', // Soft green
   'bg-gradient-to-br from-purple-100 to-violet-200 border-violet-200', // Soft purple
   'bg-gradient-to-br from-orange-100 to-amber-200 border-amber-200', // Soft orange
   'bg-gradient-to-br from-teal-100 to-cyan-200 border-cyan-200',   // Soft teal
   'bg-gradient-to-br from-indigo-100 to-blue-200 border-blue-200', // Soft indigo
-  'bg-gradient-to-br from-red-100 to-pink-200 border-pink-200',    // Soft red
-  'bg-gradient-to-br from-yellow-100 to-orange-200 border-orange-200', // Soft yellow
+  'bg-gradient-to-br from-pink-100 to-rose-200 border-pink-200',   // Soft pink
+  'bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-200', // Soft yellow (for history)
   'bg-gradient-to-br from-slate-100 to-gray-200 border-gray-200'   // Soft gray
 ] as const
 

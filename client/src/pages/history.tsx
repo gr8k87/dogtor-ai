@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "../components/ui/card";
+import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 
 // shape coming back from /api/history/list
@@ -344,13 +344,13 @@ function HistoryCard({
   };
 
   return (
-    <Card
+    <HealthCard colorIndex={8}
       className={`transition-all duration-300 border-accent rounded-2xl shadow-medium hover:shadow-elevated ${
         cards ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98]" : ""
       }`}
       onClick={cards ? handleClick : undefined}
     >
-      <CardContent className="p-6">
+      <HealthCardContent className="p-6">
         {cards ? (
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
@@ -426,7 +426,7 @@ function HistoryCard({
             </button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </HealthCardContent>
+    </HealthCard>
   );
 }

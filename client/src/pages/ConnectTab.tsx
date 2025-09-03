@@ -1,20 +1,20 @@
 import React from "react";
 import { useHistory } from "../state/historyContext";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../components/ui/card";
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
 
 export default function ConnectTab() {
   return (
     <div className="min-h-dvh gradient-hero">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
         {/* Find a Vet Card */}
-        <Card className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
-          <CardHeader>
-            <CardTitle>
+        <HealthCard colorIndex={1} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+          <HealthCardHeader>
+            <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl">🔍</span>
                 <h2 className="text-xl font-semibold text-foreground">
@@ -24,9 +24,9 @@ export default function ConnectTab() {
                   Coming Soon
                 </span>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </HealthCardTitle>
+          </HealthCardHeader>
+          <HealthCardContent>
             <div className="space-y-4">
               <div className="relative">
                 <input
@@ -105,13 +105,13 @@ export default function ConnectTab() {
                 ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </HealthCardContent>
+        </HealthCard>
 
         {/* Call TeleVet Card */}
-        <Card className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
-          <CardHeader>
-            <CardTitle>
+        <HealthCard colorIndex={1} className="opacity-75 border-accent gradient-card rounded-2xl shadow-elevated">
+          <HealthCardHeader>
+            <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl">📱</span>
                 <h2 className="text-xl font-semibold text-foreground">
@@ -121,9 +121,9 @@ export default function ConnectTab() {
                   Coming Soon
                 </span>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </HealthCardTitle>
+          </HealthCardHeader>
+          <HealthCardContent>
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 Get professional veterinary advice through video consultation
@@ -160,8 +160,8 @@ export default function ConnectTab() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </HealthCardContent>
+        </HealthCard>
       </main>
     </div>
   );

@@ -2,11 +2,11 @@ import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../components/ui/card";
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { ProfileButton } from "../components/ProfileButton";
 import { ThemeToggle } from "../components/theme-toggle";
@@ -131,14 +131,14 @@ export default function Results({}: ResultsProps) {
         {/* Card 1: Diagnosis  */}
         <div className="space-y-8">
           {/* Main diagnosis */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-2xl">
+          <HealthCard colorIndex={1} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+            <HealthCardHeader className="pb-4">
+              <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">🎯</span>
                 {cards.diagnosis?.title || "Diagnosis"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+              </HealthCardTitle>
+            </HealthCardHeader>
+            <HealthCardContent className="space-y-6">
               <div>
                 <h4 className="font-medium text-sm mb-1">Likely condition:</h4>
                 <p className="text-sm text-muted-foreground">
@@ -179,18 +179,18 @@ export default function Results({}: ResultsProps) {
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
 
           {/* Card 2: Costs */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-2xl flex items-center gap-3">
+          <HealthCard colorIndex={4} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+            <HealthCardHeader className="pb-4">
+              <HealthCardTitle className="text-2xl flex items-center gap-3">
                 <span className="text-4xl">💰</span>
                 {cards.costs.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              </HealthCardTitle>
+            </HealthCardHeader>
+            <HealthCardContent className="space-y-4">
               {cards.costs.disclaimer && (
                 <p className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
                   {cards.costs.disclaimer}
@@ -226,18 +226,18 @@ export default function Results({}: ResultsProps) {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
 
           {/* Card 3: General Care Tips */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-2xl">
+          <HealthCard colorIndex={3} className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl">
+            <HealthCardHeader className="pb-4">
+              <HealthCardTitle className="flex items-center gap-3 text-2xl">
                 <span className="text-4xl">💡</span>
                 {cards.care.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+              </HealthCardTitle>
+            </HealthCardHeader>
+            <HealthCardContent className="space-y-6">
               {cards.care.tips && (
                 <ul className="space-y-3">
                   {cards.care.tips.map((tip: any, i: number) => (
@@ -256,8 +256,8 @@ export default function Results({}: ResultsProps) {
                   {cards.care.disclaimer}
                 </p>
               )}
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
         </div>
 
         {/* Disclaimer */}

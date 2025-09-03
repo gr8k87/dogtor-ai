@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { Skeleton, SkeletonCard } from "../components/ui/skeleton";
 import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
-import { Card, CardContent } from "../components/ui/card";
+import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 
 export default function DiagnoseTab() {
@@ -142,8 +142,8 @@ export default function DiagnoseTab() {
           )}
 */}
           {/* Enhanced Photo upload section */}
-          <Card className="border-accent gradient-card transition-smooth hover:shadow-elevated">
-            <CardContent className="p-6">
+          <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-elevated">
+            <HealthCardContent className="p-6">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -170,13 +170,13 @@ export default function DiagnoseTab() {
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </HealthCardContent>
+          </HealthCard>
 
           {/* Enhanced Notes section */}
           <form onSubmit={onInitialSubmit} className="space-y-8">
-            <Card className="border-accent gradient-card transition-smooth hover:shadow-elevated">
-              <CardContent className="p-6">
+            <HealthCard colorIndex={2} className="border-accent gradient-card transition-smooth hover:shadow-elevated">
+              <HealthCardContent className="p-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -198,13 +198,13 @@ export default function DiagnoseTab() {
                     data-testid="textarea-symptoms"
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </HealthCardContent>
+            </HealthCard>
 
             {/* Error message */}
             {errors.submit && (
-              <Card className="border-destructive/20 bg-destructive/5 transition-smooth">
-                <CardContent className="p-4">
+              <HealthCard colorIndex={6} className="border-destructive/20 bg-destructive/5 transition-smooth">
+                <HealthCardContent className="p-4">
                   <div className="space-y-3">
                     <div className="flex items-start gap-2">
                       <AlertCircle
@@ -230,8 +230,8 @@ export default function DiagnoseTab() {
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </HealthCardContent>
+              </HealthCard>
             )}
 
             {/* Enhanced Submit button */}
