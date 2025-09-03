@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Moon, Sun, Monitor, Palette } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 
 import { Button } from "./ui/button"
 import {
@@ -7,13 +7,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { useTheme, themeConfigs, type ColorTheme } from "../lib/theme-provider"
+import { useTheme } from "../lib/theme-provider"
 
 export function ThemeToggle() {
-  const { theme, colorTheme, setTheme, setColorTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
 
   return (
     <DropdownMenu>
@@ -24,8 +23,8 @@ export function ThemeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel>Theme Mode</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <Sun className="mr-2 h-4 w-4" />
           <span>Light</span>
@@ -34,44 +33,7 @@ export function ThemeToggle() {
           <Moon className="mr-2 h-4 w-4" />
           <span>Dark</span>
         </DropdownMenuItem>
-        
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="flex items-center">
-          <Palette className="mr-2 h-4 w-4" />
-          Color Theme
-        </DropdownMenuLabel>
-        
-        {(Object.entries(themeConfigs) as [ColorTheme, typeof themeConfigs[ColorTheme]][]).map(([key, config]) => (
-          <DropdownMenuItem 
-            key={key} 
-            onClick={() => setColorTheme(key as ColorTheme)}
-            className={colorTheme === key ? "bg-accent" : ""}
-          >
-            <div className="flex items-center">
-              <div className={`mr-3 h-3 w-3 rounded-full ${getThemeColor(key)}`} />
-              <div>
-                <div className="font-medium">{config.name}</div>
-                <div className="text-xs text-muted-foreground">{config.description}</div>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
-
-function getThemeColor(theme: ColorTheme): string {
-  switch (theme) {
-    case "default":
-      return "bg-blue-500"
-    case "green":
-      return "bg-green-500"
-    case "orange":
-      return "bg-orange-500"
-    case "purple":
-      return "bg-purple-500"
-    default:
-      return "bg-blue-500"
-  }
 }

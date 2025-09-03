@@ -1,19 +1,36 @@
 import * as React from "react"
 import { cn } from "../../lib/utils"
 
-// Apple Health-inspired pastel colors
+// Apple Health-inspired BRIGHT pastel colors - True Apple style!
 const healthCardColors = [
-  'bg-gradient-to-br from-red-100 to-rose-200 border-rose-200',    // Soft red (brand color)
-  'bg-gradient-to-br from-blue-100 to-sky-200 border-sky-200',     // Soft blue
-  'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-200', // Soft green
-  'bg-gradient-to-br from-purple-100 to-violet-200 border-violet-200', // Soft purple
-  'bg-gradient-to-br from-orange-100 to-amber-200 border-amber-200', // Soft orange
-  'bg-gradient-to-br from-teal-100 to-cyan-200 border-cyan-200',   // Soft teal
-  'bg-gradient-to-br from-indigo-100 to-blue-200 border-blue-200', // Soft indigo
-  'bg-gradient-to-br from-pink-100 to-rose-200 border-pink-200',   // Soft pink
-  'bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-200', // Soft yellow (for history)
-  'bg-gradient-to-br from-slate-100 to-gray-200 border-gray-200'   // Soft gray
+  'bg-gradient-to-br from-red-300 to-rose-400 border-rose-300',      // Bright coral (matches logo theme)
+  'bg-gradient-to-br from-sky-300 to-blue-400 border-sky-300',       // Bright sky blue  
+  'bg-gradient-to-br from-emerald-300 to-green-400 border-emerald-300', // Bright emerald (medical)
+  'bg-gradient-to-br from-violet-300 to-purple-400 border-violet-300', // Bright lavender
+  'bg-gradient-to-br from-orange-300 to-amber-400 border-orange-300', // Bright orange
+  'bg-gradient-to-br from-cyan-300 to-teal-400 border-cyan-300',     // Bright teal
+  'bg-gradient-to-br from-indigo-300 to-blue-400 border-indigo-300', // Bright indigo
+  'bg-gradient-to-br from-pink-300 to-rose-400 border-pink-300',     // Bright pink
+  'bg-gradient-to-br from-yellow-300 to-amber-400 border-yellow-300', // Bright yellow (history)
+  'bg-gradient-to-br from-slate-300 to-gray-400 border-slate-300'    // Professional gray
 ] as const
+
+// Alternative: Use CSS custom properties for global color control
+// Uncomment these lines and comment out the array above to use global CSS variables
+/*
+const healthCardColors = [
+  'bg-gradient-to-br from-red-300 to-rose-400 border-rose-300',           // Brand red
+  'bg-gradient-to-br from-sky-300 to-blue-400 border-sky-300',            // Sky blue
+  'bg-[hsl(var(--health-tertiary))] border-[hsl(var(--health-primary))]', // Global theme color
+  'bg-gradient-to-br from-violet-300 to-purple-400 border-violet-300',    // Lavender
+  'bg-gradient-to-br from-orange-300 to-amber-400 border-orange-300',     // Orange
+  'bg-gradient-to-br from-cyan-300 to-teal-400 border-cyan-300',          // Teal
+  'bg-gradient-to-br from-indigo-300 to-blue-400 border-indigo-300',      // Indigo
+  'bg-[hsl(var(--health-quaternary))] border-[hsl(var(--health-secondary))]', // Global theme color 2
+  'bg-gradient-to-br from-yellow-300 to-amber-400 border-yellow-300',     // Yellow (history)
+  'bg-gradient-to-br from-slate-300 to-gray-400 border-slate-300'         // Gray
+] as const
+*/
 
 export interface HealthCardProps extends React.HTMLAttributes<HTMLDivElement> {
   colorIndex?: number

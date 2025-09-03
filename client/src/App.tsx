@@ -236,7 +236,7 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider defaultTheme="light" defaultColorTheme="default">
+    <ThemeProvider defaultTheme="light">
       <Router>
         <AppContent />
       </Router>
