@@ -51,15 +51,18 @@ const supabase = createClient(
 const verifySupabaseAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    
+
     // Verify the JWT token with Supabase
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
+
     if (error || !user) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
@@ -84,15 +87,18 @@ const verifySupabaseAuth = async (req, res, next) => {
 const optionalAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       req.user = null;
       req.currentUser = null;
       return next();
     }
 
     const token = authHeader.substring(7);
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
+
     if (error || !user) {
       req.user = null;
       req.currentUser = null;
@@ -107,7 +113,7 @@ const optionalAuth = async (req, res, next) => {
       req.user = userData || user;
       req.currentUser = userData || user;
     }
-    
+
     next();
   } catch (error) {
     req.user = null;
@@ -121,7 +127,7 @@ const optionalAuth = async (req, res, next) => {
 // ================================================
 
 // Protect diagnose routes with optional user context
-app.use("/api/diagnose", optionalAuth, diagnose);
+app.use("/api/diagnose", verifySupabaseAuth, diagnose);
 
 // Get current user
 app.get("/api/auth/user", verifySupabaseAuth, (req, res) => {
