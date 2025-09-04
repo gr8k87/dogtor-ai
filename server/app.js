@@ -84,7 +84,12 @@ const verifySupabaseAuth = async (req, res, next) => {
           {
             id: user.id,
             email: user.email,
+            auth_method:
+              user.app_metadata?.provider === "google" ? "google" : "email",
+            email_verified: true,
+            is_active: true,
             created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         ])
         .select()
@@ -92,7 +97,10 @@ const verifySupabaseAuth = async (req, res, next) => {
 
       if (createError) {
         console.error("❌ Failed to create user:", createError);
-        return res.status(500).json({ error: "Failed to create user account" });
+        return res.status(500).json({
+          error: "Failed to create user account",
+          details: createError.message,
+        });
       }
       userData = newUser;
     } else if (userError) {
