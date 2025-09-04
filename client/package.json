@@ -1,7 +1,7 @@
 {
   "name": "dogtor-client",
   "private": true,
-  "homepage": "/",
+  "homepage": ".",
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

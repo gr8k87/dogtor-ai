@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { GlobalHeader } from "../components/GlobalHeader";
-import { authFetch } from "../lib/auth";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -21,9 +20,11 @@ export default function History() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    authFetch('/api/history/list')
+    fetch("/api/history/list", {
+      credentials: "include",
+    })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load history');
+        if (!res.ok) throw new Error("Failed to load history");
         return res.json();
       })
       .then((data) => {
@@ -41,8 +42,9 @@ export default function History() {
     if (
       window.confirm("Are you sure you want to delete this history record?")
     ) {
-      authFetch(`/api/history/delete/${id}`, {
-        method: 'DELETE',
+      fetch(`/api/history/delete/${id}`, {
+        method: "DELETE",
+        credentials: "include",
       })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to delete history");

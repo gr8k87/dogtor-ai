@@ -20,7 +20,6 @@ import { ThemeProvider } from "./lib/theme-provider";
 import { ThemeToggle } from "./components/theme-toggle";
 import { ProfileButton } from "./components/ProfileButton";
 import { AppIcons } from "./components/icons";
-import { checkAuth, handleAuthRedirect, authFetch, setAuthToken } from "./lib/auth";
 
 import React, { useState, useEffect } from "react";
 import OfflineBadge from "./components/OfflineBadge";
@@ -39,15 +38,15 @@ function Splash({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-dvh flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-background to-muted/20">
+      <div className="max-w-md mx-auto space-y-6">
         <div className="space-y-4">
           <div className="flex justify-center">
             <AppIcons.logoVertical size={150} />
           </div>
 
           <div className="space-y-2">
-            <p className="text-lg text-muted-foreground flex items-center justify-center">
+            <p className="text-lg text-muted-foreground">
               Your first step before the vet.
             </p>
           </div>
@@ -86,17 +85,8 @@ function AppContent() {
     setShowSplash(false);
   }
 
-  // Check authentication status on mount and handle OAuth redirects
+  // Check authentication status on mount and route changes
   useEffect(() => {
-    // Handle OAuth redirect first
-    const hasToken = handleAuthRedirect();
-    if (hasToken) {
-      setIsAuthenticated(true);
-      setShowSplash(false);
-      return;
-    }
-    
-    // Then check existing auth
     checkAuthStatus();
   }, []);
 
@@ -113,10 +103,17 @@ function AppContent() {
 
   const checkAuthStatus = async () => {
     try {
-      const user = await checkAuth();
-      setIsAuthenticated(user !== null);
+      const apiUrl = process.env.REACT_APP_API_URL || "";
+      const response = await fetch(`${apiUrl}/api/auth/user`, {
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
     } catch (error) {
-      console.error('Error checking auth status:', error);
       setIsAuthenticated(false);
     }
   };
@@ -131,24 +128,24 @@ function AppContent() {
 
   const handleDemoAccess = async () => {
     try {
-      const response = await authFetch('/auth/demo', {
-        method: 'POST',
+      const apiUrl = process.env.REACT_APP_API_URL || "";
+      const response = await fetch(`${apiUrl}/auth/demo`, {
+        method: "POST",
+        credentials: "include",
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.token) {
-          setAuthToken(data.token);
-          setIsAuthenticated(true);
-          setShowSplash(false);
-          navigate('/', { replace: true });
-        }
+        setIsAuthenticated(true);
+        setShowSplash(false);
+        navigate("/", { replace: true });
       } else {
-        console.warn('Demo access failed, retrying...');
+        // Retry demo access once if it fails
+        console.warn("Demo access failed, retrying...");
         setTimeout(() => handleDemoAccess(), 1000);
       }
     } catch (error) {
-      console.error('Demo access failed:', error);
+      console.error("Demo access failed:", error);
+      // Retry once on network error
       setTimeout(() => handleDemoAccess(), 2000);
     }
   };

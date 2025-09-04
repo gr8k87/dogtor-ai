@@ -65,7 +65,7 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
 
           {field.type === 'dropdown' && (
             <select 
-              className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="input w-full"
               value={value[field.id] ?? ''} 
               onChange={(e) => setVal(field.id, e.target.value)}
             >
@@ -130,10 +130,10 @@ export default function DynamicForm({ schema, value, onChange }: DynamicFormProp
 
           {field.type === 'select' && (
             <select 
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={value[field.id] ?? ''} 
-                onChange={(e) => setVal(field.id, e.target.value)}
-              >
+              className="input w-full"
+              value={value[field.id] ?? ''} 
+              onChange={(e) => setVal(field.id, e.target.value)}
+            >
               <option value="" disabled>Select an option...</option>
               {field.options?.map((option) => (
                 <option key={option} value={option}>{option}</option>

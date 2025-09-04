@@ -7,8 +7,8 @@ import diagnose from "./routes/diagnose.js";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
+import session from "express-session";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -50,70 +50,71 @@ const supabase = createClient(
 );
 
 // ================================================
-// JWT Authentication Setup
+// Session Management & Authentication Setup
 // ================================================
 
-// JWT secret - ensure this is set in production
-const JWT_SECRET = process.env.JWT_SECRET || "dogtor-ai-jwt-secret-change-in-production";
+// Configure PostgreSQL session store
+import ConnectPgSimple from "connect-pg-simple";
+import pg from "pg";
 
-// JWT utility functions
-const generateToken = (user) => {
-  return jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-      auth_method: user.auth_method
+const pgSession = ConnectPgSimple(session);
+
+// Create PostgreSQL connection pool for sessions
+const pgPool = new pg.Pool({
+  connectionString: process.env.SUPABASE_DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+});
+
+// Configure session management with PostgreSQL store
+app.use(
+  session({
+    store: new pgSession({
+      pool: pgPool,
+      tableName: "session",
+      createTableIfMissing: false, // We already created the table
+    }),
+    secret:
+      process.env.SESSION_SECRET || "dogtor-ai-secret-change-in-production",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Always false for Replit development
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      sameSite: "lax", // Always lax for Replit
     },
-    JWT_SECRET,
-    { expiresIn: "30d" }
-  );
-};
+  }),
+);
 
-const verifyToken = (token) => {
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport serialization
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
   try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return null;
-  }
-};
-
-// JWT Authentication Middleware
-const authenticateJWT = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
-
-  if (!token) {
-    return res.status(401).json({ error: "Access token required" });
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return res.status(401).json({ error: "Invalid or expired token" });
-  }
-
-  try {
-    // Fetch current user data from Supabase
     const { data: user, error } = await supabase
       .from("users")
       .select("*")
-      .eq("id", decoded.userId)
+      .eq("id", id)
       .single();
 
     if (error || !user) {
-      return res.status(401).json({ error: "User not found" });
+      return done(null, false);
     }
 
-    req.user = user;
-    next();
-  } catch (error) {
-    console.error("JWT auth error:", error);
-    res.status(401).json({ error: "Authentication failed" });
+    done(null, user);
+  } catch (err) {
+    done(err, null);
   }
-};
-
-// Initialize Passport (keeping for OAuth strategies only)
-app.use(passport.initialize());
-// Removed passport.session() - no sessions with JWT
+});
 
 // Google OAuth Strategy (only if credentials are provided)
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -229,35 +230,17 @@ passport.use(
   ),
 );
 
-// JWT Authentication middleware (replaces session-based auth)
-const isAuthenticated = authenticateJWT; // Use JWT middleware
-
-// Get current user middleware (now works with JWT)
-const getCurrentUser = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-  if (token) {
-    const decoded = verifyToken(token);
-    if (decoded) {
-      try {
-        const { data: user, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', decoded.userId)
-          .single();
-        
-        req.currentUser = error || !user ? null : user;
-      } catch (error) {
-        req.currentUser = null;
-      }
-    } else {
-      req.currentUser = null;
-    }
-  } else {
-    req.currentUser = null;
+// Authentication middleware
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
   }
-  
+  res.status(401).json({ error: "Authentication required" });
+};
+
+// Get current user middleware
+const getCurrentUser = (req, res, next) => {
+  req.currentUser = req.user || null;
   next();
 };
 
@@ -280,13 +263,10 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "https://app.hellodogtor.com/?error=auth_failed",
-  }),
+  passport.authenticate("google", { failureRedirect: "/?error=auth_failed" }),
   (req, res) => {
-    // Successful authentication - generate JWT and redirect with token
-    const token = generateToken(req.user);
-    res.redirect(`https://app.hellodogtor.com/?token=${token}`);
+    // Successful authentication
+    res.redirect("/");
   },
 );
 
@@ -342,14 +322,18 @@ app.post("/auth/email/signup", async (req, res) => {
       return res.status(500).json({ error: "Failed to create account" });
     }
 
-    // Generate JWT for new user
-    const token = generateToken(newUser);
-    console.log("✅ User created successfully with JWT");
-    
-    res.json({
-      success: true,
-      user: { id: newUser.id, email: newUser.email },
-      token: token
+    // Log user in automatically
+    req.login(newUser.data, (err) => {
+      if (err) {
+        console.error("❌ Auto-login error:", err);
+        return res
+          .status(500)
+          .json({ error: "Account created but login failed" });
+      }
+      res.json({
+        success: true,
+        user: { id: newUser.data.id, email: newUser.data.email },
+      });
     });
   } catch (error) {
     console.error("❌ Signup error:", error);
@@ -369,24 +353,23 @@ app.post("/auth/email/login", (req, res, next) => {
         .json({ error: info.message || "Invalid credentials" });
     }
 
-    // Generate JWT token for authenticated user
-    const token = generateToken(user);
-    console.log("✅ Email user logged in with JWT");
-    
-    res.json({ 
-      success: true, 
-      user: { id: user.id, email: user.email },
-      token: token
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Login failed" });
+      }
+      res.json({ success: true, user: { id: user.id, email: user.email } });
     });
   })(req, res, next);
 });
 
-// Logout (JWT is stateless - just confirm logout)
+// Logout
 app.post("/auth/logout", (req, res) => {
-  // With JWT, logout is handled client-side by removing token
-  // No server-side session to destroy
-  console.log("🚪 User logged out (JWT removed client-side)");
-  res.json({ success: true });
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ error: "Logout failed" });
+    }
+    res.json({ success: true });
+  });
 });
 
 // Demo authentication (for testing)
@@ -435,18 +418,22 @@ app.post("/auth/demo", async (req, res) => {
       demoUser = newDemoUser;
     }
 
-    // Generate JWT for demo user
-    const token = generateToken(demoUser);
-    console.log("✅ Demo user logged in with JWT");
-    
-    res.json({
-      success: true,
-      user: {
-        id: demoUser.id,
-        email: demoUser.email,
-        isDemo: true,
-      },
-      token: token
+    // Log in the demo user
+    req.logIn(demoUser, (err) => {
+      if (err) {
+        console.error("❌ Demo login error:", err);
+        return res.status(500).json({ error: "Demo login failed" });
+      }
+
+      console.log("✅ Demo user logged in successfully");
+      res.json({
+        success: true,
+        user: {
+          id: demoUser.id,
+          email: demoUser.email,
+          isDemo: true,
+        },
+      });
     });
   } catch (error) {
     console.error("❌ Demo auth error:", error);
@@ -580,31 +567,13 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Failed to delete history entry" });
   }
 });
-// Serve React build for local development/testing
-import fs from "fs";
 
-const clientBuildPath = path.join(__dirname, "..", "client", "build");
-const indexPath = path.join(clientBuildPath, "index.html");
+// serve client build
+app.use(express.static(path.join(__dirname, "..", "client", "build")));
+app.get("*", (_req, res) =>
+  res.sendFile(path.join(__dirname, "..", "client", "build", "index.html")),
+);
 
-// Serve static files if build exists
-if (fs.existsSync(indexPath)) {
-  console.log("🎯 Serving React build from:", clientBuildPath);
-  app.use(express.static(clientBuildPath));
-
-  // Catch-all route for frontend (AFTER all API/auth routes)
-  app.get("*", (req, res) => {
-    // Explicitly exclude auth and api routes
-    if (req.path.startsWith("/api") || req.path.startsWith("/auth")) {
-      return res.status(404).json({ error: "API endpoint not found" });
-    }
-
-    // Serve React app for all other routes
-    res.sendFile(indexPath);
-  });
-} else {
-  console.log("⚠️ No React build found - API only mode");
-}
-// start server
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "0.0.0.0";
 
