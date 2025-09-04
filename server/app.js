@@ -12,6 +12,8 @@ import bcrypt from "bcrypt";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+// serve client build (works everywhere, fails gracefully)
+import fs from "fs";
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -566,13 +568,23 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Failed to delete history entry" });
   }
 });
-// serve client build (only if files exist)
-if (process.env.NODE_ENV !== "production") {
-  app.use(express.static(path.join(__dirname, "..", "client", "build")));
-  app.get("*", (_req, res) =>
-    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html")),
-  );
+// serve client build (only for Vercel)
+const clientBuildPath = path.join(__dirname, "..", "client", "build");
+const indexPath = path.join(clientBuildPath, "index.html");
+// Only serve static files if they actually exist
+if (fs.existsSync(indexPath)) {
+  app.use(express.static(clientBuildPath));
+  app.get("*", (_req, res) => {
+    res.sendFile(indexPath);
+  });
+} else {
+  // Fallback for API-only mode (Koyeb)
+  app.get("*", (_req, res) => {
+    res.status(404).json({ error: "API only - no frontend available" });
+  });
 }
+
+// start server
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "0.0.0.0";
 
