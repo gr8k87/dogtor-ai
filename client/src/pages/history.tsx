@@ -18,7 +18,43 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        // Get the current session and token
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
+        if (sessionError || !session) {
+          setError("Authentication required");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("/api/history/list", {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load history");
+        }
+
+        const data = await response.json();
+        setItems(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("History fetch error:", err);
+        setError("Could not load history");
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
   const handleDelete = async (id: string) => {
     if (
       window.confirm("Are you sure you want to delete this history record?")
