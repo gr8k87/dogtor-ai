@@ -67,44 +67,48 @@ const verifySupabaseAuth = async (req, res, next) => {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // If user doesn't exist with new ID, check by email (migration case)
-    if (userError && userError.code === "PGRST116") {
-      console.log(
-        "🔍 User not found by ID, checking by email for migration:",
-        user.email,
-      );
+    // Get or create user in our users table
+    let { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
-      // Try to find existing user by email
-      const { data: existingUser, error: emailError } = await supabase
+    // If user doesn't exist, create them
+    if (userError && userError.code === "PGRST116") {
+      console.log("🆕 Creating new user in database:", user.id);
+      const { data: newUser, error: createError } = await supabase
         .from("users")
-        .select("*")
-        .eq("email", user.email)
+        .insert([
+          {
+            id: user.id,
+            email: user.email,
+            auth_method: "email", // Simple default for now
+            email_verified: true,
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
+        .select()
         .single();
 
-      if (existingUser) {
-        // Update existing user record with new Supabase ID
-        console.log("🔄 Migrating existing user to new Supabase ID:", user.id);
-        const { data: migratedUser, error: updateError } = await supabase
-          .from("users")
-          .update({
-            id: user.id,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("email", user.email)
-          .select()
-          .single();
-
-        if (updateError) {
-          console.error("❌ Failed to migrate user:", updateError);
-          return res.status(500).json({ error: "Migration failed" });
-        }
-        userData = migratedUser;
-      } else {
-        // Truly new user - create fresh record
-        console.log("🆕 Creating new user in database:", user.id);
-        // ... existing user creation code ...
+      if (createError) {
+        console.error("❌ Failed to create user:", createError);
+        return res.status(500).json({
+          error: "Failed to create user account",
+          details: createError.message,
+        });
       }
+      userData = newUser;
+    } else if (userError) {
+      console.error("❌ User lookup error:", userError);
+      return res.status(500).json({ error: "Database error" });
     }
+
+    req.user = userData;
+    req.currentUser = userData;
+    next();
   } catch (error) {
     console.error("❌ Auth verification error:", error);
     res.status(401).json({ error: "Authentication failed" });
