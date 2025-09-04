@@ -8,6 +8,7 @@ import { Skeleton, SkeletonCard } from "../components/ui/skeleton";
 import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
+import { supabase } from "../lib/supabase";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -39,16 +40,25 @@ export default function DiagnoseTab() {
     try {
       // Removed image upload logic as ImagePicker now handles it and returns a URL
 
-      // Create case and generate questions
-      setDebugMsg("❓ Creating case and generating questions...");
-      const apiUrl = process.env.REACT_APP_API_URL || "";
-      const caseResp = await fetch(`${apiUrl}/api/diagnose/cases`, {
+      // Get Supabase session token
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        throw new Error("Authentication required");
+      }
+
+      const caseResp = await fetch(`/api/diagnose/cases`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`, // ✅ NEW AUTH
+        },
         body: JSON.stringify({
           symptoms: notes || "general health check",
-          imageUrl: imageUrl, // Use imageUrl directly
+          imageUrl: imageUrl,
         }),
       });
 
