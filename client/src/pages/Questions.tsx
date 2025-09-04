@@ -17,7 +17,7 @@ import {
   ArrowRight,
   AlertCircle,
 } from "../components/icons";
-
+import { supabase } from "../lib/supabase";
 interface BaseField {
   id: string;
   question?: string;
@@ -123,10 +123,23 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Analyzing your pet's condition...");
+      // Get Supabase session token first
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        console.error("Authentication required for diagnosis");
+        return;
+      }
+
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`, // ✅ NEW AUTH METHOD
+        },
         body: JSON.stringify({
           caseId,
           answers,

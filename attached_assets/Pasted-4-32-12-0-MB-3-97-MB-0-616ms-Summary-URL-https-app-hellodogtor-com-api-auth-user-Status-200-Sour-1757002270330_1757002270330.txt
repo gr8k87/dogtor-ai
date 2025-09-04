@@ -1,0 +1,45 @@
+4
+32
+12.0 MB
+3.97 MB
+0
+616ms
+Summary
+URL: https://app.hellodogtor.com/api/auth/user
+Status: 200
+Source: Network
+Address: 216.198.79.1:443
+Initiator: 
+ProfileButton.tsx:36
+
+Request
+:method: GET
+:scheme: https
+:authority: app.hellodogtor.com
+:path: /api/auth/user
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-CA,en-US;q=0.9,en;q=0.8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IlVVdi9jNW0wa1c2T283emMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3R5dHNha3Ztdmp1bWh6cW9tenh6LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIxNWRhOThlZC1kNjNmLTQyOTUtOTljZi02YmE2YWQyYjE1NjUiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU3MDA0NTEyLCJpYXQiOjE3NTcwMDA5MTIsImVtYWlsIjoiZ3I4azg3QGdtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZ29vZ2xlIiwicHJvdmlkZXJzIjpbImdvb2dsZSJdfSwidXNlcl9tZXRhZGF0YSI6eyJhdmF0YXJfdXJsIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jS0taOWxxUkZ1QjEtbF9wMjN3bVZJa2hMdkRqeXFhZk03N21SUDhNUEJKMFluS0lCWl89czk2LWMiLCJlbWFpbCI6ImdyOGs4N0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiS2FydGhpayBBcmF2aW5kIiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwibmFtZSI6IkthcnRoaWsgQXJhdmluZCIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0tLWjlscVJGdUIxLWxfcDIzd21WSWtoTHZEanlxYWZNNzdtUlA4TVBCSjBZbktJQlpfPXM5Ni1jIiwicHJvdmlkZXJfaWQiOiIxMTM0MDk5NTg3MDg0NDQzNjA5NjQiLCJzdWIiOiIxMTM0MDk5NTg3MDg0NDQzNjA5NjQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJvYXV0aCIsInRpbWVzdGFtcCI6MTc1NzAwMDkxMn1dLCJzZXNzaW9uX2lkIjoiMTNkNGZlMTItYjMwZi00MWFmLTk4YjUtNzllMWFhYmUzYmViIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.cFzIqR_mTmik1ki8H6xCE89vAgYAQI6xLlBNSxaldgQ
+Priority: u=3, i
+Referer: https://app.hellodogtor.com/questions/9e056649-f4ae-41b9-bcbb-367992b6dced
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15
+
+Response
+:status: 200
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+Cache-Control: public, max-age=0, must-revalidate
+Content-Encoding: br
+Content-Type: application/json; charset=utf-8
+Date: Thu, 04 Sep 2025 16:10:12 GMT
+ETag: W/"6b4-ZB/SEEJmXPeshDK+XTbjj6mfZaQ"
+Server: Vercel
+Strict-Transport-Security: max-age=63072000
+x-powered-by: Express
+x-vercel-cache: BYPASS
+x-vercel-id: cle1::iad1::rbgc2-1757002212632-cd6156fecda7
