@@ -67,15 +67,41 @@ const verifySupabaseAuth = async (req, res, next) => {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // Get additional user data from our users table
-    const { data: userData, error: userError } = await supabase
+    // Get or create user in our users table
+    let { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
       .eq("id", user.id)
       .single();
 
-    req.user = userData || user;
-    req.currentUser = userData || user;
+    // If user doesn't exist in our table, create them
+    if (userError && userError.code === "PGRST116") {
+      // Not found
+      console.log("🆕 Creating new user in database:", user.id);
+      const { data: newUser, error: createError } = await supabase
+        .from("users")
+        .insert([
+          {
+            id: user.id,
+            email: user.email,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+
+      if (createError) {
+        console.error("❌ Failed to create user:", createError);
+        return res.status(500).json({ error: "Failed to create user account" });
+      }
+      userData = newUser;
+    } else if (userError) {
+      console.error("❌ User lookup error:", userError);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    req.user = userData;
+    req.currentUser = userData;
     next();
   } catch (error) {
     console.error("❌ Auth verification error:", error);
