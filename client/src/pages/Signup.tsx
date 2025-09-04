@@ -19,6 +19,7 @@ import {
 import BreedSelector from "../components/BreedSelector";
 import { AppIcons } from "../components/icons";
 import { EmailSignupData } from "../../../shared/schema";
+import { supabase } from "../lib/supabase";
 
 interface SignupFormData
   extends Omit<EmailSignupData, "pet_birth_month" | "pet_birth_year"> {
@@ -154,35 +155,27 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      // Convert string dates to numbers for API
-      const signupData: EmailSignupData = {
+      const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        pet_name: formData.pet_name,
-        pet_breed: formData.pet_breed,
-        pet_birth_month: parseInt(formData.pet_birth_month),
-        pet_birth_year: parseInt(formData.pet_birth_year),
-        pet_gender: formData.pet_gender || undefined,
-      };
-
-      const response = await fetch("/auth/email/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        options: {
+          data: {
+            pet_name: formData.pet_name,
+            pet_breed: formData.pet_breed,
+            pet_birth_month: parseInt(formData.pet_birth_month),
+            pet_birth_year: parseInt(formData.pet_birth_year),
+            pet_gender: formData.pet_gender || null,
+          },
         },
-        body: JSON.stringify(signupData),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (error) {
+        setErrors({
+          general: error.message || "Signup failed. Please try again.",
+        });
+      } else {
         // Successful signup - redirect to main app
         navigate("/");
-        // Let the App component re-check auth status automatically
-      } else {
-        setErrors({
-          general: data.error || "Signup failed. Please try again.",
-        });
       }
     } catch (error) {
       setErrors({
@@ -193,9 +186,25 @@ export default function Signup() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    // Redirect to Google OAuth
-    window.location.href = "/auth/google";
+  const handleGoogleSignup = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      
+      if (error) {
+        setErrors({
+          general: error.message || "Google signup failed. Please try again.",
+        });
+      }
+    } catch (error) {
+      setErrors({
+        general: "Google signup failed. Please try again.",
+      });
+    }
   };
 
   return (

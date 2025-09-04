@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { User, Settings } from '../components/icons';
 import { LogOut } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface UserProfile {
   id: string;
@@ -25,15 +26,32 @@ export function ProfileButton() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
-        credentials: 'include'
-      });
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
+      if (error || !session) {
         setUser(null);
+      } else {
+        // Get additional user data from our API if needed
+        const token = session.access_token;
+        const response = await fetch('/api/auth/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          // Fallback to basic user info from session
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            full_name: session.user.user_metadata?.full_name,
+            first_name: session.user.user_metadata?.first_name,
+            last_name: session.user.user_metadata?.last_name,
+          });
+        }
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
@@ -53,13 +71,12 @@ export function ProfileButton() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      }
       setUser(null);
       navigate('/');
-      window.location.reload(); // Refresh to update auth state
     } catch (error) {
       console.error('Logout error:', error);
     }

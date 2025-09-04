@@ -10,6 +10,7 @@ import {
   HealthCardContent,
 } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
+import { supabase } from "../lib/supabase";
 
 interface LoginFormData {
   email: string;
@@ -65,24 +66,18 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/auth/email/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (error) {
+        setErrors({
+          general: error.message || "Login failed. Please try again.",
+        });
+      } else {
         // Successful login - redirect to main app
         navigate("/");
-        // Let the App component re-check auth status automatically
-      } else {
-        setErrors({
-          general: data.error || "Login failed. Please try again.",
-        });
       }
     } catch (error) {
       setErrors({
@@ -93,9 +88,25 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Redirect to Google OAuth
-    window.location.href = "/auth/google";
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      
+      if (error) {
+        setErrors({
+          general: error.message || "Google login failed. Please try again.",
+        });
+      }
+    } catch (error) {
+      setErrors({
+        general: "Google login failed. Please try again.",
+      });
+    }
   };
 
   const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup

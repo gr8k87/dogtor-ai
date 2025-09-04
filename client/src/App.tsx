@@ -20,6 +20,7 @@ import { ThemeProvider } from "./lib/theme-provider";
 import { ThemeToggle } from "./components/theme-toggle";
 import { ProfileButton } from "./components/ProfileButton";
 import { AppIcons } from "./components/icons";
+import { AuthProvider, useAuth } from "./lib/auth-provider";
 
 import React, { useState, useEffect } from "react";
 import OfflineBadge from "./components/OfflineBadge";
@@ -75,80 +76,14 @@ function Splash({ onComplete }: { onComplete: () => void }) {
 }
 
 function AppContent() {
-  const [tab, setTab] = useState<Tab>("Diagnose");
   const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { user, session, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   function handleSplashComplete() {
     setShowSplash(false);
   }
-
-  // Check authentication status on mount and route changes
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  // Re-check auth when returning to main routes from auth pages
-  useEffect(() => {
-    if (
-      location.pathname === "/" ||
-      location.pathname === "/history" ||
-      location.pathname === "/connect"
-    ) {
-      checkAuthStatus();
-    }
-  }, [location.pathname]);
-
-  const checkAuthStatus = async () => {
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL || "";
-      const response = await fetch(`${apiUrl}/api/auth/user`, {
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    } catch (error) {
-      setIsAuthenticated(false);
-    }
-  };
-
-  // Handle demo user access
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("demo") === "true") {
-      handleDemoAccess();
-    }
-  }, []);
-
-  const handleDemoAccess = async () => {
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL || "";
-      const response = await fetch(`${apiUrl}/auth/demo`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        setIsAuthenticated(true);
-        setShowSplash(false);
-        navigate("/", { replace: true });
-      } else {
-        // Retry demo access once if it fails
-        console.warn("Demo access failed, retrying...");
-        setTimeout(() => handleDemoAccess(), 1000);
-      }
-    } catch (error) {
-      console.error("Demo access failed:", error);
-      // Retry once on network error
-      setTimeout(() => handleDemoAccess(), 2000);
-    }
-  };
 
   // Hide navigation on question, result, and auth pages
   const hideNav =
@@ -162,7 +97,7 @@ function AppContent() {
   if (showSplash) return <Splash onComplete={handleSplashComplete} />;
 
   // If authentication status is still loading, show a loading screen
-  if (isAuthenticated === null) {
+  if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -171,7 +106,7 @@ function AppContent() {
   }
 
   // If not authenticated, redirect to login (except for auth pages)
-  if (!isAuthenticated && !["/login", "/signup"].includes(location.pathname)) {
+  if (!user && !["/login", "/signup"].includes(location.pathname)) {
     return <Login />;
   }
 
@@ -274,9 +209,11 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider defaultTheme="light">
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
