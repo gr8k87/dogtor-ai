@@ -73,48 +73,65 @@ export default function Questions() {
       return;
     }
 
-    // Fetch questions for this case
-    console.log("🔍 Fetching questions for case:", caseId);
+    // Fetch questions for this case with JWT auth
+    const fetchQuestions = async () => {
+      console.log("🔍 Fetching questions for case:", caseId);
 
-    fetch(`/api/diagnose/questions/${caseId}`, {
-      credentials: "include",
-    })
-      .then(async (res) => {
-        console.log("📡 Questions API response status:", res.status);
+      // Get Supabase session token first
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-        if (res.status === 404) {
-          console.log("❌ Questions not found, redirecting home");
-          navigate("/");
-          return null;
-        }
+      if (sessionError || !session) {
+        console.error("Authentication required for questions");
+        setError("Authentication required");
+        setLoading(false);
+        return;
+      }
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.log("❌ Questions API error:", errorText);
-          throw new Error(`Questions API failed: ${res.status} - ${errorText}`);
-        }
-
-        const data = await res.json();
-        console.log("📋 Raw questions response:", data);
-        return data;
+      fetch(`/api/diagnose/questions/${caseId}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`, // ✅ ADD JWT TOKEN
+        },
       })
-      .then((data) => {
-        if (data) {
-          console.log("✅ Questions data received:", data);
-          const questions = data.questions || [];
-          setQuestions(questions);
+        .then(async (res) => {
+          console.log("📡 Questions API response status:", res.status);
 
-          console.log(`📊 Found ${questions.length} questions`);
-          if (questions.length === 0) {
+          if (res.status === 404) {
+            console.log("❌ Questions not found, redirecting home");
+            navigate("/");
+            return null;
           }
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Questions fetch error:", err);
-        setError(err.message || "Failed to load questions");
-        setLoading(false);
-      });
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.log("❌ Questions API error:", errorText);
+            throw new Error(
+              `Questions API failed: ${res.status} - ${errorText}`,
+            );
+          }
+
+          const data = await res.json();
+          console.log("📋 Raw questions response:", data);
+          return data;
+        })
+        .then((data) => {
+          if (data) {
+            console.log("✅ Questions data received:", data);
+            const questions = data.questions || [];
+            setQuestions(questions);
+            console.log(`📊 Found ${questions.length} questions`);
+          }
+          setLoading(false);
+        });
+    };
+
+    fetchQuestions().catch((err) => {
+      console.error("❌ Questions fetch error:", err);
+      setError(err.message || "Failed to load questions");
+      setLoading(false);
+    });
   }, [caseId, navigate]);
 
   const handleSubmit = async () => {
@@ -168,10 +185,25 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Generating results with initial information...");
+      // Get Supabase session token first
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        console.error("Authentication required for results");
+        setError("Authentication required");
+        setSubmitting(false);
+        return;
+      }
+
       const response = await fetch("/api/diagnose/results", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`, // ✅ ADD JWT TOKEN
+        },
         body: JSON.stringify({ caseId }),
       });
 
