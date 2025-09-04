@@ -12,8 +12,6 @@ import bcrypt from "bcrypt";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-// serve client build (works everywhere, fails gracefully)
-import fs from "fs";
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -568,21 +566,31 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Failed to delete history entry" });
   }
 });
-// serve client build (only for Vercel)
+// serve client build (works everywhere, fails gracefully)
+import fs from "fs";
+
 const clientBuildPath = path.join(__dirname, "..", "client", "build");
 const indexPath = path.join(clientBuildPath, "index.html");
+
 // Only serve static files if they actually exist
 if (fs.existsSync(indexPath)) {
   app.use(express.static(clientBuildPath));
-  app.get("*", (_req, res) => {
-    res.sendFile(indexPath);
-  });
-} else {
-  // Fallback for API-only mode (Koyeb)
-  app.get("*", (_req, res) => {
-    res.status(404).json({ error: "API only - no frontend available" });
-  });
 }
+
+// Catch-all route for frontend (but exclude API routes)
+app.get("*", (req, res) => {
+  // Don't interfere with API routes
+  if (req.path.startsWith("/api") || req.path.startsWith("/auth")) {
+    return res.status(404).json({ error: "API endpoint not found" });
+  }
+
+  // Serve frontend if files exist
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: "Frontend not available" });
+  }
+});
 
 // start server
 const PORT = process.env.PORT || 5000;
