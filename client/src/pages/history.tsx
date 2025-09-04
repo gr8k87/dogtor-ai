@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
-import { GlobalHeader } from "../components/GlobalHeader";
+import { supabase } from "../lib/supabase";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -19,41 +19,38 @@ export default function History() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("/api/history/list", {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load history");
-        return res.json();
-      })
-      .then((data) => {
-        setItems(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("History fetch error:", err);
-        setError("Could not load history");
-        setLoading(false);
-      });
-  }, []);
-
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (
       window.confirm("Are you sure you want to delete this history record?")
     ) {
-      fetch(`/api/history/delete/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to delete history");
-          setItems(items.filter((item) => item.id !== id));
-        })
-        .catch((err) => {
-          console.error("History delete error:", err);
-          setError("Could not delete history");
+      try {
+        // Get the current session and token
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          setError("Authentication required");
+          return;
+        }
+
+        const response = await fetch(`/api/history/delete/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
         });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete history");
+        }
+
+        setItems(items.filter((item) => item.id !== id));
+      } catch (err) {
+        console.error("History delete error:", err);
+        setError("Could not delete history");
+      }
     }
   };
 
@@ -84,7 +81,6 @@ export default function History() {
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Sad Dog Illustration for Error */}
@@ -170,7 +166,6 @@ export default function History() {
   if (!items.length) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <GlobalHeader title="History" />
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Friendly Dog Illustration */}
