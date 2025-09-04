@@ -103,7 +103,7 @@ function AppContent() {
 
   const checkAuthStatus = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "";
+      const apiUrl = process.env.REACT_APP_API_BASE || "";
       const response = await fetch(`${apiUrl}/api/auth/user`, {
         credentials: "include",
       });
