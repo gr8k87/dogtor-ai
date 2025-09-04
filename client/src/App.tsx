@@ -128,7 +128,7 @@ function AppContent() {
 
   const handleDemoAccess = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || "";
+      const apiUrl = process.env.REACT_APP_API_BASE || ""; // Updated Correct Variable
       const response = await fetch(`${apiUrl}/auth/demo`, {
         method: "POST",
         credentials: "include",

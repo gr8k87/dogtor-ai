@@ -95,7 +95,8 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth
-    window.location.href = "/auth/google";
+    const apiUrl = process.env.REACT_APP_API_BASE || "";
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   const isEmailFlowEnabled = false; // TODO: Set to true to re-enable email signup
