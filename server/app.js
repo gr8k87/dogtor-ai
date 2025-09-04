@@ -63,6 +63,7 @@ const pgSession = ConnectPgSimple(session);
 const pgPool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
+  max: 20, // Add this line
 });
 
 // Configure session management with PostgreSQL store
