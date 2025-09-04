@@ -19,6 +19,7 @@ import {
 import BreedSelector from "../components/BreedSelector";
 import { AppIcons } from "../components/icons";
 import { EmailSignupData } from "../../../shared/schema";
+import { authFetch, setAuthToken } from "../lib/auth";
 
 interface SignupFormData
   extends Omit<EmailSignupData, "pet_birth_month" | "pet_birth_year"> {
@@ -165,23 +166,20 @@ export default function Signup() {
         pet_gender: formData.pet_gender || undefined,
       };
 
-      const response = await fetch("/auth/email/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await authFetch('/auth/email/signup', {
+        method: 'POST',
         body: JSON.stringify(signupData),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Successful signup - redirect to main app
-        navigate("/");
-        // Let the App component re-check auth status automatically
+      if (response.ok && data.token) {
+        // Store JWT token and redirect to main app
+        setAuthToken(data.token);
+        navigate('/');
       } else {
         setErrors({
-          general: data.error || "Signup failed. Please try again.",
+          general: data.error || 'Signup failed. Please try again.',
         });
       }
     } catch (error) {

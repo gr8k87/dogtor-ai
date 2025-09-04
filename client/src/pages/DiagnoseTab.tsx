@@ -8,6 +8,7 @@ import { Skeleton, SkeletonCard } from "../components/ui/skeleton";
 import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
+import { authFetch } from "../lib/auth";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -41,14 +42,11 @@ export default function DiagnoseTab() {
 
       // Create case and generate questions
       setDebugMsg("❓ Creating case and generating questions...");
-      const apiUrl = process.env.REACT_APP_API_BASE || "";
-      const caseResp = await fetch(`${apiUrl}/api/diagnose/cases`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+      const caseResp = await authFetch('/api/diagnose/cases', {
+        method: 'POST',
         body: JSON.stringify({
-          symptoms: notes || "general health check",
-          imageUrl: imageUrl, // Use imageUrl directly
+          symptoms: notes || 'general health check',
+          imageUrl: imageUrl,
         }),
       });
 

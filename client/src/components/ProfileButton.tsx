@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { User, Settings } from '../components/icons';
 import { LogOut } from 'lucide-react';
+import { authFetch, logout, checkAuth } from '../lib/auth';
 
 interface UserProfile {
   id: string;
@@ -25,16 +26,8 @@ export function ProfileButton() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
-        setUser(null);
-      }
+      const userData = await checkAuth();
+      setUser(userData);
     } catch (error) {
       console.error('Error checking auth status:', error);
       setUser(null);
@@ -53,10 +46,7 @@ export function ProfileButton() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      await logout();
       setUser(null);
       navigate('/');
       window.location.reload(); // Refresh to update auth state

@@ -9,6 +9,7 @@ import { Separator } from '../components/ui/separator';
 import BreedSelector from '../components/BreedSelector';
 import { ArrowLeft, User, Save } from '../components/icons';
 import { GlobalHeader } from '../components/GlobalHeader';
+import { authFetch } from '../lib/auth';
 
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
@@ -104,9 +105,7 @@ export default function Profile() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
-        credentials: 'include'
-      });
+      const response = await authFetch('/api/auth/user');
       
       if (response.ok) {
         const userData = await response.json();
@@ -206,12 +205,8 @@ export default function Profile() {
         pet_gender: formData.pet_gender || undefined
       };
 
-      const response = await fetch('/api/auth/profile', {
+      const response = await authFetch('/api/auth/profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify(updateData),
       });
 

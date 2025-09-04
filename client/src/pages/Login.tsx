@@ -10,6 +10,7 @@ import {
   HealthCardContent,
 } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
+import { authFetch, setAuthToken } from "../lib/auth";
 
 interface LoginFormData {
   email: string;
@@ -65,23 +66,20 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/auth/email/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await authFetch('/auth/email/login', {
+        method: 'POST',
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Successful login - redirect to main app
-        navigate("/");
-        // Let the App component re-check auth status automatically
+      if (response.ok && data.token) {
+        // Store JWT token and redirect to main app
+        setAuthToken(data.token);
+        navigate('/');
       } else {
         setErrors({
-          general: data.error || "Login failed. Please try again.",
+          general: data.error || 'Login failed. Please try again.',
         });
       }
     } catch (error) {
