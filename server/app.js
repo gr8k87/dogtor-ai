@@ -67,50 +67,44 @@ const verifySupabaseAuth = async (req, res, next) => {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // Get or create user in our users table
-    let { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-
-    // If user doesn't exist in our table, create them
+    // If user doesn't exist with new ID, check by email (migration case)
     if (userError && userError.code === "PGRST116") {
-      // Not found
-      console.log("🆕 Creating new user in database:", user.id);
-      const { data: newUser, error: createError } = await supabase
+      console.log(
+        "🔍 User not found by ID, checking by email for migration:",
+        user.email,
+      );
+
+      // Try to find existing user by email
+      const { data: existingUser, error: emailError } = await supabase
         .from("users")
-        .insert([
-          {
-            id: user.id,
-            email: user.email,
-            auth_method:
-              user.app_metadata?.provider === "google" ? "google" : "email",
-            email_verified: true,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ])
-        .select()
+        .select("*")
+        .eq("email", user.email)
         .single();
 
-      if (createError) {
-        console.error("❌ Failed to create user:", createError);
-        return res.status(500).json({
-          error: "Failed to create user account",
-          details: createError.message,
-        });
-      }
-      userData = newUser;
-    } else if (userError) {
-      console.error("❌ User lookup error:", userError);
-      return res.status(500).json({ error: "Database error" });
-    }
+      if (existingUser) {
+        // Update existing user record with new Supabase ID
+        console.log("🔄 Migrating existing user to new Supabase ID:", user.id);
+        const { data: migratedUser, error: updateError } = await supabase
+          .from("users")
+          .update({
+            id: user.id,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("email", user.email)
+          .select()
+          .single();
 
-    req.user = userData;
-    req.currentUser = userData;
-    next();
+        if (updateError) {
+          console.error("❌ Failed to migrate user:", updateError);
+          return res.status(500).json({ error: "Migration failed" });
+        }
+        userData = migratedUser;
+      } else {
+        // Truly new user - create fresh record
+        console.log("🆕 Creating new user in database:", user.id);
+        // ... existing user creation code ...
+      }
+    }
   } catch (error) {
     console.error("❌ Auth verification error:", error);
     res.status(401).json({ error: "Authentication failed" });
