@@ -566,13 +566,13 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Failed to delete history entry" });
   }
 });
-
-// serve client build
-app.use(express.static(path.join(__dirname, "..", "client", "build")));
-app.get("*", (_req, res) =>
-  res.sendFile(path.join(__dirname, "..", "client", "build", "index.html")),
-);
-
+// serve client build (only if files exist)
+if (process.env.NODE_ENV !== "production") {
+  app.use(express.static(path.join(__dirname, "..", "client", "build")));
+  app.get("*", (_req, res) =>
+    res.sendFile(path.join(__dirname, "..", "client", "build", "index.html")),
+  );
+}
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "0.0.0.0";
 
