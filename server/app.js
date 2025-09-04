@@ -262,10 +262,12 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/?error=auth_failed" }),
+  passport.authenticate("google", {
+    failureRedirect: "https://app.hellodogtor.com/?error=auth_failed",
+  }),
   (req, res) => {
-    // Successful authentication
-    res.redirect("/");
+    // Successful authentication - redirect to frontend
+    res.redirect("https://app.hellodogtor.com/");
   },
 );
 
@@ -566,32 +568,30 @@ app.delete("/api/history/delete/:id", isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Failed to delete history entry" });
   }
 });
-// serve client build (works everywhere, fails gracefully)
+// Serve React build for local development/testing
 import fs from "fs";
 
 const clientBuildPath = path.join(__dirname, "..", "client", "build");
 const indexPath = path.join(clientBuildPath, "index.html");
 
-// Only serve static files if they actually exist
+// Serve static files if build exists
 if (fs.existsSync(indexPath)) {
+  console.log("🎯 Serving React build from:", clientBuildPath);
   app.use(express.static(clientBuildPath));
-}
 
-// Catch-all route for frontend (but exclude API routes)
-app.get("*", (req, res) => {
-  // Don't interfere with API routes
-  if (req.path.startsWith("/api") || req.path.startsWith("/auth")) {
-    return res.status(404).json({ error: "API endpoint not found" });
-  }
+  // Catch-all route for frontend (AFTER all API/auth routes)
+  app.get("*", (req, res) => {
+    // Explicitly exclude auth and api routes
+    if (req.path.startsWith("/api") || req.path.startsWith("/auth")) {
+      return res.status(404).json({ error: "API endpoint not found" });
+    }
 
-  // Serve frontend if files exist
-  if (fs.existsSync(indexPath)) {
+    // Serve React app for all other routes
     res.sendFile(indexPath);
-  } else {
-    res.status(404).json({ error: "Frontend not available" });
-  }
-});
-
+  });
+} else {
+  console.log("⚠️ No React build found - API only mode");
+}
 // start server
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "0.0.0.0";
