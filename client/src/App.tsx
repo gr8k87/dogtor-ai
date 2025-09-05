@@ -28,6 +28,12 @@ import OfflineBadge from "./components/OfflineBadge";
 type Tab = "Diagnose" | "History" | "Connect" | "Results";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
+// Demo user detection
+const isDemoMode = () => {
+  return new URLSearchParams(window.location.search).get('demo') === 'true' ||
+         window.location.pathname.includes('/demo');
+};
+
 function Splash({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     // Auto-transition to login after 2.5 seconds
@@ -97,7 +103,7 @@ function AppContent() {
   if (showSplash) return <Splash onComplete={handleSplashComplete} />;
 
   // If authentication status is still loading, show a loading screen
-  if (loading) {
+  if (loading && !isDemoMode()) {
     return (
       <div className="min-h-dvh flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -106,9 +112,17 @@ function AppContent() {
   }
 
   // If not authenticated, redirect to login (except for auth pages)
-  if (!user && !["/login", "/signup"].includes(location.pathname)) {
+  if (!user && !["/login", "/signup"].includes(location.pathname) && !isDemoMode()) {
     return <Login />;
   }
+  
+  // Helper function to determine the active tab for BottomTabs
+  const getActiveTab = () => {
+    if (location.pathname === "/") return "diagnose";
+    if (location.pathname === "/history") return "history";
+    if (location.pathname === "/connect") return "connect";
+    return "diagnose"; // Default to diagnose
+  };
 
   return (
     <div className="min-h-dvh flex flex-col bg-background">
@@ -186,20 +200,31 @@ function AppContent() {
         />
         <Route path="/questions/:caseId" element={<Questions />} />
         <Route path="/results/:caseId" element={<Results />} />
+        {/* Demo Route */}
+        <Route path="/demo" element={
+          <>
+            <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="flex h-16 items-center justify-between px-4">
+                <div className="flex items-center gap-3">
+                  <AppIcons.logo size={48} className="text-primary" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <ProfileButton />
+                  <ThemeToggle />
+                </div>
+              </div>
+            </header>
+            <main className="flex-1 pb-20 overflow-y-auto">
+              <DiagnoseTab /> 
+            </main>
+          </>
+        } />
       </Routes>
 
       {!hideNav && (
         <BottomTabs
           navigate={navigate}
-          activeTab={
-            location.pathname === "/"
-              ? "diagnose"
-              : location.pathname === "/history"
-                ? "history"
-                : location.pathname === "/connect"
-                  ? "connect"
-                  : "diagnose"
-          }
+          activeTab={getActiveTab()}
         />
       )}
     </div>
@@ -210,9 +235,9 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="light">
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
+          <Router>
+            <AppContent />
+          </Router>
       </AuthProvider>
     </ThemeProvider>
   );

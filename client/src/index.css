@@ -334,7 +334,7 @@
 
   /* Enhanced card variants for different elevations */
   .card-interactive {
-    @apply rounded-xl border bg-card text-card-foreground shadow-soft hover:shadow-medium transition-all duration-200 cursor-pointer hover:scale-[1.01];
+    @apply transition-all duration-300 hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98];
   }
 
   .card-hero {

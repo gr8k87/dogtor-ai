@@ -67,72 +67,86 @@ export default function Questions() {
   const [error, setError] = useState<string | null>(null);
   const [debugMsg, setDebugMsg] = useState("");
 
+  // Mock case data structure for demo mode
+  const [caseData, setCaseData] = useState<any>(null);
+
   useEffect(() => {
-    if (!caseId) {
-      navigate("/");
-      return;
-    }
+    const fetchCaseData = async () => {
+      if (!caseId) return;
 
-    // Fetch questions for this case with JWT auth
-    const fetchQuestions = async () => {
-      console.log("🔍 Fetching questions for case:", caseId);
+      setLoading(true);
+      setError("");
 
-      // Get Supabase session token first
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      try {
+        // Check for demo mode
+        const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                           window.location.pathname.includes('/demo') ||
+                           caseId?.startsWith('demo-');
 
-      if (sessionError || !session) {
-        console.error("Authentication required for questions");
-        setError("Authentication required");
-        setLoading(false);
-        return;
-      }
-
-      fetch(`/api/diagnose/questions/${caseId}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`, // ✅ ADD JWT TOKEN
-        },
-      })
-        .then(async (res) => {
-          console.log("📡 Questions API response status:", res.status);
-
-          if (res.status === 404) {
-            console.log("❌ Questions not found, redirecting home");
-            navigate("/");
-            return null;
-          }
-
-          if (!res.ok) {
-            const errorText = await res.text();
-            console.log("❌ Questions API error:", errorText);
-            throw new Error(
-              `Questions API failed: ${res.status} - ${errorText}`,
-            );
-          }
-
-          const data = await res.json();
-          console.log("📋 Raw questions response:", data);
-          return data;
-        })
-        .then((data) => {
-          if (data) {
-            console.log("✅ Questions data received:", data);
-            const questions = data.questions || [];
-            setQuestions(questions);
-            console.log(`📊 Found ${questions.length} questions`);
-          }
+        if (isDemoMode) {
+          // Mock case data for demo
+          const mockCase = {
+            id: caseId,
+            symptoms: 'Demo symptoms',
+            imageUrl: null,
+            questions: [
+              {
+                id: '1',
+                question: 'How long have you noticed this issue?',
+                type: 'multiple_choice',
+                options: ['Less than 24 hours', '1-3 days', '4-7 days', 'More than a week']
+              },
+              {
+                id: '2',
+                question: 'Is your pet eating normally?',
+                type: 'boolean'
+              }
+            ]
+          };
+          setCaseData(mockCase);
+          setQuestions(mockCase.questions || []);
           setLoading(false);
+          return;
+        }
+
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          setError('Authentication required');
+          return;
+        }
+
+        const response = await fetch(`/api/diagnose/cases/${caseId}`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
         });
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            navigate("/");
+          } else {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch case data: ${response.status} ${errorText}`);
+          }
+          return;
+        }
+
+        const data = await response.json();
+        setCaseData(data);
+        setQuestions(data.questions || []);
+      } catch (err: any) {
+        console.error("Error fetching case data:", err);
+        setError(err.message || "Failed to load case details.");
+        navigate("/"); // Redirect on error
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchQuestions().catch((err) => {
-      console.error("❌ Questions fetch error:", err);
-      setError(err.message || "Failed to load questions");
-      setLoading(false);
-    });
+    fetchCaseData();
   }, [caseId, navigate]);
+
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -144,11 +158,25 @@ export default function Questions() {
       // Get Supabase session token first
       const {
         data: { session },
-        error: sessionError,
+        error: sessionError
       } = await supabase.auth.getSession();
+
+      // Check for demo mode
+      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo') ||
+                         caseId?.startsWith('demo-');
+
+
+      if (isDemoMode) {
+        setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
+        navigate(`/results/${caseId}`, { state: { cards: [{ title: "Demo Result", description: "This is a demo analysis." }] } });
+        return;
+      }
+
 
       if (sessionError || !session) {
         console.error("Authentication required for diagnosis");
+        setError("Authentication required");
         return;
       }
 
@@ -188,8 +216,21 @@ export default function Questions() {
       // Get Supabase session token first
       const {
         data: { session },
-        error: sessionError,
+        error: sessionError
       } = await supabase.auth.getSession();
+
+      // Check for demo mode
+      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo') ||
+                         caseId?.startsWith('demo-');
+
+
+      if (isDemoMode) {
+        setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
+        navigate(`/results/${caseId}`, { state: { cards: [{ title: "Demo Result", description: "This is a demo analysis." }] } });
+        return;
+      }
+
 
       if (sessionError || !session) {
         console.error("Authentication required for results");

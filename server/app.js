@@ -50,6 +50,29 @@ const supabase = createClient(
 // Middleware to verify Supabase JWT token
 const verifySupabaseAuth = async (req, res, next) => {
   try {
+    // Check for demo mode
+    const isDemoMode = req.query.demo === 'true' || req.headers['x-demo-mode'] === 'true';
+    
+    if (isDemoMode) {
+      // Create a demo user object
+      req.user = {
+        id: 'demo-user-id',
+        email: 'demo@example.com',
+        auth_method: 'demo',
+        email_verified: true,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        pet_name: 'Demo Pet',
+        pet_breed: 'Mixed Breed',
+        first_name: 'Demo',
+        last_name: 'User',
+        full_name: 'Demo User'
+      };
+      req.currentUser = req.user;
+      return next();
+    }
+
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Authentication required" });

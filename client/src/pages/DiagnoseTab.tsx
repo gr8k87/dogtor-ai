@@ -38,24 +38,33 @@ export default function DiagnoseTab() {
     setErrors({});
 
     try {
-      // Removed image upload logic as ImagePicker now handles it and returns a URL
+      // Check if we're in demo mode
+      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo');
 
-      // Get Supabase session token
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      let headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
 
-      if (sessionError || !session) {
-        throw new Error("Authentication required");
+      if (isDemoMode) {
+        headers['x-demo-mode'] = 'true';
+      } else {
+        // Get Supabase session token for authenticated users
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          throw new Error("Authentication required");
+        }
+
+        headers.Authorization = `Bearer ${session.access_token}`;
       }
 
-      const caseResp = await fetch(`/api/diagnose/cases`, {
+      const caseResp = await fetch(`/api/diagnose/cases${isDemoMode ? '?demo=true' : ''}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`, // ✅ NEW AUTH
-        },
+        headers,
         body: JSON.stringify({
           symptoms: notes || "general health check",
           imageUrl: imageUrl,
