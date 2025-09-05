@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
@@ -110,7 +109,7 @@ export default function Results({}: ResultsProps) {
           colorIndex={2}
           className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
         >
-          <HealthCardHeader className="pb-4">
+          <HealthCardHeader className="pb-4 text-black">
             <HealthCardTitle className="flex items-center gap-3 text-2xl text-black">
               <span className="text-4xl">🎯</span>
               Pet Health Analysis Results
@@ -123,10 +122,12 @@ export default function Results({}: ResultsProps) {
                 <span className="text-2xl">🎯</span>
                 {cards.diagnosis?.title || "Diagnosis"}
               </h3>
-              
+
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium text-sm mb-1 text-black">Likely condition:</h4>
+                  <h4 className="font-medium text-sm mb-1 text-black">
+                    Likely condition:
+                  </h4>
                   <p className="text-sm text-black">
                     {cards.diagnosis?.likely_condition || "Analysis complete"}
                   </p>
@@ -157,7 +158,9 @@ export default function Results({}: ResultsProps) {
 
                 {cards.diagnosis?.urgency && (
                   <div className="p-3 rounded-md bg-amber-50 border border-amber-200">
-                    <h4 className="font-medium text-sm mb-1 text-black">Urgency Level:</h4>
+                    <h4 className="font-medium text-sm mb-1 text-black">
+                      Urgency Level:
+                    </h4>
                     <p className="text-sm text-black">
                       {cards.diagnosis.urgency.badge}{" "}
                       {cards.diagnosis.urgency.level} Urgency —{" "}
@@ -174,13 +177,13 @@ export default function Results({}: ResultsProps) {
                 <span className="text-2xl">💰</span>
                 {cards.costs?.title || "Expected Costs"}
               </h3>
-              
+
               {cards.costs?.disclaimer && (
                 <p className="text-xs text-black p-2 bg-blue-50 rounded border">
                   {cards.costs.disclaimer}
                 </p>
               )}
-              
+
               {cards.costs?.steps && (
                 <div className="space-y-3">
                   {cards.costs.steps.map((step: any, i: number) => (
@@ -194,14 +197,14 @@ export default function Results({}: ResultsProps) {
                         </span>
                         <div className="flex-1 space-y-1">
                           <div className="flex justify-between items-start">
-                            <h4 className="font-medium text-sm text-black">{step.name}</h4>
+                            <h4 className="font-medium text-sm text-black">
+                              {step.name}
+                            </h4>
                             <span className="text-sm font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded">
                               {step.cost}
                             </span>
                           </div>
-                          <p className="text-sm text-black">
-                            {step.desc}
-                          </p>
+                          <p className="text-sm text-black">{step.desc}</p>
                           <p className="text-xs text-black">
                             Likelihood: {step.likelihood}
                           </p>
@@ -219,7 +222,7 @@ export default function Results({}: ResultsProps) {
                 <span className="text-2xl">💡</span>
                 {cards.care?.title || "General Care Tips"}
               </h3>
-              
+
               {cards.care?.tips && (
                 <ul className="space-y-3">
                   {cards.care.tips.map((tip: any, i: number) => (
@@ -232,12 +235,6 @@ export default function Results({}: ResultsProps) {
                     </li>
                   ))}
                 </ul>
-              )}
-              
-              {cards.care?.disclaimer && (
-                <p className="text-xs text-black italic p-2 bg-blue-50 rounded border">
-                  {cards.care.disclaimer}
-                </p>
               )}
             </div>
           </HealthCardContent>
@@ -255,9 +252,8 @@ export default function Results({}: ResultsProps) {
                 Important Disclaimer
               </h3>
               <p className="text-amber-700 text-sm">
-                This AI diagnosis is for informational purposes only and should
-                not replace professional veterinary care. Always consult with a
-                qualified veterinarian for accurate diagnosis and treatment.
+                AI results are for information only. Consult a vet for diagnosis
+                and treatment.
               </p>
             </div>
           </div>
@@ -267,7 +263,7 @@ export default function Results({}: ResultsProps) {
         <div className="pt-4">
           <Button
             onClick={handleNewDiagnosis}
-            variant="outline"
+            variant="default"
             size="lg"
             className="w-full h-12"
             data-testid="button-new-diagnosis"

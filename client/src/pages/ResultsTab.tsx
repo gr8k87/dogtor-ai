@@ -37,7 +37,9 @@ export default function ResultsTab({ cards, onBack }: ResultsTabProps) {
         <p className="mb-2">
           <b>Likely condition:</b> {cards.diagnosis.likely_condition}
         </p>
-        <p className="mb-1"><b>Other possibilities:</b></p>
+        <p className="mb-1">
+          <b>Other possibilities:</b>
+        </p>
         <ul className="text-sm mb-3">
           {cards.diagnosis.other_possibilities.map((p: any, i: number) => (
             <li key={i} className="ml-2">
@@ -45,9 +47,12 @@ export default function ResultsTab({ cards, onBack }: ResultsTabProps) {
             </li>
           ))}
         </ul>
-        <p className="mb-1"><b>Urgency:</b></p>
+        <p className="mb-1">
+          <b>Urgency:</b>
+        </p>
         <p className="text-sm">
-          {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level} Urgency — {cards.diagnosis.urgency.note}
+          {cards.diagnosis.urgency.badge} {cards.diagnosis.urgency.level}{" "}
+          Urgency — {cards.diagnosis.urgency.note}
         </p>
       </div>
 
@@ -61,17 +66,13 @@ export default function ResultsTab({ cards, onBack }: ResultsTabProps) {
             </li>
           ))}
         </ul>
-        <p className="text-xs text-gray-500 mt-2">
-          {cards.care.disclaimer}
-        </p>
+        <p className="text-xs text-gray-500 mt-2">{cards.care.disclaimer}</p>
       </div>
 
       {/* Card 3: Vet Procedures & Costs */}
       <div className="rounded-2xl border p-4">
         <h2 className="font-semibold mb-2">{cards.costs.title}</h2>
-        <p className="text-xs text-gray-500 mb-2">
-          {cards.costs.disclaimer}
-        </p>
+        <p className="text-xs text-gray-500 mb-2">{cards.costs.disclaimer}</p>
         <ul className="space-y-2 text-sm">
           {cards.costs.steps.map((s: any, i: number) => (
             <li key={i}>
