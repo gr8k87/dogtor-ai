@@ -101,7 +101,7 @@ export default function History() {
   if (loading) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
           {/* Header Card Skeleton */}
           <HealthCard colorIndex={2} className="mb-4">
             <HealthCardContent className="p-4">
@@ -141,7 +141,7 @@ export default function History() {
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
           <div className="text-center py-16">
             {/* Sad Dog Illustration for Error */}
             <div className="flex justify-center mb-8">
@@ -226,7 +226,7 @@ export default function History() {
   if (!items.length) {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
-        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
           <div className="text-center py-16">
             {/* Friendly Dog Illustration */}
             <div className="flex justify-center mb-8">
@@ -325,7 +325,7 @@ export default function History() {
 
   return (
     <div className="min-h-dvh flex flex-col gradient-hero">
-      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
         {/* Header Card - now inside the layout with proper theming */}
         <HealthCard colorIndex={2} className="mb-4 border-accent">
           <HealthCardHeader className="pb-2">
