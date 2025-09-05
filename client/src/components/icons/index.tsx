@@ -94,6 +94,16 @@ export {
   Moon,
   Monitor,
   Palette,
+
+  // Results page icons
+  ClipboardList,
+  Target,
+  DollarSign,
+  Lightbulb,
+  Building,
+  Pill,
+  Utensils,
+  Activity,
 } from "lucide-react";
 
 // Icon configuration - Change these to switch icon sets globally
