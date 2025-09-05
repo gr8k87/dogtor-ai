@@ -11,7 +11,8 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 357 100% 68%; /* #FF5A5F - Logo Red */
+    --primary: 357 100% 68%;
+    /* #FF5A5F - Logo Red */
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
@@ -23,22 +24,33 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 357 100% 68%; /* Match primary */
+    --ring: 357 100% 68%;
+    /* Match primary */
     --radius: 0.75rem;
 
     /* Health Card Palette - Global Variables */
     /* EMERALD THEME - Bright Apple-style gradients */
-    --health-card-0: linear-gradient(135deg, hsl(357 100% 75%) 0%, hsl(357 100% 68%) 100%); /* Brand coral */
-    --health-card-1: linear-gradient(135deg, hsl(200 98% 73%) 0%, hsl(200 98% 60%) 100%); /* Sky blue */
-    --health-card-2: linear-gradient(135deg, hsl(160 84% 75%) 0%, hsl(160 84% 65%) 100%); /* Emerald green */
-    --health-card-3: linear-gradient(135deg, hsl(262 83% 75%) 0%, hsl(262 83% 65%) 100%); /* Violet */
-    --health-card-4: linear-gradient(135deg, hsl(25 95% 73%) 0%, hsl(25 95% 63%) 100%); /* Orange */
-    --health-card-5: linear-gradient(135deg, hsl(189 94% 73%) 0%, hsl(189 94% 63%) 100%); /* Cyan */
-    --health-card-6: linear-gradient(135deg, hsl(239 84% 75%) 0%, hsl(239 84% 65%) 100%); /* Indigo */
-    --health-card-7: linear-gradient(135deg, hsl(330 81% 73%) 0%, hsl(330 81% 63%) 100%); /* Pink */
-    --health-card-8: linear-gradient(135deg, hsl(48 96% 73%) 0%, hsl(48 96% 63%) 100%); /* Yellow (history) */
-    --health-card-9: linear-gradient(135deg, hsl(215 28% 73%) 0%, hsl(215 28% 63%) 100%); /* Gray */
-    
+    --health-card-0: linear-gradient(135deg, hsl(357 100% 75%) 0%, hsl(357 100% 68%) 100%);
+    /* Brand coral */
+    --health-card-1: linear-gradient(135deg, hsl(200 98% 73%) 0%, hsl(200 98% 60%) 100%);
+    /* Sky blue */
+    --health-card-2: linear-gradient(135deg, hsl(160 84% 75%) 0%, hsl(160 84% 65%) 100%);
+    /* Emerald green */
+    --health-card-3: linear-gradient(135deg, hsl(262 83% 75%) 0%, hsl(262 83% 65%) 100%);
+    /* Violet */
+    --health-card-4: linear-gradient(135deg, hsl(25 95% 73%) 0%, hsl(25 95% 63%) 100%);
+    /* Orange */
+    --health-card-5: linear-gradient(135deg, hsl(189 94% 73%) 0%, hsl(189 94% 63%) 100%);
+    /* Cyan */
+    --health-card-6: linear-gradient(135deg, hsl(239 84% 75%) 0%, hsl(239 84% 65%) 100%);
+    /* Indigo */
+    --health-card-7: linear-gradient(135deg, hsl(330 81% 73%) 0%, hsl(330 81% 63%) 100%);
+    /* Pink */
+    --health-card-8: linear-gradient(135deg, hsl(48 96% 73%) 0%, hsl(48 96% 63%) 100%);
+    /* Yellow (history) */
+    --health-card-9: linear-gradient(135deg, hsl(215 28% 73%) 0%, hsl(215 28% 63%) 100%);
+    /* Gray */
+
     /* Borders for each card */
     --health-border-0: hsl(357 100% 65%);
     --health-border-1: hsl(200 98% 55%);
@@ -50,18 +62,28 @@
     --health-border-7: hsl(330 81% 58%);
     --health-border-8: hsl(48 96% 58%);
     --health-border-9: hsl(215 28% 58%);
-    
+
     /* Text colors for contrast */
-    --health-text-0: hsl(0 0% 100%);  /* White text on coral */
-    --health-text-1: hsl(0 0% 100%);  /* White text on blue */
-    --health-text-2: hsl(0 0% 100%);  /* White text on green */
-    --health-text-3: hsl(0 0% 100%);  /* White text on violet */
-    --health-text-4: hsl(0 0% 100%);  /* White text on orange */
-    --health-text-5: hsl(0 0% 100%);  /* White text on cyan */
-    --health-text-6: hsl(0 0% 100%);  /* White text on indigo */
-    --health-text-7: hsl(0 0% 100%);  /* White text on pink */
-    --health-text-8: hsl(222.2 84% 4.9%); /* Dark text on yellow */
-    --health-text-9: hsl(0 0% 100%);  /* White text on gray */
+    --health-text-0: hsl(0 0% 100%);
+    /* White text on coral */
+    --health-text-1: hsl(0 0% 100%);
+    /* White text on blue */
+    --health-text-2: hsl(0 0% 100%);
+    /* White text on green */
+    --health-text-3: hsl(0 0% 100%);
+    /* White text on violet */
+    --health-text-4: hsl(0 0% 100%);
+    /* White text on orange */
+    --health-text-5: hsl(0 0% 100%);
+    /* White text on cyan */
+    --health-text-6: hsl(0 0% 100%);
+    /* White text on indigo */
+    --health-text-7: hsl(0 0% 100%);
+    /* White text on pink */
+    --health-text-8: hsl(222.2 84% 4.9%);
+    /* Dark text on yellow */
+    --health-text-9: hsl(0 0% 100%);
+    /* White text on gray */
   }
 
   .dark {
@@ -71,7 +93,8 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 357 100% 68%; /* #FF5A5F - Logo Red (same in dark mode) */
+    --primary: 357 100% 68%;
+    /* #FF5A5F - Logo Red (same in dark mode) */
     --primary-foreground: 0 0% 100%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -83,20 +106,31 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 357 100% 68%; /* Match primary */
-    
+    --ring: 357 100% 68%;
+    /* Match primary */
+
     /* Health Card Palette - Dark Mode */
-    --health-card-0: linear-gradient(135deg, hsl(357 85% 65%) 0%, hsl(357 85% 55%) 100%); /* Brand coral - darker */
-    --health-card-1: linear-gradient(135deg, hsl(200 85% 65%) 0%, hsl(200 85% 55%) 100%); /* Sky blue - darker */
-    --health-card-2: linear-gradient(135deg, hsl(160 75% 65%) 0%, hsl(160 75% 55%) 100%); /* Emerald green - darker */
-    --health-card-3: linear-gradient(135deg, hsl(262 75% 65%) 0%, hsl(262 75% 55%) 100%); /* Violet - darker */
-    --health-card-4: linear-gradient(135deg, hsl(25 85% 65%) 0%, hsl(25 85% 55%) 100%); /* Orange - darker */
-    --health-card-5: linear-gradient(135deg, hsl(189 85% 65%) 0%, hsl(189 85% 55%) 100%); /* Cyan - darker */
-    --health-card-6: linear-gradient(135deg, hsl(239 75% 65%) 0%, hsl(239 75% 55%) 100%); /* Indigo - darker */
-    --health-card-7: linear-gradient(135deg, hsl(330 75% 65%) 0%, hsl(330 75% 55%) 100%); /* Pink - darker */
-    --health-card-8: linear-gradient(135deg, hsl(48 85% 65%) 0%, hsl(48 85% 55%) 100%); /* Yellow - darker */
-    --health-card-9: linear-gradient(135deg, hsl(215 25% 55%) 0%, hsl(215 25% 45%) 100%); /* Gray - darker */
-    
+    --health-card-0: linear-gradient(135deg, hsl(357 85% 65%) 0%, hsl(357 85% 55%) 100%);
+    /* Brand coral - darker */
+    --health-card-1: linear-gradient(135deg, hsl(200 85% 65%) 0%, hsl(200 85% 55%) 100%);
+    /* Sky blue - darker */
+    --health-card-2: linear-gradient(135deg, hsl(160 75% 65%) 0%, hsl(160 75% 55%) 100%);
+    /* Emerald green - darker */
+    --health-card-3: linear-gradient(135deg, hsl(262 75% 65%) 0%, hsl(262 75% 55%) 100%);
+    /* Violet - darker */
+    --health-card-4: linear-gradient(135deg, hsl(25 85% 65%) 0%, hsl(25 85% 55%) 100%);
+    /* Orange - darker */
+    --health-card-5: linear-gradient(135deg, hsl(189 85% 65%) 0%, hsl(189 85% 55%) 100%);
+    /* Cyan - darker */
+    --health-card-6: linear-gradient(135deg, hsl(239 75% 65%) 0%, hsl(239 75% 55%) 100%);
+    /* Indigo - darker */
+    --health-card-7: linear-gradient(135deg, hsl(330 75% 65%) 0%, hsl(330 75% 55%) 100%);
+    /* Pink - darker */
+    --health-card-8: linear-gradient(135deg, hsl(48 85% 65%) 0%, hsl(48 85% 55%) 100%);
+    /* Yellow - darker */
+    --health-card-9: linear-gradient(135deg, hsl(215 25% 55%) 0%, hsl(215 25% 45%) 100%);
+    /* Gray - darker */
+
     /* Borders for dark mode */
     --health-border-0: hsl(357 85% 50%);
     --health-border-1: hsl(200 85% 50%);
@@ -108,7 +142,7 @@
     --health-border-7: hsl(330 75% 50%);
     --health-border-8: hsl(48 85% 50%);
     --health-border-9: hsl(215 25% 40%);
-    
+
     /* Text colors for dark mode - all white for good contrast */
     --health-text-0: hsl(0 0% 100%);
     --health-text-1: hsl(0 0% 100%);
@@ -118,7 +152,8 @@
     --health-text-5: hsl(0 0% 100%);
     --health-text-6: hsl(0 0% 100%);
     --health-text-7: hsl(0 0% 100%);
-    --health-text-8: hsl(0 0% 100%);  /* White text on darker yellow */
+    --health-text-8: hsl(0 0% 100%);
+    /* White text on darker yellow */
     --health-text-9: hsl(0 0% 100%);
   }
 
@@ -134,6 +169,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -185,7 +221,54 @@
 }
 
 @layer components {
+
   /* Enhanced button variants */
+  /* Explicit input text color fixes */
+  input,
+  textarea,
+  select {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  /* Dropdown/Select text color */
+  .select-content {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Ensure all form elements have proper text color */
+  .input,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea,
+  select {
+    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--background));
+  }
+
+  /* Radix UI Select component text colors */
+  [data-radix-select-content] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [data-radix-select-item] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [data-radix-select-trigger] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [data-radix-select-value] {
+    color: hsl(var(--foreground)) !important;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
   }
@@ -216,7 +299,7 @@
 
   /* Enhanced input styles */
   .input {
-    @apply flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:shadow-soft transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:shadow-soft transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .input-elevated {
@@ -337,6 +420,7 @@
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(100%);
     }
