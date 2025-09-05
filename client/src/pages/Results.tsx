@@ -9,7 +9,22 @@ import {
 } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { GlobalHeader } from "../components/GlobalHeader";
-import { AppIcons, ArrowLeft, AlertTriangle, ClipboardList, Target, DollarSign, Lightbulb, Building, Pill, Search, Phone, Clock, Utensils, Activity } from "../components/icons";
+import {
+  AppIcons,
+  ArrowLeft,
+  AlertTriangle,
+  ClipboardList,
+  Target,
+  DollarSign,
+  Lightbulb,
+  Building,
+  Pill,
+  Search,
+  Phone,
+  Clock,
+  Utensils,
+  Activity,
+} from "../components/icons";
 
 interface ResultsProps {}
 
@@ -110,7 +125,7 @@ export default function Results({}: ResultsProps) {
           className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
         >
           <HealthCardHeader className="pb-4 text-black">
-            <HealthCardTitle className="flex items-center gap-3 text-2xl text-black">
+            <HealthCardTitle className="flex items-center gap-3 text-2xl text-primary">
               <ClipboardList size={32} className="text-primary" />
               Pet Health Analysis Results
             </HealthCardTitle>
@@ -193,10 +208,18 @@ export default function Results({}: ResultsProps) {
                     >
                       <div className="flex items-start gap-3">
                         <div className="flex-shrink-0">
-                          {step.icon === '🏥' && <Building size={20} className="text-primary" />}
-                          {step.icon === '💊' && <Pill size={20} className="text-primary" />}
-                          {step.icon === '🔬' && <Search size={20} className="text-primary" />}
-                          {!['🏥', '💊', '🔬'].includes(step.icon) && <Building size={20} className="text-primary" />}
+                          {step.icon === "🏥" && (
+                            <Building size={20} className="text-primary" />
+                          )}
+                          {step.icon === "💊" && (
+                            <Pill size={20} className="text-primary" />
+                          )}
+                          {step.icon === "🔬" && (
+                            <Search size={20} className="text-primary" />
+                          )}
+                          {!["🏥", "💊", "🔬"].includes(step.icon) && (
+                            <Building size={20} className="text-primary" />
+                          )}
                         </div>
                         <div className="flex-1 space-y-1">
                           <div className="flex justify-between items-start">
@@ -234,11 +257,21 @@ export default function Results({}: ResultsProps) {
                       className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-200"
                     >
                       <div className="flex-shrink-0">
-                        {tip.icon === '📱' && <Phone size={20} className="text-primary" />}
-                        {tip.icon === '🕐' && <Clock size={20} className="text-primary" />}
-                        {tip.icon === '🍽️' && <Utensils size={20} className="text-primary" />}
-                        {tip.icon === '🚶' && <Activity size={20} className="text-primary" />}
-                        {!['📱', '🕐', '🍽️', '🚶'].includes(tip.icon) && <Lightbulb size={20} className="text-primary" />}
+                        {tip.icon === "📱" && (
+                          <Phone size={20} className="text-primary" />
+                        )}
+                        {tip.icon === "🕐" && (
+                          <Clock size={20} className="text-primary" />
+                        )}
+                        {tip.icon === "🍽️" && (
+                          <Utensils size={20} className="text-primary" />
+                        )}
+                        {tip.icon === "🚶" && (
+                          <Activity size={20} className="text-primary" />
+                        )}
+                        {!["📱", "🕐", "🍽️", "🚶"].includes(tip.icon) && (
+                          <Lightbulb size={20} className="text-primary" />
+                        )}
                       </div>
                       <span className="text-sm text-black">{tip.text}</span>
                     </li>
