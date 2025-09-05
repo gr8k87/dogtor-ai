@@ -31,20 +31,21 @@ const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 // Demo user detection with sessionStorage persistence
 const isDemoMode = () => {
   // Check sessionStorage first
-  const storedDemo = sessionStorage.getItem('demo-mode');
-  if (storedDemo === 'true') {
+  const storedDemo = sessionStorage.getItem("demo-mode");
+  if (storedDemo === "true") {
     return true;
   }
-  
+
   // Check URL parameters and paths
-  const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                 window.location.pathname.includes('/demo');
-  
+  const isDemo =
+    new URLSearchParams(window.location.search).get("demo") === "true" ||
+    window.location.pathname.includes("/demo");
+
   // If demo mode detected from URL, store it in sessionStorage
   if (isDemo) {
-    sessionStorage.setItem('demo-mode', 'true');
+    sessionStorage.setItem("demo-mode", "true");
   }
-  
+
   return isDemo;
 };
 
@@ -126,10 +127,14 @@ function AppContent() {
   }
 
   // If not authenticated, redirect to login (except for auth pages)
-  if (!user && !["/login", "/signup"].includes(location.pathname) && !isDemoMode()) {
+  if (
+    !user &&
+    !["/login", "/signup"].includes(location.pathname) &&
+    !isDemoMode()
+  ) {
     return <Login />;
   }
-  
+
   // Helper function to determine the active tab for BottomTabs
   const getActiveTab = () => {
     if (location.pathname === "/") return "diagnose";
@@ -215,31 +220,31 @@ function AppContent() {
         <Route path="/questions/:caseId" element={<Questions />} />
         <Route path="/results/:caseId" element={<Results />} />
         {/* Demo Route */}
-        <Route path="/demo" element={
-          <>
-            <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-3">
-                  <AppIcons.logo size={48} className="text-primary" />
+        <Route
+          path="/demo"
+          element={
+            <>
+              <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center justify-between px-4">
+                  <div className="flex items-center gap-3">
+                    <AppIcons.logo size={48} className="text-primary" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ProfileButton />
+                    <ThemeToggle />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <ProfileButton />
-                  <ThemeToggle />
-                </div>
-              </div>
-            </header>
-            <main className="flex-1 pb-20 overflow-y-auto">
-              <DiagnoseTab /> 
-            </main>
-          </>
-        } />
+              </header>
+              <main className="flex-1 pb-20 overflow-y-auto">
+                <DiagnoseTab />
+              </main>
+            </>
+          }
+        />
       </Routes>
 
       {!hideNav && (
-        <BottomTabs
-          navigate={navigate}
-          activeTab={getActiveTab()}
-        />
+        <BottomTabs navigate={navigate} activeTab={getActiveTab()} />
       )}
     </div>
   );
@@ -249,9 +254,9 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="light">
       <AuthProvider>
-          <Router>
-            <AppContent />
-          </Router>
+        <Router>
+          <AppContent />
+        </Router>
       </AuthProvider>
     </ThemeProvider>
   );

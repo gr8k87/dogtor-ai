@@ -11,7 +11,7 @@ interface GlobalHeaderProps {
 }
 
 export function GlobalHeader({
-  title = "Dogtor AI",
+  title = "Dogtor",
   showBackButton = false,
   onBackClick,
   centerContent,
@@ -32,7 +32,6 @@ export function GlobalHeader({
           ) : (
             <AppIcons.logo size={50} className="text-primary" />
           )}
-          <h1 className="text-xl font-semibold">{title}</h1>
         </div>
 
         {/* Center content (optional) */}

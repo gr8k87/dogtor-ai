@@ -1,7 +1,11 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HealthCard, HealthCardContent, HealthCardHeader, HealthCardTitle } from "../components/ui/health-card";
+import {
+  HealthCard,
+  HealthCardContent,
+  HealthCardHeader,
+  HealthCardTitle,
+} from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
 import { AppIcons, Delete } from "../components/icons";
@@ -20,7 +24,7 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -58,7 +62,7 @@ export default function History() {
 
     fetchHistory();
   }, []);
-  
+
   const handleDelete = async (id: string) => {
     if (
       window.confirm("Are you sure you want to delete this history record?")
@@ -325,13 +329,13 @@ export default function History() {
         {/* Header Card - now inside the layout with proper theming */}
         <HealthCard colorIndex={2} className="mb-4 border-accent">
           <HealthCardHeader className="pb-2">
-            <HealthCardTitle className="flex items-center justify-between text-xl">
+            <HealthCardTitle className="flex items-center justify-between text-xl text-foreground">
               <div className="flex items-center gap-2">
                 <AppIcons.history size={24} className="text-primary" />
                 Pet Health History
               </div>
               <span className="text-sm font-normal text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                {items.length} record{items.length !== 1 ? 's' : ''}
+                {items.length} record{items.length !== 1 ? "s" : ""}
               </span>
             </HealthCardTitle>
           </HealthCardHeader>
@@ -419,18 +423,18 @@ function HistoryCard({
                   </span>
                 )}
               </div>
-              
+
               {/* Main condition - more compact */}
               <h3 className="font-semibold text-foreground text-sm leading-tight">
                 {cards.diagnosis?.likely_condition || "Analysis complete"}
               </h3>
-              
+
               {/* Symptoms - smaller and truncated */}
               <p className="text-xs text-muted-foreground truncate">
                 {item.prompt}
               </p>
             </div>
-            
+
             {/* Compact action buttons */}
             <div className="flex items-center gap-2 ml-3">
               <div className="text-primary">→</div>

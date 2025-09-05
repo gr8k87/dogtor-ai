@@ -318,7 +318,7 @@ export default function Questions() {
                   <span>Your Pet’s Concerns</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary"></div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 text-foreground">
                   <div className="w-3 h-3 rounded-full bg-primary transition-all duration-500"></div>
                   <span className="font-medium text-primary">
                     A Few More Questions

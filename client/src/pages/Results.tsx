@@ -125,7 +125,7 @@ export default function Results({}: ResultsProps) {
           className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
         >
           <HealthCardHeader className="pb-4 text-black">
-            <HealthCardTitle className="flex items-center gap-3 text-2xl text-primary">
+            <HealthCardTitle className="flex items-center gap-3 text-2xl text-foreground">
               <ClipboardList size={32} className="text-primary" />
               Pet Health Analysis Results
             </HealthCardTitle>
