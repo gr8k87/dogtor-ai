@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
@@ -85,7 +86,7 @@ export default function Results({}: ResultsProps) {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                <span>Your Pet’s Concerns</span>
+                <span>Your Pet's Concerns</span>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-primary/60"></div>
               <div className="flex items-center gap-1">
@@ -104,86 +105,88 @@ export default function Results({}: ResultsProps) {
           </div>
         </div>
 
-        {/* Card 1: Diagnosis  */}
-        <div className="space-y-8">
-          {/* Main diagnosis */}
-          <HealthCard
-            colorIndex={2}
-            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
-          >
-            <HealthCardHeader className="pb-4">
-              <HealthCardTitle className="flex items-center gap-3 text-2xl">
-                <span className="text-4xl">🎯</span>
+        {/* Single comprehensive results card */}
+        <HealthCard
+          colorIndex={2}
+          className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
+        >
+          <HealthCardHeader className="pb-4">
+            <HealthCardTitle className="flex items-center gap-3 text-2xl text-black">
+              <span className="text-4xl">🎯</span>
+              Pet Health Analysis Results
+            </HealthCardTitle>
+          </HealthCardHeader>
+          <HealthCardContent className="space-y-8 text-black">
+            {/* Diagnosis Section */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-black flex items-center gap-2">
+                <span className="text-2xl">🎯</span>
                 {cards.diagnosis?.title || "Diagnosis"}
-              </HealthCardTitle>
-            </HealthCardHeader>
-            <HealthCardContent className="space-y-6">
-              <div>
-                <h4 className="font-medium text-sm mb-1">Likely condition:</h4>
-                <p className="text-sm text-muted-foreground">
-                  {cards.diagnosis?.likely_condition || "Analysis complete"}
-                </p>
-              </div>
-
-              {cards.diagnosis?.other_possibilities && (
+              </h3>
+              
+              <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium text-sm mb-2">
-                    Other possibilities:
-                  </h4>
-                  <ul className="space-y-1">
-                    {cards.diagnosis.other_possibilities.map(
-                      (p: any, i: number) => (
-                        <li
-                          key={i}
-                          className="text-sm text-muted-foreground flex items-center gap-2"
-                        >
-                          <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"></div>
-                          <span>
-                            {p.name} ({p.likelihood} likelihood)
-                          </span>
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {cards.diagnosis?.urgency && (
-                <div className="p-3 rounded-md bg-muted/50 border">
-                  <h4 className="font-medium text-sm mb-1">Urgency Level:</h4>
-                  <p className="text-sm">
-                    {cards.diagnosis.urgency.badge}{" "}
-                    {cards.diagnosis.urgency.level} Urgency —{" "}
-                    {cards.diagnosis.urgency.note}
+                  <h4 className="font-medium text-sm mb-1 text-black">Likely condition:</h4>
+                  <p className="text-sm text-black">
+                    {cards.diagnosis?.likely_condition || "Analysis complete"}
                   </p>
                 </div>
-              )}
-            </HealthCardContent>
-          </HealthCard>
 
-          {/* Card 2: Costs */}
-          <HealthCard
-            colorIndex={2}
-            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
-          >
-            <HealthCardHeader className="pb-4">
-              <HealthCardTitle className="text-2xl flex items-center gap-3">
-                <span className="text-4xl">💰</span>
-                {cards.costs.title}
-              </HealthCardTitle>
-            </HealthCardHeader>
-            <HealthCardContent className="space-y-4">
-              {cards.costs.disclaimer && (
-                <p className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
+                {cards.diagnosis?.other_possibilities && (
+                  <div>
+                    <h4 className="font-medium text-sm mb-2 text-black">
+                      Other possibilities:
+                    </h4>
+                    <ul className="space-y-1">
+                      {cards.diagnosis.other_possibilities.map(
+                        (p: any, i: number) => (
+                          <li
+                            key={i}
+                            className="text-sm text-black flex items-center gap-2"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-black/50"></div>
+                            <span>
+                              {p.name} ({p.likelihood} likelihood)
+                            </span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+                {cards.diagnosis?.urgency && (
+                  <div className="p-3 rounded-md bg-amber-50 border border-amber-200">
+                    <h4 className="font-medium text-sm mb-1 text-black">Urgency Level:</h4>
+                    <p className="text-sm text-black">
+                      {cards.diagnosis.urgency.badge}{" "}
+                      {cards.diagnosis.urgency.level} Urgency —{" "}
+                      {cards.diagnosis.urgency.note}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Costs Section */}
+            <div className="space-y-4 border-t pt-6">
+              <h3 className="text-xl font-semibold text-black flex items-center gap-2">
+                <span className="text-2xl">💰</span>
+                {cards.costs?.title || "Expected Costs"}
+              </h3>
+              
+              {cards.costs?.disclaimer && (
+                <p className="text-xs text-black p-2 bg-blue-50 rounded border">
                   {cards.costs.disclaimer}
                 </p>
               )}
-              {cards.costs.steps && (
+              
+              {cards.costs?.steps && (
                 <div className="space-y-3">
                   {cards.costs.steps.map((step: any, i: number) => (
                     <div
                       key={i}
-                      className="border border-border rounded-lg p-4 bg-card"
+                      className="border border-gray-200 rounded-lg p-4 bg-white"
                     >
                       <div className="flex items-start gap-3">
                         <span className="text-lg flex-shrink-0">
@@ -191,15 +194,15 @@ export default function Results({}: ResultsProps) {
                         </span>
                         <div className="flex-1 space-y-1">
                           <div className="flex justify-between items-start">
-                            <h4 className="font-medium text-sm">{step.name}</h4>
-                            <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                            <h4 className="font-medium text-sm text-black">{step.name}</h4>
+                            <span className="text-sm font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded">
                               {step.cost}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-black">
                             {step.desc}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-black">
                             Likelihood: {step.likelihood}
                           </p>
                         </div>
@@ -208,42 +211,37 @@ export default function Results({}: ResultsProps) {
                   ))}
                 </div>
               )}
-            </HealthCardContent>
-          </HealthCard>
+            </div>
 
-          {/* Card 3: General Care Tips */}
-          <HealthCard
-            colorIndex={2}
-            className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
-          >
-            <HealthCardHeader className="pb-4">
-              <HealthCardTitle className="flex items-center gap-3 text-2xl">
-                <span className="text-4xl">💡</span>
-                {cards.care.title}
-              </HealthCardTitle>
-            </HealthCardHeader>
-            <HealthCardContent className="space-y-6">
-              {cards.care.tips && (
+            {/* Care Tips Section */}
+            <div className="space-y-4 border-t pt-6">
+              <h3 className="text-xl font-semibold text-black flex items-center gap-2">
+                <span className="text-2xl">💡</span>
+                {cards.care?.title || "General Care Tips"}
+              </h3>
+              
+              {cards.care?.tips && (
                 <ul className="space-y-3">
                   {cards.care.tips.map((tip: any, i: number) => (
                     <li
                       key={i}
-                      className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-100"
+                      className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-200"
                     >
                       <span className="text-lg flex-shrink-0">{tip.icon}</span>
-                      <span className="text-sm text-green-800">{tip.text}</span>
+                      <span className="text-sm text-black">{tip.text}</span>
                     </li>
                   ))}
                 </ul>
               )}
-              {cards.care.disclaimer && (
-                <p className="text-xs text-muted-foreground italic p-2 bg-muted/30 rounded">
+              
+              {cards.care?.disclaimer && (
+                <p className="text-xs text-black italic p-2 bg-blue-50 rounded border">
                   {cards.care.disclaimer}
                 </p>
               )}
-            </HealthCardContent>
-          </HealthCard>
-        </div>
+            </div>
+          </HealthCardContent>
+        </HealthCard>
 
         {/* Disclaimer */}
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">

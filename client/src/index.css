@@ -245,13 +245,21 @@
     background-color: hsl(var(--background));
   }
 
-  /* Radix UI Select component text colors */
+  /* Radix UI Select component text colors and backgrounds */
   [data-radix-select-content] {
-    color: hsl(var(--foreground)) !important;
+    color: #020817 !important;
+    background-color: white !important;
   }
 
   [data-radix-select-item] {
-    color: hsl(var(--foreground)) !important;
+    color: #020817 !important;
+    background-color: white !important;
+  }
+
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background-color: #f1f5f9 !important;
+    color: #020817 !important;
   }
 
   [data-radix-select-trigger] {
