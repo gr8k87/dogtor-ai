@@ -93,6 +93,7 @@
     /* --background: 222.2 84% 4.9%;
     --background: hsl(160 8% 12%);*/
     --background: 25 6% 8%;
+    --textarea-text: 210 40% 98%;
   }
 
 }
@@ -173,7 +174,8 @@
     color: hsl(var(--foreground)) !important;
   }
 
-  /* Ensure all form elements have proper text color 
+  /* Ensure all form elements have proper text color */
+
   .input,
   input[type="text"],
   input[type="email"],
@@ -184,7 +186,15 @@
     background-color: hsl(var(--background));
   }
 
-  */
+  .dark textarea {
+    color: hsl(var(--textarea-text)) !important;
+  }
+
+  /* textarea {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }*/
+
 
   /* Radix UI Select component text colors and backgrounds */
   [data-radix-select-content] {
