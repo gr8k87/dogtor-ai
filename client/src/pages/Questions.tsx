@@ -79,35 +79,44 @@ export default function Questions() {
 
       try {
         // Check for demo mode
-        const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                           window.location.pathname.includes('/demo') ||
-                           caseId?.startsWith('demo-');
+        const isDemoMode =
+          new URLSearchParams(window.location.search).get("demo") === "true" ||
+          window.location.pathname.includes("/demo") ||
+          caseId?.startsWith("demo-");
 
         let headers: HeadersInit = {};
 
         if (isDemoMode) {
-          headers['x-demo-mode'] = 'true';
+          headers["x-demo-mode"] = "true";
         } else {
-          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          const {
+            data: { session },
+            error: sessionError,
+          } = await supabase.auth.getSession();
 
           if (sessionError || !session) {
-            setError('Authentication required');
+            setError("Authentication required");
             return;
           }
 
           headers.Authorization = `Bearer ${session.access_token}`;
         }
 
-        const response = await fetch(`/api/diagnose/cases/${caseId}${isDemoMode ? '?demo=true' : ''}`, {
-          headers
-        });
+        const response = await fetch(
+          `/api/diagnose/cases/${caseId}${isDemoMode ? "?demo=true" : ""}`,
+          {
+            headers,
+          },
+        );
 
         if (!response.ok) {
           if (response.status === 404) {
             navigate("/");
           } else {
             const errorText = await response.text();
-            throw new Error(`Failed to fetch case data: ${response.status} ${errorText}`);
+            throw new Error(
+              `Failed to fetch case data: ${response.status} ${errorText}`,
+            );
           }
           return;
         }
@@ -127,7 +136,6 @@ export default function Questions() {
     fetchCaseData();
   }, [caseId, navigate]);
 
-
   const handleSubmit = async () => {
     setSubmitting(true);
     setError(null);
@@ -138,21 +146,26 @@ export default function Questions() {
       // Get Supabase session token first
       const {
         data: { session },
-        error: sessionError
+        error: sessionError,
       } = await supabase.auth.getSession();
 
       // Check for demo mode
-      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                         window.location.pathname.includes('/demo') ||
-                         caseId?.startsWith('demo-');
-
+      const isDemoMode =
+        new URLSearchParams(window.location.search).get("demo") === "true" ||
+        window.location.pathname.includes("/demo") ||
+        caseId?.startsWith("demo-");
 
       if (isDemoMode) {
         setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
-        navigate(`/results/${caseId}`, { state: { cards: [{ title: "Demo Result", description: "This is a demo analysis." }] } });
+        navigate(`/results/${caseId}`, {
+          state: {
+            cards: [
+              { title: "Demo Result", description: "This is a demo analysis." },
+            ],
+          },
+        });
         return;
       }
-
 
       if (sessionError || !session) {
         console.error("Authentication required for diagnosis");
@@ -196,21 +209,26 @@ export default function Questions() {
       // Get Supabase session token first
       const {
         data: { session },
-        error: sessionError
+        error: sessionError,
       } = await supabase.auth.getSession();
 
       // Check for demo mode
-      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                         window.location.pathname.includes('/demo') ||
-                         caseId?.startsWith('demo-');
-
+      const isDemoMode =
+        new URLSearchParams(window.location.search).get("demo") === "true" ||
+        window.location.pathname.includes("/demo") ||
+        caseId?.startsWith("demo-");
 
       if (isDemoMode) {
         setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
-        navigate(`/results/${caseId}`, { state: { cards: [{ title: "Demo Result", description: "This is a demo analysis." }] } });
+        navigate(`/results/${caseId}`, {
+          state: {
+            cards: [
+              { title: "Demo Result", description: "This is a demo analysis." },
+            ],
+          },
+        });
         return;
       }
-
 
       if (sessionError || !session) {
         console.error("Authentication required for results");
@@ -335,7 +353,7 @@ export default function Questions() {
 
                     <div className="flex gap-3 pt-2">
                       <Button
-                        variant="outline"
+                        variant="default"
                         onClick={() => navigate("/")}
                         className="flex-1"
                         data-testid="button-try-different"
@@ -419,7 +437,7 @@ export default function Questions() {
 
                   <div className="flex gap-3 pt-2">
                     <Button
-                      variant="outline"
+                      variant="default"
                       onClick={() => navigate("/")}
                       className="flex-1"
                       data-testid="button-start-over"
@@ -562,7 +580,7 @@ export default function Questions() {
                   {/* Enhanced Action buttons */}
                   <div className="flex gap-3 pt-4">
                     <Button
-                      variant="outline"
+                      variant="default"
                       onClick={handleSkip}
                       disabled={submitting}
                       className="flex-1 h-14 font-semibold text-lg rounded-2xl transition-all duration-300 hover:shadow-medium active:scale-95 disabled:hover:scale-100"
