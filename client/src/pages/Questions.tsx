@@ -80,7 +80,7 @@ export default function Questions() {
       try {
         // Check for demo mode
         const isDemoMode =
-          sessionStorage.getItem('demo-mode') === 'true' ||
+          sessionStorage.getItem("demo-mode") === "true" ||
           new URLSearchParams(window.location.search).get("demo") === "true" ||
           window.location.pathname.includes("/demo") ||
           caseId?.startsWith("demo-");
@@ -152,7 +152,7 @@ export default function Questions() {
 
       // Check for demo mode
       const isDemoMode =
-        sessionStorage.getItem('demo-mode') === 'true' ||
+        sessionStorage.getItem("demo-mode") === "true" ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");
@@ -216,7 +216,7 @@ export default function Questions() {
 
       // Check for demo mode
       const isDemoMode =
-        sessionStorage.getItem('demo-mode') === 'true' ||
+        sessionStorage.getItem("demo-mode") === "true" ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");
@@ -397,7 +397,7 @@ export default function Questions() {
   if (error) {
     return (
       <div className="min-h-dvh flex flex-col bg-background">
-        <GlobalHeader title="Questions" />
+        <GlobalHeader />
 
         <main className="flex-1 pb-20 overflow-y-auto">
           <div className="container max-w-2xl mx-auto p-4 space-y-6">
@@ -411,7 +411,7 @@ export default function Questions() {
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-destructive"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-destructive transition-all duration-500"></div>
-                  <span className="font-medium text-destructive">
+                  <span className="font-medium text-primary">
                     A Few More Questions
                   </span>
                 </div>

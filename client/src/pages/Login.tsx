@@ -91,12 +91,12 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: window.location.origin,
         },
       });
-      
+
       if (error) {
         setErrors({
           general: error.message || "Google login failed. Please try again.",

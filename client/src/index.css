@@ -173,7 +173,7 @@
     color: hsl(var(--foreground)) !important;
   }
 
-  /* Ensure all form elements have proper text color */
+  /* Ensure all form elements have proper text color 
   .input,
   input[type="text"],
   input[type="email"],
@@ -183,6 +183,8 @@
     color: #020817 !important;
     background-color: hsl(var(--background));
   }
+
+  */
 
   /* Radix UI Select component text colors and backgrounds */
   [data-radix-select-content] {

@@ -76,7 +76,7 @@ export default function Results({}: ResultsProps) {
 
   return (
     <div className="min-h-screen gradient-hero transition-smooth">
-      <GlobalHeader title="Results" />
+      <GlobalHeader />
       <div className="container max-w-4xl mx-auto p-6 space-y-8 pb-24">
         {/* Enhanced Header */}
         <div className="space-y-6">
@@ -111,7 +111,7 @@ export default function Results({}: ResultsProps) {
         >
           <HealthCardHeader className="pb-4 text-black">
             <HealthCardTitle className="flex items-center gap-3 text-2xl text-black">
-              <span className="text-4xl">🎯</span>
+              <span className="text-4xl">📋</span>
               Pet Health Analysis Results
             </HealthCardTitle>
           </HealthCardHeader>

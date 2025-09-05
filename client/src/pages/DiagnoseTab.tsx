@@ -39,15 +39,16 @@ export default function DiagnoseTab() {
 
     try {
       // Check if we're in demo mode
-      const isDemoMode = new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                         window.location.pathname.includes('/demo');
+      const isDemoMode =
+        new URLSearchParams(window.location.search).get("demo") === "true" ||
+        window.location.pathname.includes("/demo");
 
       let headers: HeadersInit = {
         "Content-Type": "application/json",
       };
 
       if (isDemoMode) {
-        headers['x-demo-mode'] = 'true';
+        headers["x-demo-mode"] = "true";
       } else {
         // Get Supabase session token for authenticated users
         const {
@@ -62,14 +63,17 @@ export default function DiagnoseTab() {
         headers.Authorization = `Bearer ${session.access_token}`;
       }
 
-      const caseResp = await fetch(`/api/diagnose/cases${isDemoMode ? '?demo=true' : ''}`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          symptoms: notes || "general health check",
-          imageUrl: imageUrl,
-        }),
-      });
+      const caseResp = await fetch(
+        `/api/diagnose/cases${isDemoMode ? "?demo=true" : ""}`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            symptoms: notes || "general health check",
+            imageUrl: imageUrl,
+          }),
+        },
+      );
 
       if (!caseResp.ok) {
         const errorText = await caseResp.text();

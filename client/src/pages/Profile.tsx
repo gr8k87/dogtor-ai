@@ -281,9 +281,10 @@ export default function Profile() {
           auth_method: user!.auth_method,
           first_name: formData.first_name || undefined,
           last_name: formData.last_name || undefined,
-          full_name: formData.first_name && formData.last_name 
-            ? `${formData.first_name} ${formData.last_name}` 
-            : user!.full_name,
+          full_name:
+            formData.first_name && formData.last_name
+              ? `${formData.first_name} ${formData.last_name}`
+              : user!.full_name,
           pet_name: formData.pet_name,
           pet_breed: formData.pet_breed,
           pet_birth_month: parseInt(formData.pet_birth_month),
@@ -370,12 +371,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <GlobalHeader
-        title="Profile"
-        showBackButton={true}
-        onBackClick={() => navigate("/")}
-      />
+    <div className="min-h-screen gradient-hero transition-smooth">
+      <GlobalHeader showBackButton={true} onBackClick={() => navigate("/")} />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
         {/* User Summary Card */}
