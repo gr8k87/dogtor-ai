@@ -223,12 +223,6 @@
 @layer components {
 
   /* Enhanced button variants */
-  /* Explicit input text color fixes */
-  input,
-  textarea,
-  select {
-    color: hsl(var(--foreground)) !important;
-  }
 
   input::placeholder,
   textarea::placeholder {
@@ -246,9 +240,8 @@
   input[type="email"],
   input[type="password"],
   input[type="number"],
-  textarea,
   select {
-    color: hsl(var(--foreground)) !important;
+    color: #020817 !important;
     background-color: hsl(var(--background));
   }
 
