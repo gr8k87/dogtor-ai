@@ -92,7 +92,7 @@ export default function History() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex flex-col gradient-hero">
+      <div className="min-h-dvh flex flex-col">
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -116,7 +116,7 @@ export default function History() {
 
   if (error) {
     return (
-      <div className="min-h-dvh flex flex-col gradient-hero">
+      <div className="min-h-dvh flex flex-col">
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Sad Dog Illustration for Error */}
@@ -201,7 +201,7 @@ export default function History() {
 
   if (!items.length) {
     return (
-      <div className="min-h-dvh flex flex-col gradient-hero">
+      <div className="min-h-dvh flex flex-col">
         <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Friendly Dog Illustration */}
@@ -300,7 +300,7 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col gradient-hero">
+    <div className="min-h-dvh flex flex-col">
       <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Pet Health History</h2>

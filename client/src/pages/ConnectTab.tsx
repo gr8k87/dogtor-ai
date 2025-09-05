@@ -9,7 +9,7 @@ import {
 
 export default function ConnectTab() {
   return (
-    <div className="min-h-dvh gradient-hero">
+    <div className="min-h-dvh">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
         {/* Find a Vet Card */}
         <HealthCard
