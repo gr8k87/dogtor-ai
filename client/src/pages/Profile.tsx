@@ -1,32 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { HealthCard, HealthCardHeader, HealthCardTitle, HealthCardContent } from '../components/ui/health-card';
-import { Separator } from '../components/ui/separator';
-import BreedSelector from '../components/BreedSelector';
-import { ArrowLeft, User, Save } from '../components/icons';
-import { GlobalHeader } from '../components/GlobalHeader';
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  HealthCard,
+  HealthCardHeader,
+  HealthCardTitle,
+  HealthCardContent,
+} from "../components/ui/health-card";
+import { Separator } from "../components/ui/separator";
+import BreedSelector from "../components/BreedSelector";
+import { ArrowLeft, User, Save } from "../components/icons";
+import { GlobalHeader } from "../components/GlobalHeader";
+import { supabase } from "../lib/supabase";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
   const birthDate = new Date(birthYear, birthMonth - 1, 1); // Month is 0-indexed
-  
+
   let years = today.getFullYear() - birthDate.getFullYear();
   let months = today.getMonth() - birthDate.getMonth();
-  
+
   if (months < 0) {
     years--;
     months += 12;
   }
-  
+
   if (years > 0) {
     return months > 0 ? `${years} years, ${months} months` : `${years} years`;
   } else {
-    return months > 0 ? `${months} months` : 'Less than 1 month';
+    return months > 0 ? `${months} months` : "Less than 1 month";
   }
 }
 
@@ -41,7 +52,7 @@ interface UserProfile {
   pet_birth_month?: number;
   pet_birth_year?: number;
   pet_gender?: string;
-  auth_method: 'google' | 'email';
+  auth_method: "google" | "email";
 }
 
 interface ProfileFormData {
@@ -55,48 +66,48 @@ interface ProfileFormData {
 }
 
 const MONTHS = [
-  { value: '1', label: 'January' },
-  { value: '2', label: 'February' },
-  { value: '3', label: 'March' },
-  { value: '4', label: 'April' },
-  { value: '5', label: 'May' },
-  { value: '6', label: 'June' },
-  { value: '7', label: 'July' },
-  { value: '8', label: 'August' },
-  { value: '9', label: 'September' },
-  { value: '10', label: 'October' },
-  { value: '11', label: 'November' },
-  { value: '12', label: 'December' },
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
 ];
 
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 26 }, (_, i) => ({
   value: (currentYear - i).toString(),
-  label: (currentYear - i).toString()
+  label: (currentYear - i).toString(),
 }));
 
 const GENDERS = [
-  { value: 'Male', label: 'Male' },
-  { value: 'Female', label: 'Female' },
-  { value: 'Unknown', label: 'Unknown' },
+  { value: "Male", label: "Male" },
+  { value: "Female", label: "Female" },
+  { value: "Unknown", label: "Unknown" },
 ];
 
 export default function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<ProfileFormData>({
-    first_name: '',
-    last_name: '',
-    pet_name: '',
-    pet_breed: '',
-    pet_birth_month: '',
-    pet_birth_year: '',
-    pet_gender: ''
+    first_name: "",
+    last_name: "",
+    pet_name: "",
+    pet_breed: "",
+    pet_birth_month: "",
+    pet_birth_year: "",
+    pet_gender: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState('');
+  const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
     fetchUserProfile();
@@ -104,31 +115,48 @@ export default function Profile() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
-        credentials: 'include'
+      // Get Supabase session token first
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch("/api/auth/user", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-        
+
         // Populate form with current data
         setFormData({
-          first_name: userData.first_name || '',
-          last_name: userData.last_name || '',
-          pet_name: userData.pet_name || '',
-          pet_breed: userData.pet_breed || '',
-          pet_birth_month: userData.pet_birth_month ? userData.pet_birth_month.toString() : '',
-          pet_birth_year: userData.pet_birth_year ? userData.pet_birth_year.toString() : '',
-          pet_gender: userData.pet_gender || ''
+          first_name: userData.first_name || "",
+          last_name: userData.last_name || "",
+          pet_name: userData.pet_name || "",
+          pet_breed: userData.pet_breed || "",
+          pet_birth_month: userData.pet_birth_month
+            ? userData.pet_birth_month.toString()
+            : "",
+          pet_birth_year: userData.pet_birth_year
+            ? userData.pet_birth_year.toString()
+            : "",
+          pet_gender: userData.pet_gender || "",
         });
       } else {
         // User not authenticated, redirect to login
-        navigate('/login');
+        navigate("/login");
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
-      navigate('/login');
+      console.error("Error fetching profile:", error);
+      navigate("/login");
     } finally {
       setIsLoading(false);
     }
@@ -136,29 +164,29 @@ export default function Profile() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const handleSelectChange = (field: string) => (value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     // Clear error when user makes selection
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
   };
@@ -168,19 +196,19 @@ export default function Profile() {
 
     // Pet information validation (required)
     if (!formData.pet_name.trim()) {
-      newErrors.pet_name = 'Pet name is required';
+      newErrors.pet_name = "Pet name is required";
     }
 
     if (!formData.pet_breed.trim()) {
-      newErrors.pet_breed = 'Pet breed is required';
+      newErrors.pet_breed = "Pet breed is required";
     }
 
     if (!formData.pet_birth_month) {
-      newErrors.pet_birth_month = 'Birth month is required';
+      newErrors.pet_birth_month = "Birth month is required";
     }
 
     if (!formData.pet_birth_year) {
-      newErrors.pet_birth_year = 'Birth year is required';
+      newErrors.pet_birth_year = "Birth year is required";
     }
 
     setErrors(newErrors);
@@ -189,12 +217,12 @@ export default function Profile() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSaving(true);
-    setSaveMessage('');
-    
+    setSaveMessage("");
+
     try {
       const updateData = {
         first_name: formData.first_name || undefined,
@@ -203,32 +231,44 @@ export default function Profile() {
         pet_breed: formData.pet_breed,
         pet_birth_month: parseInt(formData.pet_birth_month),
         pet_birth_year: parseInt(formData.pet_birth_year),
-        pet_gender: formData.pet_gender || undefined
+        pet_gender: formData.pet_gender || undefined,
       };
 
-      const response = await fetch('/api/auth/profile', {
-        method: 'PUT',
+      // Get Supabase session token first
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch("/api/auth/profile", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
         },
-        credentials: 'include',
         body: JSON.stringify(updateData),
       });
 
       if (response.ok) {
         const updatedUser = await response.json();
         setUser(updatedUser);
-        setSaveMessage('Profile updated successfully!');
-        setTimeout(() => setSaveMessage(''), 3000);
+        setSaveMessage("Profile updated successfully!");
+        setTimeout(() => setSaveMessage(""), 3000);
       } else {
         const errorData = await response.json();
         setErrors({
-          general: errorData.error || 'Failed to update profile. Please try again.'
+          general:
+            errorData.error || "Failed to update profile. Please try again.",
         });
       }
     } catch (error) {
       setErrors({
-        general: 'Network error. Please check your connection and try again.'
+        general: "Network error. Please check your connection and try again.",
       });
     } finally {
       setIsSaving(false);
@@ -239,7 +279,7 @@ export default function Profile() {
     if (user?.pet_birth_month && user?.pet_birth_year) {
       return formatPetAge(user.pet_birth_month, user.pet_birth_year);
     }
-    return 'Age not set';
+    return "Age not set";
   };
 
   if (isLoading) {
@@ -259,10 +299,10 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <GlobalHeader 
-        title="Profile" 
-        showBackButton={true} 
-        onBackClick={() => navigate('/')} 
+      <GlobalHeader
+        title="Profile"
+        showBackButton={true}
+        onBackClick={() => navigate("/")}
       />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
@@ -279,12 +319,14 @@ export default function Profile() {
               <div>
                 <p className="font-medium">{user.email}</p>
                 <p className="text-sm text-muted-foreground">
-                  {user.auth_method === 'google' ? 'Google Account' : 'Email Account'}
+                  {user.auth_method === "google"
+                    ? "Google Account"
+                    : "Email Account"}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Pet</p>
-                <p className="font-medium">{user.pet_name || 'Not set'}</p>
+                <p className="font-medium">{user.pet_name || "Not set"}</p>
                 <p className="text-xs text-muted-foreground">{getPetAge()}</p>
               </div>
             </div>
@@ -300,13 +342,19 @@ export default function Profile() {
             </HealthCardHeader>
             <HealthCardContent className="space-y-4">
               {errors.general && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md" data-testid="text-profile-error">
+                <div
+                  className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md"
+                  data-testid="text-profile-error"
+                >
                   {errors.general}
                 </div>
               )}
 
               {saveMessage && (
-                <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md" data-testid="text-profile-success">
+                <div
+                  className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md"
+                  data-testid="text-profile-success"
+                >
                   {saveMessage}
                 </div>
               )}
@@ -361,7 +409,9 @@ export default function Profile() {
             </HealthCardHeader>
             <HealthCardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="pet_name">Pet Name <span className="text-red-500">*</span></Label>
+                <Label htmlFor="pet_name">
+                  Pet Name <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="pet_name"
                   name="pet_name"
@@ -373,7 +423,10 @@ export default function Profile() {
                   data-testid="input-pet-name"
                 />
                 {errors.pet_name && (
-                  <p className="text-sm text-red-500" data-testid="text-pet-name-error">
+                  <p
+                    className="text-sm text-red-500"
+                    data-testid="text-pet-name-error"
+                  >
                     {errors.pet_name}
                   </p>
                 )}
@@ -381,20 +434,22 @@ export default function Profile() {
 
               <BreedSelector
                 value={formData.pet_breed}
-                onChange={handleSelectChange('pet_breed')}
+                onChange={handleSelectChange("pet_breed")}
                 required
                 error={errors.pet_breed}
               />
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Birth Month <span className="text-red-500">*</span></Label>
-                  <Select 
-                    value={formData.pet_birth_month} 
-                    onValueChange={handleSelectChange('pet_birth_month')}
+                  <Label>
+                    Birth Month <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.pet_birth_month}
+                    onValueChange={handleSelectChange("pet_birth_month")}
                     disabled={isSaving}
                   >
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={errors.pet_birth_month ? "border-red-500" : ""}
                       data-testid="select-birth-month"
                     >
@@ -402,27 +457,36 @@ export default function Profile() {
                     </SelectTrigger>
                     <SelectContent>
                       {MONTHS.map((month) => (
-                        <SelectItem key={month.value} value={month.value} data-testid={`option-month-${month.value}`}>
+                        <SelectItem
+                          key={month.value}
+                          value={month.value}
+                          data-testid={`option-month-${month.value}`}
+                        >
                           {month.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {errors.pet_birth_month && (
-                    <p className="text-sm text-red-500" data-testid="text-birth-month-error">
+                    <p
+                      className="text-sm text-red-500"
+                      data-testid="text-birth-month-error"
+                    >
                       {errors.pet_birth_month}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Birth Year <span className="text-red-500">*</span></Label>
-                  <Select 
-                    value={formData.pet_birth_year} 
-                    onValueChange={handleSelectChange('pet_birth_year')}
+                  <Label>
+                    Birth Year <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.pet_birth_year}
+                    onValueChange={handleSelectChange("pet_birth_year")}
                     disabled={isSaving}
                   >
-                    <SelectTrigger 
+                    <SelectTrigger
                       className={errors.pet_birth_year ? "border-red-500" : ""}
                       data-testid="select-birth-year"
                     >
@@ -430,14 +494,21 @@ export default function Profile() {
                     </SelectTrigger>
                     <SelectContent>
                       {YEARS.map((year) => (
-                        <SelectItem key={year.value} value={year.value} data-testid={`option-year-${year.value}`}>
+                        <SelectItem
+                          key={year.value}
+                          value={year.value}
+                          data-testid={`option-year-${year.value}`}
+                        >
                           {year.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {errors.pet_birth_year && (
-                    <p className="text-sm text-red-500" data-testid="text-birth-year-error">
+                    <p
+                      className="text-sm text-red-500"
+                      data-testid="text-birth-year-error"
+                    >
                       {errors.pet_birth_year}
                     </p>
                   )}
@@ -446,9 +517,9 @@ export default function Profile() {
 
               <div className="space-y-2">
                 <Label>Gender (optional)</Label>
-                <Select 
-                  value={formData.pet_gender} 
-                  onValueChange={handleSelectChange('pet_gender')}
+                <Select
+                  value={formData.pet_gender}
+                  onValueChange={handleSelectChange("pet_gender")}
                   disabled={isSaving}
                 >
                   <SelectTrigger data-testid="select-gender">
@@ -456,7 +527,11 @@ export default function Profile() {
                   </SelectTrigger>
                   <SelectContent>
                     {GENDERS.map((gender) => (
-                      <SelectItem key={gender.value} value={gender.value} data-testid={`option-gender-${gender.value.toLowerCase()}`}>
+                      <SelectItem
+                        key={gender.value}
+                        value={gender.value}
+                        data-testid={`option-gender-${gender.value.toLowerCase()}`}
+                      >
                         {gender.label}
                       </SelectItem>
                     ))}
@@ -468,7 +543,11 @@ export default function Profile() {
               {formData.pet_birth_month && formData.pet_birth_year && (
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm text-blue-700">
-                    <strong>Current age:</strong> {formatPetAge(parseInt(formData.pet_birth_month), parseInt(formData.pet_birth_year))}
+                    <strong>Current age:</strong>{" "}
+                    {formatPetAge(
+                      parseInt(formData.pet_birth_month),
+                      parseInt(formData.pet_birth_year),
+                    )}
                   </p>
                 </div>
               )}
@@ -484,7 +563,7 @@ export default function Profile() {
               data-testid="button-save-profile"
             >
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </form>
