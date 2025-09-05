@@ -9,7 +9,7 @@ import {
 } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { GlobalHeader } from "../components/GlobalHeader";
-import { AppIcons, ArrowLeft, AlertTriangle } from "../components/icons";
+import { AppIcons, ArrowLeft, AlertTriangle, ClipboardList, Target, DollarSign, Lightbulb, Building, Pill, Search, Phone, Clock, Utensils, Activity } from "../components/icons";
 
 interface ResultsProps {}
 
@@ -111,7 +111,7 @@ export default function Results({}: ResultsProps) {
         >
           <HealthCardHeader className="pb-4 text-black">
             <HealthCardTitle className="flex items-center gap-3 text-2xl text-black">
-              <span className="text-4xl">📋</span>
+              <ClipboardList size={32} className="text-primary" />
               Pet Health Analysis Results
             </HealthCardTitle>
           </HealthCardHeader>
@@ -119,7 +119,7 @@ export default function Results({}: ResultsProps) {
             {/* Diagnosis Section */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-black flex items-center gap-2">
-                <span className="text-2xl">🎯</span>
+                <Target size={24} className="text-primary" />
                 {cards.diagnosis?.title || "Diagnosis"}
               </h3>
 
@@ -174,7 +174,7 @@ export default function Results({}: ResultsProps) {
             {/* Costs Section */}
             <div className="space-y-4 border-t pt-6">
               <h3 className="text-xl font-semibold text-black flex items-center gap-2">
-                <span className="text-2xl">💰</span>
+                <DollarSign size={24} className="text-primary" />
                 {cards.costs?.title || "Expected Costs"}
               </h3>
 
@@ -192,9 +192,12 @@ export default function Results({}: ResultsProps) {
                       className="border border-gray-200 rounded-lg p-4 bg-white"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-lg flex-shrink-0">
-                          {step.icon}
-                        </span>
+                        <div className="flex-shrink-0">
+                          {step.icon === '🏥' && <Building size={20} className="text-primary" />}
+                          {step.icon === '💊' && <Pill size={20} className="text-primary" />}
+                          {step.icon === '🔬' && <Search size={20} className="text-primary" />}
+                          {!['🏥', '💊', '🔬'].includes(step.icon) && <Building size={20} className="text-primary" />}
+                        </div>
                         <div className="flex-1 space-y-1">
                           <div className="flex justify-between items-start">
                             <h4 className="font-medium text-sm text-black">
@@ -219,7 +222,7 @@ export default function Results({}: ResultsProps) {
             {/* Care Tips Section */}
             <div className="space-y-4 border-t pt-6">
               <h3 className="text-xl font-semibold text-black flex items-center gap-2">
-                <span className="text-2xl">💡</span>
+                <Lightbulb size={24} className="text-primary" />
                 {cards.care?.title || "General Care Tips"}
               </h3>
 
@@ -230,7 +233,13 @@ export default function Results({}: ResultsProps) {
                       key={i}
                       className="flex items-start gap-3 p-3 rounded-md bg-green-50 border border-green-200"
                     >
-                      <span className="text-lg flex-shrink-0">{tip.icon}</span>
+                      <div className="flex-shrink-0">
+                        {tip.icon === '📱' && <Phone size={20} className="text-primary" />}
+                        {tip.icon === '🕐' && <Clock size={20} className="text-primary" />}
+                        {tip.icon === '🍽️' && <Utensils size={20} className="text-primary" />}
+                        {tip.icon === '🚶' && <Activity size={20} className="text-primary" />}
+                        {!['📱', '🕐', '🍽️', '🚶'].includes(tip.icon) && <Lightbulb size={20} className="text-primary" />}
+                      </div>
                       <span className="text-sm text-black">{tip.text}</span>
                     </li>
                   ))}
