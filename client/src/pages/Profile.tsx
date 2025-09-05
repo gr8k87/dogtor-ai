@@ -275,10 +275,15 @@ export default function Profile() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Update the demo user data
-        const updatedDemoUser = {
-          ...user,
+        const updatedDemoUser: UserProfile = {
+          id: user!.id,
+          email: user!.email,
+          auth_method: user!.auth_method,
           first_name: formData.first_name || undefined,
           last_name: formData.last_name || undefined,
+          full_name: formData.first_name && formData.last_name 
+            ? `${formData.first_name} ${formData.last_name}` 
+            : user!.full_name,
           pet_name: formData.pet_name,
           pet_breed: formData.pet_breed,
           pet_birth_month: parseInt(formData.pet_birth_month),
