@@ -1,8 +1,10 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HealthCard, HealthCardContent } from "../components/ui/health-card";
+import { HealthCard, HealthCardContent, HealthCardHeader, HealthCardTitle } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
+import { AppIcons, Delete } from "../components/icons";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -18,6 +20,7 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -55,6 +58,7 @@ export default function History() {
 
     fetchHistory();
   }, []);
+  
   const handleDelete = async (id: string) => {
     if (
       window.confirm("Are you sure you want to delete this history record?")
@@ -92,19 +96,35 @@ export default function History() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
-          <div className="space-y-4">
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+          {/* Header Card Skeleton */}
+          <HealthCard colorIndex={2} className="mb-4">
+            <HealthCardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="h-6 bg-muted rounded w-48 animate-pulse"></div>
+                <div className="h-5 bg-muted rounded-full w-16 animate-pulse"></div>
+              </div>
+            </HealthCardContent>
+          </HealthCard>
+
+          {/* History Cards Skeleton */}
+          <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <HealthCard key={i} colorIndex={2} className="animate-pulse">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-muted rounded-lg w-32"></div>
-                    <div className="h-5 bg-muted rounded-lg w-48"></div>
-                    <div className="h-3 bg-muted rounded-lg w-40"></div>
+                <HealthCardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 bg-muted rounded w-20"></div>
+                        <div className="h-4 bg-muted rounded-full w-16"></div>
+                      </div>
+                      <div className="h-4 bg-muted rounded w-40"></div>
+                      <div className="h-3 bg-muted rounded w-32"></div>
+                    </div>
+                    <div className="w-6 h-6 bg-muted rounded"></div>
                   </div>
-                  <div className="w-6 h-6 bg-muted rounded"></div>
-                </div>
+                </HealthCardContent>
               </HealthCard>
             ))}
           </div>
@@ -116,8 +136,8 @@ export default function History() {
 
   if (error) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Sad Dog Illustration for Error */}
             <div className="flex justify-center mb-8">
@@ -201,8 +221,8 @@ export default function History() {
 
   if (!items.length) {
     return (
-      <div className="min-h-dvh flex flex-col">
-        <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
+      <div className="min-h-dvh flex flex-col gradient-hero">
+        <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
           <div className="text-center py-16">
             {/* Friendly Dog Illustration */}
             <div className="flex justify-center mb-8">
@@ -300,16 +320,25 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      <main className="flex-1 p-6 max-w-2xl mx-auto w-full pb-24">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Pet Health History</h2>
-          <span className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
-            {items.length} records
-          </span>
-        </div>
+    <div className="min-h-dvh flex flex-col gradient-hero">
+      <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-24">
+        {/* Header Card - now inside the layout with proper theming */}
+        <HealthCard colorIndex={2} className="mb-4 border-accent">
+          <HealthCardHeader className="pb-2">
+            <HealthCardTitle className="flex items-center justify-between text-xl">
+              <div className="flex items-center gap-2">
+                <AppIcons.history size={24} className="text-primary" />
+                Pet Health History
+              </div>
+              <span className="text-sm font-normal text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                {items.length} record{items.length !== 1 ? 's' : ''}
+              </span>
+            </HealthCardTitle>
+          </HealthCardHeader>
+        </HealthCard>
 
-        <div className="space-y-4">
+        {/* Compact History Cards */}
+        <div className="space-y-3">
           {items.map((item) => (
             <HistoryCard
               key={item.id}
@@ -362,85 +391,87 @@ function HistoryCard({
   return (
     <HealthCard
       colorIndex={2}
-      className={`transition-all duration-300 border-accent rounded-2xl shadow-medium hover:shadow-elevated ${
-        cards ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98]" : ""
+      className={`transition-all duration-200 border-accent hover:shadow-medium ${
+        cards ? "cursor-pointer hover:scale-[1.01] active:scale-[0.99]" : ""
       }`}
       onClick={cards ? handleClick : undefined}
     >
-      <HealthCardContent className="p-6">
+      <HealthCardContent className="p-4">
         {cards ? (
           <div className="flex items-center justify-between">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-xs text-muted-foreground font-medium">
+            <div className="flex-1 min-w-0 space-y-1">
+              {/* Compact header row */}
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-muted-foreground font-medium">
                   {formatDate(item.created_at)}
                 </span>
                 {cards.diagnosis?.urgency && (
                   <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
+                    className={`px-2 py-0.5 rounded-full font-medium text-xs ${
                       cards.diagnosis.urgency.level === "High"
-                        ? "bg-destructive/10 text-destructive border border-destructive/20"
+                        ? "bg-destructive/10 text-destructive"
                         : cards.diagnosis.urgency.level === "Medium"
-                          ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                          : "bg-green-100 text-green-800 border border-green-200"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
                     }`}
                   >
-                    {cards.diagnosis.urgency.badge}{" "}
                     {cards.diagnosis.urgency.level}
                   </span>
                 )}
               </div>
-              <p className="text-lg font-semibold text-foreground truncate mb-1">
+              
+              {/* Main condition - more compact */}
+              <h3 className="font-semibold text-foreground text-sm leading-tight">
                 {cards.diagnosis?.likely_condition || "Analysis complete"}
-              </p>
-              <p className="text-sm text-muted-foreground truncate">
+              </h3>
+              
+              {/* Symptoms - smaller and truncated */}
+              <p className="text-xs text-muted-foreground truncate">
                 {item.prompt}
               </p>
             </div>
-            <div className="flex items-center gap-4 ml-4">
-              <div className="text-primary text-xl">→</div>
+            
+            {/* Compact action buttons */}
+            <div className="flex items-center gap-2 ml-3">
+              <div className="text-primary">→</div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(item.id);
                 }}
-                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-colors duration-200"
+                className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors duration-200"
+                title="Delete record"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2" />
-                  <line x1="10" y1="11" x2="10" y2="17" />
-                  <line x1="14" y1="11" x2="14" y2="17" />
-                </svg>
+                <Delete size={14} />
               </button>
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
-            <div className="text-sm text-muted-foreground font-medium">
-              {formatDate(item.created_at)}
+          // Raw data fallback - also more compact
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="text-xs text-muted-foreground font-medium mb-1">
+                  {formatDate(item.created_at)}
+                </div>
+                <div className="text-sm font-semibold text-muted-foreground mb-1">
+                  Raw Data
+                </div>
+                <div className="text-xs text-muted-foreground truncate">
+                  {item.prompt}
+                </div>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item.id);
+                }}
+                className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors duration-200 ml-3"
+                title="Delete record"
+              >
+                <Delete size={14} />
+              </button>
             </div>
-            <div className="text-lg font-semibold text-muted-foreground">
-              Raw Data
-            </div>
-            <div className="text-sm text-muted-foreground truncate">
-              {item.prompt}
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(item.id);
-              }}
-              className="text-destructive hover:text-destructive/80 font-medium text-sm px-3 py-1 rounded-lg hover:bg-destructive/10 transition-colors duration-200"
-            >
-              Delete Record
-            </button>
           </div>
         )}
       </HealthCardContent>
