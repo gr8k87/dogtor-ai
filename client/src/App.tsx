@@ -28,10 +28,24 @@ import OfflineBadge from "./components/OfflineBadge";
 type Tab = "Diagnose" | "History" | "Connect" | "Results";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
 
-// Demo user detection
+// Demo user detection with sessionStorage persistence
 const isDemoMode = () => {
-  return new URLSearchParams(window.location.search).get('demo') === 'true' ||
-         window.location.pathname.includes('/demo');
+  // Check sessionStorage first
+  const storedDemo = sessionStorage.getItem('demo-mode');
+  if (storedDemo === 'true') {
+    return true;
+  }
+  
+  // Check URL parameters and paths
+  const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                 window.location.pathname.includes('/demo');
+  
+  // If demo mode detected from URL, store it in sessionStorage
+  if (isDemo) {
+    sessionStorage.setItem('demo-mode', 'true');
+  }
+  
+  return isDemo;
 };
 
 function Splash({ onComplete }: { onComplete: () => void }) {

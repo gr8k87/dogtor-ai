@@ -27,9 +27,26 @@ export function ProfileButton() {
   const checkAuthStatus = async () => {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
-      
+
       if (error || !session) {
-        setUser(null);
+        // Check for demo mode if no session
+        const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
+                           new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                           window.location.pathname.includes('/demo');
+
+        if (isDemoMode) {
+          // Simulate a demo user
+          setUser({
+            id: 'demo-user-id',
+            email: 'demo@example.com',
+            full_name: 'Demo User',
+            first_name: 'Demo',
+            last_name: 'User',
+            pet_name: 'Buddy'
+          });
+        } else {
+          setUser(null);
+        }
       } else {
         // Get additional user data from our API if needed
         const token = session.access_token;
@@ -38,7 +55,7 @@ export function ProfileButton() {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
@@ -66,11 +83,32 @@ export function ProfileButton() {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    // Check for demo mode to decide where to navigate
+    const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
+                       new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                       window.location.pathname.includes('/demo');
+    if (isDemoMode) {
+      navigate('/demo/profile'); // Assuming a specific route for demo profile
+    } else {
+      navigate('/profile');
+    }
   };
 
   const handleLogout = async () => {
     try {
+      // Check for demo mode
+      const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
+                         new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo');
+
+      if (isDemoMode) {
+        // Clear demo mode from sessionStorage and navigate to login
+        sessionStorage.removeItem('demo-mode');
+        setUser(null); // Clear the simulated user
+        navigate('/login');
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Logout error:', error);
@@ -115,6 +153,7 @@ export function ProfileButton() {
     );
   }
 
+  // Show Sign in button if not logged in and not in demo mode
   if (!user) {
     return (
       <Button 
@@ -128,6 +167,7 @@ export function ProfileButton() {
     );
   }
 
+  // Render profile dropdown for logged-in users or demo users
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

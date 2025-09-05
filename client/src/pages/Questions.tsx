@@ -80,6 +80,7 @@ export default function Questions() {
       try {
         // Check for demo mode
         const isDemoMode =
+          sessionStorage.getItem('demo-mode') === 'true' ||
           new URLSearchParams(window.location.search).get("demo") === "true" ||
           window.location.pathname.includes("/demo") ||
           caseId?.startsWith("demo-");
@@ -151,6 +152,7 @@ export default function Questions() {
 
       // Check for demo mode
       const isDemoMode =
+        sessionStorage.getItem('demo-mode') === 'true' ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");
@@ -214,6 +216,7 @@ export default function Questions() {
 
       // Check for demo mode
       const isDemoMode =
+        sessionStorage.getItem('demo-mode') === 'true' ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");

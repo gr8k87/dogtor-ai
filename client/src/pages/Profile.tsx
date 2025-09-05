@@ -115,6 +115,41 @@ export default function Profile() {
 
   const fetchUserProfile = async () => {
     try {
+      // Check for demo mode first
+      const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
+                         new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo');
+
+      if (isDemoMode) {
+        // Set demo user data
+        const demoUser = {
+          id: 'demo-user-id',
+          email: 'demo@example.com',
+          first_name: 'Demo',
+          last_name: 'User',
+          full_name: 'Demo User',
+          pet_name: 'Demo Pet',
+          pet_breed: 'Mixed Breed',
+          pet_birth_month: 6,
+          pet_birth_year: 2020,
+          pet_gender: 'Male',
+          auth_method: 'demo'
+        };
+        
+        setUser(demoUser);
+        setFormData({
+          first_name: demoUser.first_name || "",
+          last_name: demoUser.last_name || "",
+          pet_name: demoUser.pet_name || "",
+          pet_breed: demoUser.pet_breed || "",
+          pet_birth_month: demoUser.pet_birth_month ? demoUser.pet_birth_month.toString() : "",
+          pet_birth_year: demoUser.pet_birth_year ? demoUser.pet_birth_year.toString() : "",
+          pet_gender: demoUser.pet_gender || "",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Get Supabase session token first
       const {
         data: { session },
@@ -224,6 +259,32 @@ export default function Profile() {
     setSaveMessage("");
 
     try {
+      // Check for demo mode
+      const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
+                         new URLSearchParams(window.location.search).get('demo') === 'true' ||
+                         window.location.pathname.includes('/demo');
+
+      if (isDemoMode) {
+        // Simulate saving for demo mode
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update the demo user data
+        const updatedDemoUser = {
+          ...user,
+          first_name: formData.first_name || undefined,
+          last_name: formData.last_name || undefined,
+          pet_name: formData.pet_name,
+          pet_breed: formData.pet_breed,
+          pet_birth_month: parseInt(formData.pet_birth_month),
+          pet_birth_year: parseInt(formData.pet_birth_year),
+          pet_gender: formData.pet_gender || undefined,
+        };
+        
+        setUser(updatedDemoUser);
+        setSaveMessage("Demo profile updated successfully!");
+        setTimeout(() => setSaveMessage(""), 3000);
+        return;
+      }
       const updateData = {
         first_name: formData.first_name || undefined,
         last_name: formData.last_name || undefined,
