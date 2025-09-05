@@ -327,7 +327,7 @@ export default function History() {
     <div className="min-h-dvh flex flex-col gradient-hero">
       <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
         {/* Header Card - now inside the layout with proper theming */}
-        <HealthCard colorIndex={2} className="mb-4 border-accent !p-1">
+        <HealthCard colorIndex={2} className="mb-4 border-accent">
           <HealthCardHeader className="pb-2">
             <HealthCardTitle className="flex items-center justify-between text-xl text-foreground">
               <div className="flex items-center gap-2">
@@ -395,7 +395,7 @@ function HistoryCard({
   return (
     <HealthCard
       colorIndex={2}
-      className={`transition-all duration-200 border-accent hover:shadow-medium ${
+      className={`transition-all duration-200 border-accent !p-1 hover:shadow-medium ${
         cards ? "cursor-pointer hover:scale-[1.01] active:scale-[0.99]" : ""
       }`}
       onClick={cards ? handleClick : undefined}
