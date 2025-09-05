@@ -327,7 +327,7 @@ export default function History() {
     <div className="min-h-dvh flex flex-col gradient-hero">
       <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
         {/* Header Card - now inside the layout with proper theming */}
-        <HealthCard colorIndex={2} className="mb-4 border-accent">
+        <HealthCard colorIndex={2} className="mb-4 border-accent !p-1">
           <HealthCardHeader className="pb-2">
             <HealthCardTitle className="flex items-center justify-between text-xl text-foreground">
               <div className="flex items-center gap-2">
