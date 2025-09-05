@@ -5,9 +5,10 @@
 @layer base {
   :root {
     /* Dogtor AI Theme - Logo Red Primary */
-    /*  --background: 0 0% 100%;
-    --background: hsl(45 15% 97%);*/
+    /*--background: hsl(45 15% 97%);
     --background: 30 20% 98%;
+    --background: 262 44% 79%;*/
+    --background: 30 20% 98;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -102,10 +103,17 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    line-height: 1.6;
+    @apply text-foreground font-sans antialiased;
+    background:
+      radial-gradient(circle at top center,
+        rgba(255, 90, 95, 0.1),
+        transparent 70%),
+      hsl(var(--background));
+    /* fallback color */
+    background-repeat: no-repeat;
+    background-size: cover;
   }
+
 
   /* Enhanced typography hierarchy */
   h1 {
@@ -239,9 +247,18 @@
   }
 
   /* Enhanced card styles */
+  /*.card {
+    @apply r ounded-xl border bg-card text-card-foreground shadow-soft;
+  }*/
+
   .card {
-    @apply rounded-xl border bg-card text-card-foreground shadow-soft;
+    @apply rounded-xl border bg-card text-card-foreground;
+    /*background: rgba(255, 255, 255, 0.7);*/
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   }
+
 
   .card-elevated {
     @apply rounded-2xl border bg-card text-card-foreground shadow-medium;
@@ -271,6 +288,42 @@
     @apply flex items-center p-6 pt-0 space-x-3;
   }
 
+  .card-ribbon {
+    position: relative;
+  }
+
+  .card-ribbon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right,
+        hsl(var(--primary)),
+        hsl(var(--primary) / 0.7));
+    border-radius: 0.75rem 0.75rem 0 0;
+    /* matches your --radius */
+  }
+
+  .card-ribbon {
+    position: relative;
+  }
+
+  .card-ribbon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right,
+        hsl(var(--primary)),
+        hsl(var(--primary) / 0.7));
+    border-radius: 0.75rem 0.75rem 0 0;
+    /* matches your --radius */
+  }
+
   /* Enhanced card variants for different elevations */
   .card-interactive {
     @apply transition-all duration-300 hover:shadow-elevated hover:scale-[1.02] active:scale-[0.98];
@@ -284,6 +337,7 @@
   .glass {
     @apply backdrop-blur-md bg-background/80 border border-border/50;
   }
+
 
   /* Loading states */
   .loading-skeleton {
