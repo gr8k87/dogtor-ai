@@ -123,7 +123,7 @@ export default function Profile() {
 
       if (isDemoMode) {
         // Set demo user data
-        const demoUser = {
+        const demoUser: UserProfile = {
           id: "demo-user-id",
           email: "demo@example.com",
           first_name: "Demo",
@@ -134,8 +134,8 @@ export default function Profile() {
           pet_birth_month: 6,
           pet_birth_year: 2020,
           pet_gender: "Male",
-          uth_method: "email",
-        } as const;
+          auth_method: "email",
+        };
 
         setUser(demoUser);
         setFormData({
@@ -151,7 +151,7 @@ export default function Profile() {
             : "",
           pet_gender: demoUser.pet_gender || "",
         });
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
 
