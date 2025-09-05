@@ -187,6 +187,20 @@ export default function Questions() {
         }),
       });
 
+      // Handle 400 status responses with specific error details
+      if (response.status === 400) {
+        const errorData = await response.json();
+        const errorReason = errorData.details?.reason;
+        
+        if (errorReason && errorReason.includes("illustration")) {
+          setError("IMAGE_REJECTED");
+        } else {
+          setError(errorReason || errorData.error || "Analysis not possible");
+        }
+        setDebugMsg(`❌ Error: ${errorReason || "Analysis failed"}`);
+        return;
+      }
+
       if (!response.ok) throw new Error("Failed to get results");
 
       setDebugMsg("✅ Analysis complete! Redirecting to results...");
@@ -194,7 +208,7 @@ export default function Questions() {
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
       console.error("Results submission error:", err);
-      setError(err.message);
+      setError(err.message || "Failed to get results");
       setDebugMsg(`❌ Error: ${err.message}`);
     } finally {
       setSubmitting(false);
@@ -249,6 +263,20 @@ export default function Questions() {
         body: JSON.stringify({ caseId }),
       });
 
+      // Handle 400 status responses with specific error details
+      if (response.status === 400) {
+        const errorData = await response.json();
+        const errorReason = errorData.details?.reason;
+        
+        if (errorReason && errorReason.includes("illustration")) {
+          setError("IMAGE_REJECTED");
+        } else {
+          setError(errorReason || errorData.error || "Analysis not possible");
+        }
+        setDebugMsg(`❌ Error: ${errorReason || "Analysis failed"}`);
+        return;
+      }
+
       if (!response.ok) throw new Error("Failed to get results");
 
       setDebugMsg("✅ Analysis complete! Redirecting to results...");
@@ -256,7 +284,7 @@ export default function Questions() {
       navigate(`/results/${caseId}`, { state: { cards: data.cards } });
     } catch (err: any) {
       console.error("Skip questions error:", err);
-      setError(err.message);
+      setError(err.message || "Failed to get results");
       setDebugMsg(`❌ Error: ${err.message}`);
     } finally {
       setSubmitting(false);
@@ -455,6 +483,23 @@ export default function Questions() {
                       <ArrowLeft size={16} className="mr-2" />
                       {isImageRejected ? "Upload Different Photo" : "Start Over"}
                     </Button>
+                    {!isImageRejected && (
+                      <Button
+                        onClick={handleSkip}
+                        disabled={submitting}
+                        className="w-full"
+                        data-testid="button-skip"
+                      >
+                        {submitting ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                            Analyzing...
+                          </div>
+                        ) : (
+                          "Skip to Results"
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
