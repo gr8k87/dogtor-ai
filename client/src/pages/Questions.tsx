@@ -547,7 +547,7 @@ export default function Questions() {
             <HealthCardContent className="p-6">
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <h2 className="text-foreground text-xl font-semibold flex items-center gap-3">
                     <AppIcons.medical size={24} className="text-primary" />A Few
                     More Questions
                   </h2>
