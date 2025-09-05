@@ -395,6 +395,8 @@ export default function Questions() {
   }
 
   if (error) {
+    const isImageRejected = error === "IMAGE_REJECTED";
+
     return (
       <div className="min-h-dvh flex flex-col bg-background">
         <GlobalHeader />
@@ -406,13 +408,13 @@ export default function Questions() {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-primary/60 transition-all duration-500"></div>
-                  <span>Your Pet’s Concerns</span>
+                  <span>Your Pet's Concerns</span>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-primary/60 to-destructive"></div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full bg-destructive transition-all duration-500"></div>
                   <span className="font-medium text-primary">
-                    A Few More Questions
+                    {isImageRejected ? "Image Upload" : "A Few More Questions"}
                   </span>
                 </div>
                 <div className="flex-1 h-px bg-muted"></div>
@@ -434,38 +436,24 @@ export default function Questions() {
                 />
                 <div className="space-y-3">
                   <h3 className="font-semibold text-destructive">
-                    Error Loading Questions
+                    {isImageRejected ? "Image Not Suitable for Analysis" : "Error Generating Results"}
                   </h3>
-                  <p className="text-destructive/80 text-sm">{error}</p>
+                  <p className="text-destructive/80 text-sm">
+                    {isImageRejected
+                      ? "The uploaded image appears to be an illustration or drawing. Please upload a clear photograph of your real pet for accurate analysis."
+                      : error
+                    }
+                  </p>
 
                   <div className="flex gap-3 pt-2">
                     <Button
                       variant="default"
                       onClick={() => navigate("/")}
-                      className="flex-1"
+                      className="w-full"
                       data-testid="button-start-over"
                     >
                       <ArrowLeft size={16} className="mr-2" />
-                      Start Over
-                    </Button>
-                    <Button
-                      onClick={handleSkip}
-                      disabled={submitting}
-                      variant="destructive"
-                      className="flex-1"
-                      data-testid="button-skip-results"
-                    >
-                      {submitting ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                          Analyzing...
-                        </div>
-                      ) : (
-                        <>
-                          Skip to Results
-                          <ArrowRight size={16} className="ml-2" />
-                        </>
-                      )}
+                      {isImageRejected ? "Upload Different Photo" : "Start Over"}
                     </Button>
                   </div>
                 </div>
