@@ -102,7 +102,7 @@ export default function History() {
     return (
       <div className="min-h-dvh flex flex-col gradient-hero">
         <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-          {/* Header Card Skeleton */}
+          {/* Header Card */}
           <HealthCard colorIndex={2} className="mb-4">
             <HealthCardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -116,7 +116,7 @@ export default function History() {
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <HealthCard key={i} colorIndex={2} className="animate-pulse">
-                <HealthCardContent className="p-4">
+                <HealthCardContent className="p-1">
                   <div className="flex items-center justify-between">
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
