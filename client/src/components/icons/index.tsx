@@ -104,6 +104,11 @@ export {
   Pill,
   Utensils,
   Activity,
+
+  // ConnectTab icons
+  MapPin,
+  Star,
+  Video,
 } from "lucide-react";
 
 // Icon configuration - Change these to switch icon sets globally

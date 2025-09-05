@@ -6,6 +6,14 @@ import {
   HealthCardTitle,
   HealthCardContent,
 } from "../components/ui/health-card";
+import {
+  Search,
+  MapPin,
+  Star,
+  Phone,
+  MessageCircle,
+  Video,
+} from "../components/icons";
 
 export default function ConnectTab() {
   return (
@@ -19,7 +27,7 @@ export default function ConnectTab() {
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">🔍</span>
+                <Search size={24} className="text-primary" />
                 <h2 className="text-xl font-semibold text-foreground">
                   Find a Vet
                 </h2>
@@ -38,9 +46,9 @@ export default function ConnectTab() {
                   disabled
                   className="input w-full pl-10 opacity-50 cursor-not-allowed"
                 />
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                  📍
-                </span>
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  <MapPin size={16} />
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -58,9 +66,10 @@ export default function ConnectTab() {
                           {vet.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-sm text-yellow-600">
-                            ⭐ {vet.rating}
-                          </span>
+                          <div className="flex items-center gap-1 text-sm text-yellow-600">
+                            <Star size={16} className="text-yellow-600" />
+                            {vet.rating}
+                          </div>
                           <span className="text-sm text-muted-foreground">
                             • {vet.distance}
                           </span>
@@ -85,7 +94,7 @@ export default function ConnectTab() {
           <HealthCardHeader>
             <HealthCardTitle>
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">📱</span>
+                <Phone size={24} className="text-primary" />
                 <h2 className="text-xl font-semibold text-foreground">
                   Call TeleVet
                 </h2>
@@ -104,7 +113,9 @@ export default function ConnectTab() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 border border-border rounded-lg text-center">
-                  <span className="text-2xl mb-2 block">💬</span>
+                  <div className="flex justify-center mb-2">
+                    <MessageCircle size={24} className="text-primary" />
+                  </div>
                   <h3 className="font-medium text-foreground text-sm">
                     Chat Consultation
                   </h3>
@@ -115,7 +126,9 @@ export default function ConnectTab() {
                 </div>
 
                 <div className="p-3 border border-border rounded-lg text-center">
-                  <span className="text-2xl mb-2 block">📹</span>
+                  <div className="flex justify-center mb-2">
+                    <Video size={24} className="text-primary" />
+                  </div>
                   <h3 className="font-medium text-foreground text-sm">
                     Video Call
                   </h3>
