@@ -83,43 +83,23 @@ export default function Questions() {
                            window.location.pathname.includes('/demo') ||
                            caseId?.startsWith('demo-');
 
+        let headers: HeadersInit = {};
+
         if (isDemoMode) {
-          // Mock case data for demo
-          const mockCase = {
-            id: caseId,
-            symptoms: 'Demo symptoms',
-            imageUrl: null,
-            questions: [
-              {
-                id: '1',
-                question: 'How long have you noticed this issue?',
-                type: 'multiple_choice',
-                options: ['Less than 24 hours', '1-3 days', '4-7 days', 'More than a week']
-              },
-              {
-                id: '2',
-                question: 'Is your pet eating normally?',
-                type: 'boolean'
-              }
-            ]
-          };
-          setCaseData(mockCase);
-          setQuestions(mockCase.questions || []);
-          setLoading(false);
-          return;
-        }
+          headers['x-demo-mode'] = 'true';
+        } else {
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-        if (sessionError || !session) {
-          setError('Authentication required');
-          return;
-        }
-
-        const response = await fetch(`/api/diagnose/cases/${caseId}`, {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`
+          if (sessionError || !session) {
+            setError('Authentication required');
+            return;
           }
+
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
+
+        const response = await fetch(`/api/diagnose/cases/${caseId}${isDemoMode ? '?demo=true' : ''}`, {
+          headers
         });
 
         if (!response.ok) {

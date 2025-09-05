@@ -343,7 +343,49 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
   }
 });
 
-// Get questions for a case
+// Get case data including questions
+r.get("/cases/:caseId", async (req, res) => {
+  const { caseId } = req.params;
+  console.log("📋 Case data fetch request for case:", caseId);
+
+  try {
+    const { data: caseData, error } = await supabase
+      .from("cases")
+      .select("*")
+      .eq("id", caseId)
+      .single();
+
+    if (error) {
+      console.error("❌ Case fetch error:", error);
+      return res.status(404).json({ error: "Case not found: " + error.message });
+    }
+
+    if (!caseData) {
+      console.error("❌ No case data returned for ID:", caseId);
+      return res.status(404).json({ error: "Case not found" });
+    }
+
+    console.log("📋 Case data retrieved:", {
+      id: caseData.id,
+      hasQuestions: !!caseData.questions,
+      questionsCount: caseData.questions?.length || 0,
+      status: caseData.status
+    });
+
+    res.json({ 
+      id: caseData.id,
+      symptoms: caseData.symptoms,
+      imageUrl: caseData.image_url,
+      questions: caseData.questions || [],
+      status: caseData.status
+    });
+  } catch (err) {
+    console.error("❌ Case fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch case data: " + err.message });
+  }
+});
+
+// Get questions for a case (legacy endpoint)
 r.get("/questions/:caseId", async (req, res) => {
   const { caseId } = req.params;
   console.log("❓ Questions fetch request for case:", caseId);
