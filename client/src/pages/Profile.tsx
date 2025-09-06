@@ -94,6 +94,7 @@ const GENDERS = [
 
 export default function Profile() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<ProfileFormData>({
     first_name: "",
@@ -108,6 +109,18 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+
+  // Check if user was redirected here for profile completion
+  const isIncompleteProfile = new URLSearchParams(location.search).get('incomplete') === 'true';
+  
+  const isProfileComplete = (profile: UserProfile): boolean => {
+    return !!(
+      profile.pet_name &&
+      profile.pet_breed &&
+      profile.pet_birth_month &&
+      profile.pet_birth_year
+    );
+  };
 
   useEffect(() => {
     fetchUserProfile();
@@ -331,7 +344,15 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-        setTimeout(() => setSaveMessage(""), 3000);
+        
+        // If this was an incomplete profile completion, redirect to home
+        if (isIncompleteProfile && isProfileComplete(updatedUser)) {
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 1500);
+        } else {
+          setTimeout(() => setSaveMessage(""), 3000);
+        }
       } else {
         const errorData = await response.json();
         setErrors({
@@ -372,9 +393,25 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen gradient-hero transition-smooth">
-      <GlobalHeader showBackButton={true} onBackClick={() => navigate("/")} />
+      <GlobalHeader 
+        showBackButton={!isIncompleteProfile} 
+        onBackClick={() => navigate("/")} 
+      />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
+        {/* Profile completion notice */}
+        {isIncompleteProfile && (
+          <HealthCard colorIndex={0}>
+            <HealthCardContent className="p-4">
+              <div className="text-center space-y-2">
+                <h3 className="font-semibold text-primary">Complete Your Profile</h3>
+                <p className="text-sm text-muted-foreground">
+                  Please provide your pet's information to get started with personalized health guidance.
+                </p>
+              </div>
+            </HealthCardContent>
+          </HealthCard>
+        )}
         {/* User Summary Card */}
         <HealthCard colorIndex={2}>
           <HealthCardHeader>

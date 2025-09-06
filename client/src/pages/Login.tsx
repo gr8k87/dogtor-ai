@@ -76,8 +76,35 @@ export default function Login() {
           general: error.message || "Login failed. Please try again.",
         });
       } else {
-        // Successful login - redirect to main app
-        navigate("/");
+        // Successful login - check profile completion
+        try {
+          const response = await fetch("/api/auth/user", {
+            headers: {
+              Authorization: `Bearer ${data.session.access_token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userProfile = await response.json();
+            const isComplete = !!(
+              userProfile.pet_name &&
+              userProfile.pet_breed &&
+              userProfile.pet_birth_month &&
+              userProfile.pet_birth_year
+            );
+
+            if (isComplete) {
+              navigate("/");
+            } else {
+              navigate("/profile?incomplete=true");
+            }
+          } else {
+            navigate("/");
+          }
+        } catch (profileError) {
+          console.error("Error checking profile:", profileError);
+          navigate("/");
+        }
       }
     } catch (error) {
       setErrors({
@@ -93,7 +120,7 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}?auth=success`,
         },
       });
 

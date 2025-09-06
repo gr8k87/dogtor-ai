@@ -174,8 +174,8 @@ export default function Signup() {
           general: error.message || "Signup failed. Please try again.",
         });
       } else {
-        // Successful signup - redirect to main app
-        navigate("/");
+        // Successful signup - redirect to profile completion since we have pet data
+        navigate("/profile?incomplete=true");
       }
     } catch (error) {
       setErrors({
@@ -191,7 +191,7 @@ export default function Signup() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}?auth=success`,
         },
       });
       

@@ -2,16 +2,34 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import { Session, User } from '@supabase/supabase-js';
 
+interface UserProfile {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
+  pet_name?: string;
+  pet_breed?: string;
+  pet_birth_month?: number;
+  pet_birth_year?: number;
+  pet_gender?: string;
+  auth_method: "google" | "email";
+}
+
 interface AuthContextType {
   session: Session | null;
   user: User | null;
+  userProfile: UserProfile | null;
   loading: boolean;
+  isProfileComplete: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
+  userProfile: null,
   loading: true,
+  isProfileComplete: () => false,
 });
 
 export const useAuth = () => {
@@ -25,14 +43,53 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isProfileComplete = (): boolean => {
+    if (!userProfile) return false;
+    
+    // Check mandatory pet fields
+    return !!(
+      userProfile.pet_name &&
+      userProfile.pet_breed &&
+      userProfile.pet_birth_month &&
+      userProfile.pet_birth_year
+    );
+  };
+
+  const fetchUserProfile = async (session: Session) => {
+    try {
+      const response = await fetch("/api/auth/user", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        const profileData = await response.json();
+        setUserProfile(profileData);
+      } else {
+        setUserProfile(null);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      setUserProfile(null);
+    }
+  };
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      
+      if (session?.user) {
+        fetchUserProfile(session).finally(() => setLoading(false));
+      } else {
+        setUserProfile(null);
+        setLoading(false);
+      }
     });
 
     // Listen for auth changes
@@ -41,7 +98,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      
+      if (session?.user) {
+        fetchUserProfile(session).finally(() => setLoading(false));
+      } else {
+        setUserProfile(null);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -50,7 +113,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value = {
     session,
     user,
+    userProfile,
     loading,
+    isProfileComplete,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -98,13 +98,25 @@ function Splash({ onComplete }: { onComplete: () => void }) {
 
 function AppContent() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
-  const { user, session, loading } = useAuth();
+  const { user, session, loading, userProfile, isProfileComplete } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   function handleSplashComplete() {
     setShowSplash(false);
   }
+
+  // Handle auth success redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('auth') === 'success' && user && userProfile && !loading) {
+      if (isProfileComplete()) {
+        navigate("/", { replace: true });
+      } else {
+        navigate("/profile?incomplete=true", { replace: true });
+      }
+    }
+  }, [user, userProfile, loading, isProfileComplete, location.search, navigate]);
 
   // Hide navigation on question, result, and auth pages
   const hideNav =
@@ -133,6 +145,16 @@ function AppContent() {
     !isDemoMode()
   ) {
     return <Login />;
+  }
+
+  // Check profile completion for authenticated users (not demo mode)
+  if (user && !isDemoMode() && userProfile && !isProfileComplete()) {
+    // Allow access to profile page and auth pages
+    if (!["/profile", "/login", "/signup"].includes(location.pathname)) {
+      // Redirect to profile with completion context
+      navigate("/profile?incomplete=true", { replace: true });
+      return null;
+    }
   }
 
   // Helper function to determine the active tab for BottomTabs
