@@ -191,7 +191,7 @@ export default function Questions() {
       if (response.status === 400) {
         const errorData = await response.json();
         const errorReason = errorData.details?.reason;
-        
+
         if (errorReason && errorReason.includes("illustration")) {
           setError("IMAGE_REJECTED");
         } else {
@@ -267,7 +267,7 @@ export default function Questions() {
       if (response.status === 400) {
         const errorData = await response.json();
         const errorReason = errorData.details?.reason;
-        
+
         if (errorReason && errorReason.includes("illustration")) {
           setError("IMAGE_REJECTED");
         } else {
@@ -382,7 +382,7 @@ export default function Questions() {
                       notes to provide guidance.
                     </p>
 
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
                       <Button
                         variant="default"
                         onClick={() => navigate("/")}
@@ -464,16 +464,17 @@ export default function Questions() {
                 />
                 <div className="space-y-3">
                   <h3 className="font-semibold text-destructive">
-                    {isImageRejected ? "Image Not Suitable for Analysis" : "Error Generating Results"}
+                    {isImageRejected
+                      ? "Image Not Suitable for Analysis"
+                      : "Error Generating Results"}
                   </h3>
                   <p className="text-destructive/80 text-sm">
                     {isImageRejected
                       ? "The uploaded image appears to be an illustration or drawing. Please upload a clear photograph of your real pet for accurate analysis."
-                      : error
-                    }
+                      : error}
                   </p>
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
                     <Button
                       variant="default"
                       onClick={() => navigate("/")}
@@ -481,7 +482,9 @@ export default function Questions() {
                       data-testid="button-start-over"
                     >
                       <ArrowLeft size={16} className="mr-2" />
-                      {isImageRejected ? "Upload Different Photo" : "Start Over"}
+                      {isImageRejected
+                        ? "Upload Different Photo"
+                        : "Start Over"}
                     </Button>
                     {!isImageRejected && (
                       <Button
@@ -614,7 +617,7 @@ export default function Questions() {
                   )}
 
                   {/* Enhanced Action buttons */}
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
                     <Button
                       variant="default"
                       onClick={handleSkip}

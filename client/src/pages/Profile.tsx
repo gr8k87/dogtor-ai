@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -111,8 +111,9 @@ export default function Profile() {
   const [saveMessage, setSaveMessage] = useState("");
 
   // Check if user was redirected here for profile completion
-  const isIncompleteProfile = new URLSearchParams(location.search).get('incomplete') === 'true';
-  
+  const isIncompleteProfile =
+    new URLSearchParams(location.search).get("incomplete") === "true";
+
   const isProfileComplete = (profile: UserProfile): boolean => {
     return !!(
       profile.pet_name &&
@@ -344,7 +345,7 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-        
+
         // If this was an incomplete profile completion, redirect to home
         if (isIncompleteProfile && isProfileComplete(updatedUser)) {
           setTimeout(() => {
@@ -393,9 +394,9 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen gradient-hero transition-smooth">
-      <GlobalHeader 
-        showBackButton={!isIncompleteProfile} 
-        onBackClick={() => navigate("/")} 
+      <GlobalHeader
+        showBackButton={!isIncompleteProfile}
+        onBackClick={() => navigate("/")}
       />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
@@ -404,9 +405,12 @@ export default function Profile() {
           <HealthCard colorIndex={0}>
             <HealthCardContent className="p-4">
               <div className="text-center space-y-2">
-                <h3 className="font-semibold text-primary">Complete Your Profile</h3>
+                <h3 className="font-semibold text-primary">
+                  Complete Your Profile
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Please provide your pet's information to get started with personalized health guidance.
+                  Please provide your pet's information to get started with
+                  personalized health guidance.
                 </p>
               </div>
             </HealthCardContent>
