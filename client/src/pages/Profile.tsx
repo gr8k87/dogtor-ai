@@ -109,6 +109,7 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [profileCompleted, setProfileCompleted] = useState(false);
 
   // Check if user was redirected here for profile completion
   const isIncompleteProfile =
@@ -120,6 +121,15 @@ export default function Profile() {
       profile.pet_breed &&
       profile.pet_birth_month &&
       profile.pet_birth_year
+    );
+  };
+
+  const isFormValid = (): boolean => {
+    return !!(
+      formData.pet_name.trim() &&
+      formData.pet_breed.trim() &&
+      formData.pet_birth_month &&
+      formData.pet_birth_year
     );
   };
 
@@ -308,6 +318,14 @@ export default function Profile() {
 
         setUser(updatedDemoUser);
         setSaveMessage("Demo profile updated successfully!");
+        
+        // Set profile completed state for demo
+        if (isProfileComplete(updatedDemoUser)) {
+          setProfileCompleted(true);
+          // Auto-hide celebration after 10 seconds
+          setTimeout(() => setProfileCompleted(false), 10000);
+        }
+        
         setTimeout(() => setSaveMessage(""), 3000);
         return;
       }
@@ -345,15 +363,16 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-
-        // If this was an incomplete profile completion, redirect to home
-        if (isIncompleteProfile && isProfileComplete(updatedUser)) {
-          setTimeout(() => {
-            navigate("/", { replace: true });
-          }, 1500);
-        } else {
-          setTimeout(() => setSaveMessage(""), 3000);
+        
+        // Set profile completed state
+        if (isProfileComplete(updatedUser)) {
+          setProfileCompleted(true);
+          // Auto-hide celebration after 10 seconds
+          setTimeout(() => setProfileCompleted(false), 10000);
         }
+
+        // Clear save message after 3 seconds
+        setTimeout(() => setSaveMessage(""), 3000);
       } else {
         const errorData = await response.json();
         setErrors({
@@ -375,6 +394,16 @@ export default function Profile() {
       return formatPetAge(user.pet_birth_month, user.pet_birth_year);
     }
     return "Age not set";
+  };
+
+  const handleContinueToDogtor = () => {
+    if (!isFormValid()) {
+      setErrors({
+        general: "Please complete all required pet information before proceeding."
+      });
+      return;
+    }
+    navigate("/");
   };
 
   if (isLoading) {
@@ -400,17 +429,21 @@ export default function Profile() {
       />
 
       <div className="max-w-2xl mx-auto p-4 pb-8 space-y-6">
-        {/* Profile completion notice */}
-        {isIncompleteProfile && (
-          <HealthCard colorIndex={0}>
+        {/* Profile completion celebration */}
+        {profileCompleted && (
+          <HealthCard colorIndex={2}>
             <HealthCardContent className="p-4">
-              <div className="text-center space-y-2">
-                <h3 className="font-semibold text-primary">
-                  Complete Your Profile
+              <div className="text-center space-y-3">
+                <div className="flex justify-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">🎉</span>
+                  </div>
+                </div>
+                <h3 className="font-semibold text-green-700">
+                  Profile Successfully Created!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Please provide your pet's information to get started with
-                  personalized health guidance.
+                  Great! Your pet's information has been saved. You're now ready to start getting personalized health guidance.
                 </p>
               </div>
             </HealthCardContent>
@@ -664,8 +697,8 @@ export default function Profile() {
             </HealthCardContent>
           </HealthCard>
 
-          {/* Save Button */}
-          <div className="flex justify-end">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
             <Button
               type="submit"
               disabled={isSaving}
@@ -674,6 +707,16 @@ export default function Profile() {
             >
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+            
+            <Button
+              type="button"
+              onClick={handleContinueToDogtor}
+              disabled={!profileCompleted && !isFormValid()}
+              className="min-w-[140px] btn-primary"
+              data-testid="button-continue-dogtor"
+            >
+              Continue to Dogtor
             </Button>
           </div>
         </form>
