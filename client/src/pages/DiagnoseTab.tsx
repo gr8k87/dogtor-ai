@@ -9,7 +9,7 @@ import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/auth-provider";
+import { useDogName } from "../lib/hooks";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -18,8 +18,7 @@ export default function DiagnoseTab() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const [debugMsg, setDebugMsg] = useState("");
-  const { dog } = useAuth();
-  const dogName = dog ? dog.name : "your pet";
+  const dogName = useDogName();
 
   function validate() {
     const e: Record<string, string> = {};
