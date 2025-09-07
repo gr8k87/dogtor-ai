@@ -164,7 +164,7 @@ export default function ImagePicker({ onChange, className }: Props) {
         <div className="space-y-4">
           {/* Upload area */}
           <div className="group relative overflow-hidden rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300 shadow-medium hover:shadow-elevated">
-            <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
+            <div className="flex flex-col items-center justify-center p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
               {isLoading ? (
                 <div className="space-y-6 w-full">
                   <div className="space-y-4">
