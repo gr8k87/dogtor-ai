@@ -9,6 +9,7 @@ import {
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
 import { AppIcons, Delete } from "../components/icons";
+import { useDogName } from "../lib/hooks";
 
 // shape coming back from /api/history/list
 export interface HistoryEntry {
@@ -24,6 +25,7 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const dogName = useDogName();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -302,9 +304,9 @@ export default function History() {
               </div>
             </div>
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold">No records yet</h2>
+              <h2 className="text-2xl font-bold">{dogName}'s health journey starts here</h2>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                Start your pet's first checkup! Your diagnosis history will
+                Start {dogName}'s first checkup! Your diagnosis history will
                 appear here.
               </p>
             </div>
@@ -313,7 +315,7 @@ export default function History() {
                 onClick={() => navigate("/")}
                 className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 font-semibold text-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                Start Your Pet's First Checkup
+                Start {dogName}'s First Checkup
               </button>
             </div>
           </div>
@@ -332,7 +334,7 @@ export default function History() {
             <HealthCardTitle className="flex items-center justify-between text-xl text-foreground">
               <div className="flex items-center gap-2">
                 <AppIcons.history size={24} className="text-primary" />
-                Pet Health History
+                {dogName}'s previous checkups
               </div>
               <span className="text-sm font-normal text-muted-foreground bg-muted px-3 py-1 rounded-full">
                 {items.length} record{items.length !== 1 ? "s" : ""}

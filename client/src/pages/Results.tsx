@@ -25,6 +25,7 @@ import {
   Utensils,
   Activity,
 } from "../components/icons";
+import { useDogName } from "../lib/hooks";
 
 interface ResultsProps {}
 
@@ -33,6 +34,7 @@ export default function Results({}: ResultsProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const cards = location.state?.cards;
+  const dogName = useDogName();
 
   const handleNewDiagnosis = () => {
     navigate("/");
@@ -127,7 +129,7 @@ export default function Results({}: ResultsProps) {
           <HealthCardHeader className="pb-4 text-black">
             <HealthCardTitle className="flex items-center gap-3 text-2xl text-foreground">
               <ClipboardList size={32} className="text-primary" />
-              Pet Health Analysis Results
+              Here's what we found about {dogName}
             </HealthCardTitle>
           </HealthCardHeader>
           <HealthCardContent className="space-y-8 text-black">
@@ -190,7 +192,7 @@ export default function Results({}: ResultsProps) {
             <div className="space-y-4 border-t pt-6">
               <h3 className="text-xl font-semibold text-black flex items-center gap-2">
                 <DollarSign size={24} className="text-primary" />
-                {cards.costs?.title || "Expected Costs"}
+                {cards.costs?.title || `Recommended next steps for ${dogName}`}
               </h3>
 
               {cards.costs?.disclaimer && (

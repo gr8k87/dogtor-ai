@@ -9,6 +9,7 @@ import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../state/authContext";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -17,6 +18,8 @@ export default function DiagnoseTab() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const [debugMsg, setDebugMsg] = useState("");
+  const { dog } = useAuth();
+  const dogName = dog ? dog.name : "your pet";
 
   function validate() {
     const e: Record<string, string> = {};
@@ -174,7 +177,7 @@ export default function DiagnoseTab() {
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                     <AppIcons.camera size={24} className="text-primary" />
-                    What’s Worrying You?
+                    What's worrying you about {dogName}?
                   </h2>
                   <p className="text-muted-foreground">
                     Upload a clear photo for analysis.
@@ -209,10 +212,10 @@ export default function DiagnoseTab() {
                   <div className="space-y-2">
                     <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={24} className="text-primary" />
-                      What Have You Noticed?
+                      What have you noticed about {dogName}?
                     </h2>
                     <p className="text-muted-foreground">
-                      Describe any changes in your pet’s health or behavior.
+                      Describe any changes in {dogName}'s health or behavior.
                       Even small details can help.
                     </p>
                   </div>
