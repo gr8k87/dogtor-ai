@@ -32,7 +32,7 @@ export function GlobalHeader({
         <div className="flex items-center gap-3">
           {showBackButton && onBackClick ? (
             <button
-              onClick={onBackButton}
+              onClick={onBackClick}
               className="p-2 hover:bg-muted rounded-lg transition-colors"
               data-testid="button-back"
             >

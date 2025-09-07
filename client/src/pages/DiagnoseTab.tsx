@@ -9,7 +9,7 @@ import { AppIcons, AlertCircle, Edit, ArrowRight } from "../components/icons";
 import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../state/authContext";
+import { useAuth } from "../lib/auth-provider";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
