@@ -21,6 +21,7 @@ import BreedSelector from "../components/BreedSelector";
 import { ArrowLeft, User, Save } from "../components/icons";
 import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../lib/auth-provider";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
@@ -95,6 +96,7 @@ const GENDERS = [
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { refreshUserProfile } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<ProfileFormData>({
     first_name: "",
@@ -363,6 +365,9 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
+        
+        // Refresh auth context profile
+        await refreshUserProfile();
         
         // Set profile completed state
         if (isProfileComplete(updatedUser)) {

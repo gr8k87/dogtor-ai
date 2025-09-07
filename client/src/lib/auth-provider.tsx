@@ -22,6 +22,7 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   loading: boolean;
   isProfileComplete: () => boolean;
+  refreshUserProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   loading: true,
   isProfileComplete: () => false,
+  refreshUserProfile: async () => {},
 });
 
 export const useAuth = () => {
@@ -110,12 +112,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  const refreshUserProfile = async () => {
+    if (session) {
+      await fetchUserProfile(session);
+    }
+  };
+
   const value = {
     session,
     user,
     userProfile,
     loading,
     isProfileComplete,
+    refreshUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
