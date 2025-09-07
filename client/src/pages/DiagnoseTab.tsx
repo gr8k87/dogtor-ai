@@ -176,7 +176,7 @@ export default function DiagnoseTab() {
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                     <AppIcons.camera size={24} className="text-primary" />
-                    What's worrying you about {dogName}?
+                    What's worrying you about <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>?
                   </h2>
                   <p className="text-muted-foreground">
                     Upload a clear photo for analysis.
@@ -211,10 +211,10 @@ export default function DiagnoseTab() {
                   <div className="space-y-2">
                     <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={24} className="text-primary" />
-                      What have you noticed about {dogName}?
+                      What have you noticed about <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>?
                     </h2>
                     <p className="text-muted-foreground">
-                      Describe any changes in {dogName}'s health or behavior.
+                      Describe any changes in <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s health or behavior.
                       Even small details can help.
                     </p>
                   </div>

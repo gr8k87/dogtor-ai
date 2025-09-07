@@ -39,18 +39,13 @@ export function GlobalHeader({
               <ArrowLeft size={20} />
             </button>
           ) : (
-            <div className="flex flex-col items-start">
-              <button
-                onClick={handleLogoClick}
-                className="hover:bg-muted/20 rounded-lg transition-colors p-1"
-                data-testid="button-logo-home"
-              >
-                <AppIcons.logo size={50} className="text-primary" />
-              </button>
-              <p className="text-sm text-muted-foreground mt-1 ml-1">
-                How's {dogName} doing today?
-              </p>
-            </div>
+            <button
+              onClick={handleLogoClick}
+              className="hover:bg-muted/20 rounded-lg transition-colors p-1"
+              data-testid="button-logo-home"
+            >
+              <AppIcons.logo size={50} className="text-primary" />
+            </button>
           )}
         </div>
 

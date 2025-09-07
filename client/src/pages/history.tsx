@@ -304,9 +304,9 @@ export default function History() {
               </div>
             </div>
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold">{dogName}'s health journey starts here</h2>
+              <h2 className="text-2xl font-bold"><span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s health journey starts here</h2>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                Start {dogName}'s first checkup! Your diagnosis history will
+                Start <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s first checkup! Your diagnosis history will
                 appear here.
               </p>
             </div>
@@ -315,7 +315,7 @@ export default function History() {
                 onClick={() => navigate("/")}
                 className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 font-semibold text-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                Start {dogName}'s First Checkup
+                Start <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s First Checkup
               </button>
             </div>
           </div>
