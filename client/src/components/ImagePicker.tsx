@@ -129,23 +129,23 @@ export default function ImagePicker({ onChange, className }: Props) {
           </Button>
 
           {/* Replace button */}
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-3">
             <Button
               variant="default"
               onClick={handleCameraCapture}
-              className="flex-1"
+              className="flex-1 h-9 text-sm"
               data-testid="button-retake-photo"
             >
-              <Camera size={16} className="mr-2" />
+              <Camera size={14} className="mr-1" />
               Retake
             </Button>
             <Button
               variant="default"
               onClick={handleGalleryUpload}
-              className="flex-1"
+              className="flex-1 h-9 text-sm"
               data-testid="button-choose-different"
             >
-              <Upload size={16} className="mr-2" />
+              <Upload size={14} className="mr-1" />
               Choose Different
             </Button>
           </div>
@@ -163,8 +163,8 @@ export default function ImagePicker({ onChange, className }: Props) {
       ) : (
         <div className="space-y-4">
           {/* Upload area */}
-          <div className="group relative overflow-hidden rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300 shadow-medium hover:shadow-elevated">
-            <div className="flex flex-col items-center justify-center p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
+          <div className="group relative overflow-hidden rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300 shadow-medium hover:shadow-elevated">
+            <div className="flex flex-col items-center justify-center p-4 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
               {isLoading ? (
                 <div className="space-y-6 w-full">
                   <div className="space-y-4">
@@ -210,32 +210,32 @@ export default function ImagePicker({ onChange, className }: Props) {
           </div>
 
           {/* Action buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <Button
               onClick={handleCameraCapture}
               variant="default"
-              size="lg"
-              className="h-12 space-x-2 group relative overflow-hidden"
+              size="default"
+              className="h-10 space-x-1 group relative overflow-hidden"
               data-testid="button-take-photo"
             >
               <Camera
-                size={20}
+                size={16}
                 className="transition-transform group-hover:scale-110"
               />
-              <span>Take Photo</span>
+              <span className="text-sm">Take Photo</span>
             </Button>
             <Button
               onClick={handleGalleryUpload}
               variant="default"
-              size="lg"
-              className="h-12 space-x-2 group relative overflow-hidden"
+              size="default"
+              className="h-10 space-x-1 group relative overflow-hidden"
               data-testid="button-choose-gallery"
             >
               <Upload
-                size={20}
+                size={16}
                 className="transition-transform group-hover:scale-110"
               />
-              <span>Choose File</span>
+              <span className="text-sm">Choose File</span>
             </Button>
           </div>
         </div>

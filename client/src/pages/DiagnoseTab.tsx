@@ -161,30 +161,30 @@ export default function DiagnoseTab() {
             colorIndex={2}
             className="border-accent gradient-card transition-smooth hover:shadow-elevated"
           >
-            <HealthCardContent className="p-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-                    <AppIcons.camera size={24} className="text-primary" />
+            <HealthCardContent className="p-4">
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                    <AppIcons.camera size={20} className="text-primary" />
                     What's worrying you about{" "}
                     <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Upload a clear photo for analysis.
                   </p>
                 </div>
 
                 <ImagePicker
                   onChange={setImageUrl} // Changed to setImageUrl
-                  className="mb-6"
+                  className="mb-0"
                 />
                 {errors.image && (
-                  <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
                     <AlertCircle
-                      size={16}
+                      size={14}
                       className="text-destructive mt-0.5 flex-shrink-0"
                     />
-                    <p className="text-sm text-destructive">{errors.image}</p>
+                    <p className="text-xs text-destructive">{errors.image}</p>
                   </div>
                 )}
               </div>
@@ -197,15 +197,15 @@ export default function DiagnoseTab() {
               colorIndex={2}
               className="border-accent gradient-card transition-smooth hover:shadow-elevated"
             >
-              <HealthCardContent className="p-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-                      <Edit size={24} className="text-primary" />
+              <HealthCardContent className="p-4">
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                      <Edit size={20} className="text-primary" />
                       What have you noticed about{" "}
                       <span className="text-[#FF5A5F]">{dogName}</span>?
                     </h2>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       Describe any changes in{" "}
                       <span className="text-[#FF5A5F]">{dogName}</span>
                       's health or behavior. Even small details can help.
@@ -216,7 +216,7 @@ export default function DiagnoseTab() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="e.g. Red bump on paw, started yesterday. Dog keeps licking it."
-                    className="min-h-[100px] resize-none transition-smooth focus:shadow-medium"
+                    className="min-h-[80px] resize-none transition-smooth focus:shadow-medium"
                     data-testid="textarea-symptoms"
                   />
                 </div>
