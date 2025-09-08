@@ -7,6 +7,8 @@ import Results from "./pages/Results";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import {
   BrowserRouter as Router,
   Routes,
@@ -124,7 +126,9 @@ function AppContent() {
     location.pathname.includes("/results/") ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/profile";
+    location.pathname === "/profile" ||
+    location.pathname === "/privacy-policy" ||
+    location.pathname === "/terms-of-service";
 
   // Show splash screen first
   if (showSplash) return <Splash onComplete={handleSplashComplete} />;
@@ -141,7 +145,7 @@ function AppContent() {
   // If not authenticated, redirect to login (except for auth pages)
   if (
     !user &&
-    !["/login", "/signup"].includes(location.pathname) &&
+    !["/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(location.pathname) &&
     !isDemoMode()
   ) {
     return <Login />;
@@ -150,7 +154,7 @@ function AppContent() {
   // Check profile completion for authenticated users (not demo mode)
   if (user && !isDemoMode() && userProfile && !isProfileComplete()) {
     // Allow access to profile page and auth pages
-    if (!["/profile", "/login", "/signup"].includes(location.pathname)) {
+    if (!["/profile", "/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(location.pathname)) {
       // Redirect to profile with completion context
       navigate("/profile?incomplete=true", { replace: true });
       return null;
@@ -174,6 +178,9 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+
 
         {/* Main App Routes */}
         <Route

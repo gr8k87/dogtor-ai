@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Video,
 } from "../components/icons";
+import { Button } from "../components/ui/button";
 
 export default function ConnectTab() {
   return (
@@ -141,6 +142,26 @@ export default function ConnectTab() {
             </div>
           </HealthCardContent>
         </HealthCard>
+
+        {/* Legal Links */}
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={() => (window as any).setCurrentView('privacy')}
+          >
+            Privacy Policy
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={() => (window as any).setCurrentView('terms')}
+          >
+            Terms of Service
+          </Button>
+        </div>
       </main>
     </div>
   );
