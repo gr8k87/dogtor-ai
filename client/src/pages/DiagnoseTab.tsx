@@ -161,11 +161,11 @@ export default function DiagnoseTab() {
             colorIndex={2}
             className="border-accent gradient-card transition-smooth hover:shadow-elevated"
           >
-            <HealthCardContent className="p-4">
-              <div className="space-y-3">
+            <HealthCardContent className="p-0">
+              <div className="space-y-1">
                 <div className="space-y-1">
                   <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                    <AppIcons.camera size={20} className="text-primary" />
+                    <AppIcons.camera size={20} className="text-primary flex-shrink-0" />
                     What's worrying you about{" "}
                     <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
@@ -197,11 +197,11 @@ export default function DiagnoseTab() {
               colorIndex={2}
               className="border-accent gradient-card transition-smooth hover:shadow-elevated"
             >
-              <HealthCardContent className="p-4">
-                <div className="space-y-3">
+              <HealthCardContent className="p-0">
+                <div className="space-y-1">
                   <div className="space-y-1">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                      <Edit size={20} className="text-primary" />
+                      <Edit size={20} className="text-primary flex-shrink-0" />
                       What have you noticed about{" "}
                       <span className="text-[#FF5A5F]">{dogName}</span>?
                     </h2>

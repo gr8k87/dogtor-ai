@@ -90,7 +90,7 @@ export default function ImagePicker({ onChange, className }: Props) {
             <img
               src={selectedFile.preview}
               alt="Selected pet photo"
-              className="w-full h-48 object-contain bg-muted/20 transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-24 object-contain bg-muted/20 transition-transform duration-300 group-hover:scale-105"
               data-testid="img-preview"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
@@ -129,7 +129,7 @@ export default function ImagePicker({ onChange, className }: Props) {
           </Button>
 
           {/* Replace button */}
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-1 mt-3">
             <Button
               variant="default"
               onClick={handleCameraCapture}
@@ -164,7 +164,7 @@ export default function ImagePicker({ onChange, className }: Props) {
         <div className="space-y-4">
           {/* Upload area */}
           <div className="group relative overflow-hidden rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300 shadow-medium hover:shadow-elevated">
-            <div className="flex flex-col items-center justify-center p-4 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
+            <div className="flex flex-col items-center justify-center p-1 text-center bg-muted/20 hover:bg-muted/30 transition-colors duration-300">
               {isLoading ? (
                 <div className="space-y-6 w-full">
                   <div className="space-y-4">
@@ -198,7 +198,7 @@ export default function ImagePicker({ onChange, className }: Props) {
           </div>
 
           {/* Action buttons */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1">
             <Button
               onClick={handleCameraCapture}
               variant="default"
