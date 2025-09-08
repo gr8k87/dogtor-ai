@@ -23,6 +23,7 @@ export default function DiagnoseTab() {
   function validate() {
     const e: Record<string, string> = {};
     if (!imageUrl) e.image = "Please add a photo"; // Changed from imageFile
+    if (!notes.trim()) e.notes = "Please describe what you've noticed";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -32,7 +33,7 @@ export default function DiagnoseTab() {
     setDebugMsg("✅ Starting analysis...");
 
     if (!validate()) {
-      setDebugMsg("❌ Please add a photo");
+      setDebugMsg("❌ Please add a photo and describe what you've noticed");
       return;
     }
 
@@ -222,6 +223,15 @@ export default function DiagnoseTab() {
                     className="min-h-[80px] resize-none transition-smooth focus:shadow-medium"
                     data-testid="textarea-symptoms"
                   />
+                  {errors.notes && (
+                    <div className="flex items-start gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
+                      <AlertCircle
+                        size={14}
+                        className="text-destructive mt-0.5 flex-shrink-0"
+                      />
+                      <p className="text-xs text-destructive">{errors.notes}</p>
+                    </div>
+                  )}
                 </div>
               </HealthCardContent>
             </HealthCard>
