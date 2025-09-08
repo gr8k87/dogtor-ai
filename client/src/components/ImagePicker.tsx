@@ -188,21 +188,9 @@ export default function ImagePicker({ onChange, className }: Props) {
                 <div className="space-y-4 flex flex-col items-center">
                   <AppIcons.camera size={24} className="text-primary" />
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium text-foreground">
-                      Upload or Take a Photo
-                    </h3>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      A focused image helps us give you better guidance.
+                      Upload or Take a Photo
                     </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-green-500" />
-                      <span>JPG, PNG supported</span>
-                    </div>
-                    <span>•</span>
-                    <span>Max 10MB</span>
                   </div>
                 </div>
               )}
