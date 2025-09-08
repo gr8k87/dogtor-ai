@@ -211,7 +211,7 @@
     border: 1px solid rgba(255, 255, 255, 0.4);
   }
 
-  /* Dark mode input text color */
+  /* Dark mode input text color 
   .dark input,
   .dark input[type="text"],
   .dark input[type="email"],
@@ -219,7 +219,7 @@
   .dark input[type="number"],
   .dark select {
     color: hsl(var(--foreground)) !important;
-  }
+  }*/
 
   .dark textarea {
     color: hsl(var(--textarea-text)) !important;

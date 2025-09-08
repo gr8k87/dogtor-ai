@@ -165,12 +165,15 @@ export default function DiagnoseTab() {
               <div className="space-y-1">
                 <div className="space-y-1">
                   <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                    <AppIcons.camera size={20} className="text-primary flex-shrink-0" />
+                    <AppIcons.camera
+                      size={20}
+                      className="text-primary flex-shrink-0"
+                    />
                     What's worrying you about{" "}
                     <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Upload a clear photo for analysis.
+                    Upload a photo of the affected area.
                   </p>
                 </div>
 
