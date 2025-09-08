@@ -304,10 +304,30 @@ export default function History() {
               </div>
             </div>
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold"><span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s health journey starts here</h2>
+              <h2 className="text-2xl font-bold">
+                <span
+                  className="text-[#FF5A5F] font-bold tracking-tight"
+                  style={{
+                    fontFamily:
+                      'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                  }}
+                >
+                  {dogName}
+                </span>
+                's health journey starts here
+              </h2>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                Start <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s first checkup! Your diagnosis history will
-                appear here.
+                Start{" "}
+                <span
+                  className="text-[#FF5A5F] font-bold tracking-tight"
+                  style={{
+                    fontFamily:
+                      'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                  }}
+                >
+                  {dogName}
+                </span>
+                's first checkup! Your diagnosis history will appear here.
               </p>
             </div>
             <div className="mt-8">
@@ -315,7 +335,17 @@ export default function History() {
                 onClick={() => navigate("/")}
                 className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-primary/90 font-semibold text-lg shadow-elevated hover:shadow-floating transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                Start <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s First Checkup
+                Start{" "}
+                <span
+                  className="text-[#FF5A5F] font-bold tracking-tight"
+                  style={{
+                    fontFamily:
+                      'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                  }}
+                >
+                  {dogName}
+                </span>
+                's First Checkup
               </button>
             </div>
           </div>
@@ -328,20 +358,21 @@ export default function History() {
   return (
     <div className="min-h-dvh flex flex-col gradient-hero">
       <main className="flex-1 p-4 max-w-2xl mx-auto w-full pb-20">
-        {/* Header Card - now inside the layout with proper theming */}
-        <HealthCard colorIndex={2} className="mb-4 border-accent">
-          <HealthCardHeader className="pb-2">
-            <HealthCardTitle className="flex items-center justify-between text-xl text-foreground">
-              <div className="flex items-center gap-2">
-                <AppIcons.history size={24} className="text-primary" />
-                {dogName}'s previous checkups
-              </div>
-              <span className="text-sm font-normal text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                {items.length} record{items.length !== 1 ? "s" : ""}
-              </span>
-            </HealthCardTitle>
-          </HealthCardHeader>
-        </HealthCard>
+        {/* Simple heading in logo font */}
+        <div className="mb-6 text-center">
+          <h1
+            className="text-2xl font-bold text-[#FF5A5F] tracking-tight"
+            style={{
+              fontFamily:
+                'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+            }}
+          >
+            {dogName}'s Health History
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {items.length} record{items.length !== 1 ? "s" : ""}
+          </p>
+        </div>
 
         {/* Compact History Cards */}
         <div className="space-y-3">

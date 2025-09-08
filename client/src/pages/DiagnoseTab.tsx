@@ -156,16 +156,6 @@ export default function DiagnoseTab() {
             </div>
           </div>
 
-          {/* Debug message 
-          {debugMsg && (
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <p className="text-sm font-medium text-primary">{debugMsg}</p>
-              </div>
-            </div>
-          )}
-*/}
           {/* Enhanced Photo upload section */}
           <HealthCard
             colorIndex={2}
@@ -176,7 +166,8 @@ export default function DiagnoseTab() {
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                     <AppIcons.camera size={24} className="text-primary" />
-                    What's worrying you about <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>?
+                    What's worrying you about{" "}
+                    <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
                   <p className="text-muted-foreground">
                     Upload a clear photo for analysis.
@@ -211,11 +202,13 @@ export default function DiagnoseTab() {
                   <div className="space-y-2">
                     <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={24} className="text-primary" />
-                      What have you noticed about <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>?
+                      What have you noticed about{" "}
+                      <span className="text-[#FF5A5F]">{dogName}</span>?
                     </h2>
                     <p className="text-muted-foreground">
-                      Describe any changes in <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>'s health or behavior.
-                      Even small details can help.
+                      Describe any changes in{" "}
+                      <span className="text-[#FF5A5F]">{dogName}</span>
+                      's health or behavior. Even small details can help.
                     </p>
                   </div>
 
