@@ -16,6 +16,7 @@ import {
   Video,
 } from "../components/icons";
 import { Button } from "../components/ui/button";
+import BottomTabs from "../components/BottomTabs";
 
 export default function ConnectTab() {
   const navigate = useNavigate();
@@ -166,6 +167,8 @@ export default function ConnectTab() {
           </Button>
         </div>
       </main>
+      
+      <BottomTabs navigate={navigate} activeTab="connect" />
     </div>
   );
 }

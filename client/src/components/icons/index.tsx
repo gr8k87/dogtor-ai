@@ -53,6 +53,8 @@ export {
   Download,
   MapPin,
   Star,
+  MapPin,
+  Star,
 
   // Media
   Image,
@@ -60,6 +62,7 @@ export {
   Upload,
   Eye,
   EyeOff,
+  Video,
   Video,
 
   // Communication
