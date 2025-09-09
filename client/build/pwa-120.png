@@ -1,0 +1,10 @@
+
+# This is a placeholder file for the 120x120 iOS icon
+# You need to create actual PNG icon files with these dimensions:
+# - pwa-120.png (120x120)
+# - pwa-152.png (152x152) 
+# - pwa-167.png (167x167)
+# - pwa-180.png (180x180)
+# 
+# Use your existing pwa-192.png and pwa-512.png as reference
+# and resize them to create these additional iOS-specific icon sizes
