@@ -51,6 +51,8 @@ export {
   Trash2 as Delete,
   Save,
   Download,
+  MapPin,
+  Star,
 
   // Media
   Image,
@@ -58,6 +60,7 @@ export {
   Upload,
   Eye,
   EyeOff,
+  Video,
 
   // Communication
   MessageCircle,
@@ -83,6 +86,7 @@ export {
   User,
   Users,
   UserPlus,
+  LogOut,
 
   // Documents
   FileText,
@@ -94,21 +98,6 @@ export {
   Moon,
   Monitor,
   Palette,
-
-  // Results page icons
-  ClipboardList,
-  Target,
-  DollarSign,
-  Lightbulb,
-  Building,
-  Pill,
-  Utensils,
-  Activity,
-
-  // ConnectTab icons
-  MapPin,
-  Star,
-  Video,
 } from "lucide-react";
 
 // Icon configuration - Change these to switch icon sets globally

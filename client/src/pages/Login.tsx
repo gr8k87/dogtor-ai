@@ -182,7 +182,7 @@ export default function Login() {
               Continue with Google
             </Button>
 
-            {/* Hidden Email Login Form - Preserved for future use */}
+            {/* Hidden Email Login Form - Preserved for future use 
             {isEmailFlowEnabled && (
               <>
                 <div className="relative">
@@ -196,7 +196,7 @@ export default function Login() {
                   </div>
                 </div>
 
-                {/* Email Login Form */}
+                {/* Email Login Form 
                 <form onSubmit={handleEmailLogin} className="space-y-4">
                   {errors.general && (
                     <div
@@ -276,7 +276,8 @@ export default function Login() {
               </>
             )}
 
-            {/* Message when email  flow is disabled */}
+*/}
+            {/* Message when email  flow is disabled 
             {!isEmailFlowEnabled && (
               <div className="text-center py-4">
                 <div className="text-xs text-muted-foreground">
@@ -289,7 +290,7 @@ export default function Login() {
                   </a>
                 </div>
               </div>
-            )}
+            )}*/}
           </HealthCardContent>
         </HealthCard>
 

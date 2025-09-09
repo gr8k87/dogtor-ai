@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from './ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { User, Settings } from '../components/icons';
-import { LogOut } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { User, Settings } from "../components/icons";
+import { LogOut } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 interface UserProfile {
   id: string;
@@ -26,23 +33,27 @@ export function ProfileButton() {
 
   const checkAuthStatus = async () => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
       if (error || !session) {
         // Check for demo mode if no session
-        const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                           new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                           window.location.pathname.includes('/demo');
+        const isDemoMode =
+          sessionStorage.getItem("demo-mode") === "true" ||
+          new URLSearchParams(window.location.search).get("demo") === "true" ||
+          window.location.pathname.includes("/demo");
 
         if (isDemoMode) {
           // Simulate a demo user
           setUser({
-            id: 'demo-user-id',
-            email: 'demo@example.com',
-            full_name: 'Demo User',
-            first_name: 'Demo',
-            last_name: 'User',
-            pet_name: 'Buddy'
+            id: "demo-user-id",
+            email: "demo@example.com",
+            full_name: "Demo User",
+            first_name: "Demo",
+            last_name: "User",
+            pet_name: "Buddy",
           });
         } else {
           setUser(null);
@@ -50,10 +61,10 @@ export function ProfileButton() {
       } else {
         // Get additional user data from our API if needed
         const token = session.access_token;
-        const response = await fetch('/api/auth/user', {
+        const response = await fetch("/api/auth/user", {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {
@@ -63,7 +74,7 @@ export function ProfileButton() {
           // Fallback to basic user info from session
           setUser({
             id: session.user.id,
-            email: session.user.email || '',
+            email: session.user.email || "",
             full_name: session.user.user_metadata?.full_name,
             first_name: session.user.user_metadata?.first_name,
             last_name: session.user.user_metadata?.last_name,
@@ -71,7 +82,7 @@ export function ProfileButton() {
         }
       }
     } catch (error) {
-      console.error('Error checking auth status:', error);
+      console.error("Error checking auth status:", error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -79,44 +90,46 @@ export function ProfileButton() {
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleProfile = () => {
     // Check for demo mode to decide where to navigate
-    const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                       new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                       window.location.pathname.includes('/demo');
+    const isDemoMode =
+      sessionStorage.getItem("demo-mode") === "true" ||
+      new URLSearchParams(window.location.search).get("demo") === "true" ||
+      window.location.pathname.includes("/demo");
     if (isDemoMode) {
-      navigate('/demo/profile'); // Assuming a specific route for demo profile
+      navigate("/demo/profile"); // Assuming a specific route for demo profile
     } else {
-      navigate('/profile');
+      navigate("/profile");
     }
   };
 
   const handleLogout = async () => {
     try {
       // Check for demo mode
-      const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                         new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                         window.location.pathname.includes('/demo');
+      const isDemoMode =
+        sessionStorage.getItem("demo-mode") === "true" ||
+        new URLSearchParams(window.location.search).get("demo") === "true" ||
+        window.location.pathname.includes("/demo");
 
       if (isDemoMode) {
         // Clear demo mode from sessionStorage and navigate to login
-        sessionStorage.removeItem('demo-mode');
+        sessionStorage.removeItem("demo-mode");
         setUser(null); // Clear the simulated user
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error('Logout error:', error);
+        console.error("Logout error:", error);
       }
       setUser(null);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -125,7 +138,7 @@ export function ProfileButton() {
       return `${user.first_name[0]}${user.last_name[0]}`.toUpperCase();
     }
     if (user.full_name) {
-      const names = user.full_name.split(' ');
+      const names = user.full_name.split(" ");
       if (names.length >= 2) {
         return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
       }
@@ -134,7 +147,7 @@ export function ProfileButton() {
     if (user.email) {
       return user.email[0].toUpperCase();
     }
-    return 'U';
+    return "U";
   };
 
   const getDisplayName = (user: UserProfile): string => {
@@ -148,17 +161,15 @@ export function ProfileButton() {
   };
 
   if (isLoading) {
-    return (
-      <div className="w-9 h-9 rounded-full bg-muted animate-pulse" />
-    );
+    return <div className="w-9 h-9 rounded-full bg-muted animate-pulse" />;
   }
 
   // Show Sign in button if not logged in and not in demo mode
   if (!user) {
     return (
-      <Button 
+      <Button
         onClick={handleLogin}
-        variant="ghost" 
+        variant="ghost"
         size="sm"
         data-testid="button-login"
       >
@@ -171,9 +182,9 @@ export function ProfileButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="relative h-9 w-9 rounded-full"
           data-testid="button-profile"
         >
@@ -184,7 +195,9 @@ export function ProfileButton() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col space-y-1">
-          <p className="text-sm font-medium leading-none">{getDisplayName(user)}</p>
+          <p className="text-sm font-medium leading-none">
+            {getDisplayName(user)}
+          </p>
           <p className="text-xs leading-none text-muted-foreground">
             {user.email}
           </p>
