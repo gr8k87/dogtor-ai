@@ -1,5 +1,6 @@
 import React from "react";
 import { useHistory } from "../state/historyContext";
+import { useNavigate } from "react-router-dom";
 import {
   HealthCard,
   HealthCardHeader,
@@ -17,6 +18,8 @@ import {
 import { Button } from "../components/ui/button";
 
 export default function ConnectTab() {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-dvh">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
@@ -149,7 +152,7 @@ export default function ConnectTab() {
             variant="ghost"
             size="sm"
             className="flex-1 text-xs"
-            onClick={() => (window as any).setCurrentView('privacy')}
+            onClick={() => navigate('/privacy-policy')}
           >
             Privacy Policy
           </Button>
@@ -157,7 +160,7 @@ export default function ConnectTab() {
             variant="ghost"
             size="sm"
             className="flex-1 text-xs"
-            onClick={() => (window as any).setCurrentView('terms')}
+            onClick={() => navigate('/terms-of-service')}
           >
             Terms of Service
           </Button>

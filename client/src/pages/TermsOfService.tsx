@@ -1,14 +1,38 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { AppIcons } from '../components/icons';
 
 export default function TermsOfService() {
+  const navigate = useNavigate();
+  
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate(-1)}
+              className="mr-2"
+            >
+              ← Back
+            </Button>
+            <AppIcons.logo size={32} className="text-primary" />
+            <span className="font-semibold">Terms of Service</span>
+          </div>
+        </div>
+      </header>
+      
+      <div className="p-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms of Service</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-8">Terms of Service</h1>
         
         <div className="prose prose-gray max-w-none">
-          <p className="text-sm text-gray-500 mb-6">Last updated: January 18, 2025</p>
+          <p className="text-sm text-muted-foreground mb-6">Last updated: January 18, 2025</p>
           
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
