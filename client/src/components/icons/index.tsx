@@ -1,3 +1,4 @@
+
 // Global Icon Management System for DogtorAI
 // This file allows easy changing of all icons across the application
 
@@ -85,6 +86,7 @@ export {
   AlertTriangle,
   Clock,
   Zap,
+  Lightbulb,
 
   // User & Profile
   User,
@@ -103,6 +105,10 @@ export {
   Moon,
   Monitor,
   Palette,
+
+  // Additional icons used in Results.tsx
+  Activity,
+  Utensils,
 } from "lucide-react";
 
 // Icon configuration - Change these to switch icon sets globally
