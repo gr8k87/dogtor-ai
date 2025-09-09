@@ -53,8 +53,6 @@ export {
   Download,
   MapPin,
   Star,
-  MapPin,
-  Star,
 
   // Media
   Image,
@@ -63,7 +61,10 @@ export {
   Eye,
   EyeOff,
   Video,
-  Video,
+  Target,
+  DollarSign,
+  Building,
+  Pill,
 
   // Communication
   MessageCircle,
@@ -95,6 +96,7 @@ export {
   FileText,
   File,
   Folder,
+  ClipboardList,
 
   // Theme
   Sun,
