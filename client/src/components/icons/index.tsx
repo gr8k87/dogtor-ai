@@ -16,6 +16,87 @@ import {
   ShieldCheck,
 } from "./dogtor-icons";
 
+// Import all required Lucide React icons
+import {
+  // Navigation
+  Home,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  ArrowRight,
+
+  // Actions
+  Plus,
+  Minus,
+  Check,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  Edit3,
+  Trash2,
+  Save,
+  Download,
+  MapPin,
+  Star,
+
+  // Media
+  Image,
+  Camera,
+  Upload,
+  Eye,
+  EyeOff,
+  Video,
+  Target,
+  DollarSign,
+  Building,
+  Pill,
+
+  // Communication
+  MessageCircle,
+  Send,
+  Phone,
+  Mail,
+
+  // Settings & Controls
+  Settings,
+  Filter,
+  Search,
+  MoreVertical,
+  MoreHorizontal,
+
+  // Status
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Clock,
+  Zap,
+  Lightbulb,
+
+  // User & Profile
+  User,
+  Users,
+  UserPlus,
+  LogOut,
+
+  // Documents
+  FileText,
+  File,
+  Folder,
+  ClipboardList,
+
+  // Theme
+  Sun,
+  Moon,
+  Monitor,
+  Palette,
+
+  // Additional icons used in Results.tsx
+  Activity,
+  Utensils,
+} from "lucide-react";
+
 export {
   DogtorLogo,
   DogtorLogoVertical,
@@ -106,10 +187,10 @@ export {
   Monitor,
   Palette,
 
-  // Additional icons used in Results.tsx
+  // Additional icons
   Activity,
   Utensils,
-} from "lucide-react";
+};
 
 // Icon configuration - Change these to switch icon sets globally
 export const AppIcons = {
