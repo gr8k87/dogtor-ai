@@ -18,7 +18,7 @@ import {
 } from "../components/ui/health-card";
 import { Separator } from "../components/ui/separator";
 import BreedSelector from "../components/BreedSelector";
-import { ArrowLeft, User, Save, LogOut } from "../components/icons";
+import { ArrowLeft, User, Save } from "../components/icons";
 import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth-provider";
@@ -320,14 +320,14 @@ export default function Profile() {
 
         setUser(updatedDemoUser);
         setSaveMessage("Demo profile updated successfully!");
-
+        
         // Set profile completed state for demo
         if (isProfileComplete(updatedDemoUser)) {
           setProfileCompleted(true);
           // Auto-hide celebration after 10 seconds
           setTimeout(() => setProfileCompleted(false), 10000);
         }
-
+        
         setTimeout(() => setSaveMessage(""), 3000);
         return;
       }
@@ -365,10 +365,10 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-
+        
         // Refresh auth context profile
         await refreshUserProfile();
-
+        
         // Set profile completed state
         if (isProfileComplete(updatedUser)) {
           setProfileCompleted(true);
@@ -409,11 +409,6 @@ export default function Profile() {
       return;
     }
     navigate("/");
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
   };
 
   if (isLoading) {
@@ -718,7 +713,7 @@ export default function Profile() {
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
-
+            
             <Button
               type="button"
               onClick={handleContinueToDogtor}
@@ -730,39 +725,6 @@ export default function Profile() {
             </Button>
           </div>
         </form>
-
-        <div className="space-y-4">
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={handleSignOut}
-          >
-            <LogOut size={16} className="mr-2" />
-            Sign Out
-          </Button>
-
-          {/* Legal Links */}
-          <div className="pt-4 border-t border-border">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs"
-                onClick={() => navigate('/privacy-policy')}
-              >
-                Privacy Policy
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs"
-                onClick={() => navigate('/terms-of-service')}
-              >
-                Terms of Service
-              </Button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
