@@ -111,14 +111,26 @@ function AppContent() {
   // Handle auth success redirect
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    if (urlParams.get('auth') === 'success' && user && userProfile && !loading) {
+    if (
+      urlParams.get("auth") === "success" &&
+      user &&
+      userProfile &&
+      !loading
+    ) {
       if (isProfileComplete()) {
         navigate("/", { replace: true });
       } else {
         navigate("/profile?incomplete=true", { replace: true });
       }
     }
-  }, [user, userProfile, loading, isProfileComplete, location.search, navigate]);
+  }, [
+    user,
+    userProfile,
+    loading,
+    isProfileComplete,
+    location.search,
+    navigate,
+  ]);
 
   // Hide navigation on question, result, and auth pages
   const hideNav =
@@ -145,7 +157,9 @@ function AppContent() {
   // If not authenticated, redirect to login (except for auth pages)
   if (
     !user &&
-    !["/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(location.pathname) &&
+    !["/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(
+      location.pathname,
+    ) &&
     !isDemoMode()
   ) {
     return <Login />;
@@ -154,7 +168,15 @@ function AppContent() {
   // Check profile completion for authenticated users (not demo mode)
   if (user && !isDemoMode() && userProfile && !isProfileComplete()) {
     // Allow access to profile page and auth pages
-    if (!["/profile", "/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(location.pathname)) {
+    if (
+      ![
+        "/profile",
+        "/login",
+        "/signup",
+        "/privacy-policy",
+        "/terms-of-service",
+      ].includes(location.pathname)
+    ) {
       // Redirect to profile with completion context
       navigate("/profile?incomplete=true", { replace: true });
       return null;
@@ -180,7 +202,6 @@ function AppContent() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
-
 
         {/* Main App Routes */}
         <Route

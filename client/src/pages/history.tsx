@@ -306,7 +306,7 @@ export default function History() {
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">
                 <span
-                  className="text-[#FF5A5F] font-bold tracking-tight"
+                  className="font-bold tracking-tight"
                   style={{
                     fontFamily:
                       'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
