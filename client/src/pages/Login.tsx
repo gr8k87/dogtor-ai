@@ -276,7 +276,7 @@ export default function Login() {
               </>
             )}
 
-            {/* Message when email  flow is disabled */}
+            {/* Message when email  flow is disabled 
             {!isEmailFlowEnabled && (
               <div className="text-center py-4">
                 <div className="text-xs text-muted-foreground">
@@ -289,7 +289,7 @@ export default function Login() {
                   </a>
                 </div>
               </div>
-            )}
+            )}*/}
           </HealthCardContent>
         </HealthCard>
 
