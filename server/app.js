@@ -310,6 +310,8 @@ const clientBuildPath = path.join(__dirname, "..", "client", "build");
 console.log("🎯 Serving React build from:", clientBuildPath);
 
 app.use(express.static(clientBuildPath));
+
+// Catch-all route must be LAST - after static file serving
 app.get("*", (_req, res) =>
   res.sendFile(path.join(clientBuildPath, "index.html")),
 );
