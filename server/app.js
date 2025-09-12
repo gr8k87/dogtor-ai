@@ -309,7 +309,16 @@ app.delete("/api/history/delete/:id", verifySupabaseAuth, async (req, res) => {
 const clientBuildPath = path.join(__dirname, "..", "client", "build");
 console.log("🎯 Serving React build from:", clientBuildPath);
 
-app.use(express.static(clientBuildPath));
+// Ensure proper static file serving with correct headers
+app.use(express.static(clientBuildPath, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
 // Catch-all route must be LAST - after static file serving
 app.get("*", (_req, res) =>
