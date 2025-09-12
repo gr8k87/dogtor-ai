@@ -6,6 +6,8 @@ import Questions from "./pages/Questions";
 import Results from "./pages/Results";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Verify from "./pages/Verify";
+import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -138,6 +140,8 @@ function AppContent() {
     location.pathname.includes("/results/") ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
+    location.pathname === "/verify" ||
+    location.pathname === "/auth/callback" ||
     location.pathname === "/profile" ||
     location.pathname === "/privacy-policy" ||
     location.pathname === "/terms-of-service";
@@ -157,7 +161,7 @@ function AppContent() {
   // If not authenticated, redirect to login (except for auth pages)
   if (
     !user &&
-    !["/login", "/signup", "/privacy-policy", "/terms-of-service"].includes(
+    !["/login", "/signup", "/verify", "/auth/callback", "/privacy-policy", "/terms-of-service"].includes(
       location.pathname,
     ) &&
     !isDemoMode()
@@ -173,6 +177,8 @@ function AppContent() {
         "/profile",
         "/login",
         "/signup",
+        "/verify",
+        "/auth/callback",
         "/privacy-policy",
         "/terms-of-service",
       ].includes(location.pathname)
@@ -199,6 +205,8 @@ function AppContent() {
         {/* Authentication Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify" element={<Verify />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />

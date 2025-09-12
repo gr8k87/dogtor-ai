@@ -4,7 +4,17 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || ''
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    // Maximize session persistence
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage, // Use localStorage for maximum persistence
+    storageKey: 'supabase.auth.token', // Custom storage key
+    flowType: 'pkce' // Use PKCE for better security
+  }
+})
 
 // Helper function to upload image to Supabase Storage
 export const uploadImageToSupabase = async (file: File): Promise<string> => {

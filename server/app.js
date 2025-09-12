@@ -97,33 +97,69 @@ const verifySupabaseAuth = async (req, res, next) => {
       .eq("id", user.id)
       .single();
 
-    // If user doesn't exist, create them
+    // If user doesn't exist by ID, try to find by email (for Google OAuth -> Magic Link migration)
     if (userError && userError.code === "PGRST116") {
-      console.log("🆕 Creating new user in database:", user.id);
-      const { data: newUser, error: createError } = await supabase
+      console.log("🔍 User not found by ID, checking by email:", user.email);
+      
+      const { data: emailUserData, error: emailError } = await supabase
         .from("users")
-        .insert([
-          {
-            id: user.id,
-            email: user.email,
-            auth_method: "email", // Simple default for now
-            email_verified: true,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ])
-        .select()
+        .select("*")
+        .eq("email", user.email.toLowerCase())
         .single();
+      
+      if (!emailError && emailUserData) {
+        // Found existing user by email - preserve their data without mutating the primary key
+        console.log("✅ Found existing user by email, preserving data:", user.email);
+        
+        // Store Supabase auth ID in google_id field to link accounts without changing primary key
+        const { data: updatedUser, error: updateError } = await supabase
+          .from("users")
+          .update({
+            google_id: user.id, // Repurpose google_id to store Supabase auth ID for migration
+            auth_method: "email",
+            email_verified: true,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("email", user.email.toLowerCase())
+          .select()
+          .single();
 
-      if (createError) {
-        console.error("❌ Failed to create user:", createError);
-        return res.status(500).json({
-          error: "Failed to create user account",
-          details: createError.message,
-        });
+        if (updateError) {
+          console.error("❌ Failed to link existing user:", updateError);
+          return res.status(500).json({
+            error: "Failed to link user account",
+            details: updateError.message,
+          });
+        }
+        userData = updatedUser;
+      } else {
+        // No existing user found by email either - create new user
+        console.log("🆕 Creating new user in database:", user.id);
+        const { data: newUser, error: createError } = await supabase
+          .from("users")
+          .insert([
+            {
+              id: user.id,
+              email: user.email.toLowerCase(),
+              auth_method: "email",
+              email_verified: true,
+              is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+        if (createError) {
+          console.error("❌ Failed to create user:", createError);
+          return res.status(500).json({
+            error: "Failed to create user account",
+            details: createError.message,
+          });
+        }
+        userData = newUser;
       }
-      userData = newUser;
     } else if (userError) {
       console.error("❌ User lookup error:", userError);
       return res.status(500).json({ error: "Database error" });
