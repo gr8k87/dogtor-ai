@@ -30,7 +30,7 @@ export default function Verify() {
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ''); // Only allow digits
-    if (value.length <= 6) {
+    if (value.length <= 6) { 
       setCode(value);
       // Clear error when user starts typing
       if (errors.code) {
@@ -144,7 +144,7 @@ export default function Verify() {
         });
       }
     } catch (error) {
-      setErrors({
+      setErrors({ 
         general: "Network error. Please check your connection and try again.",
       });
     } finally {
@@ -233,18 +233,17 @@ export default function Verify() {
               </p>
               <div className="space-y-2">
                 <Button
-                  variant="outline"
-                  onClick={handleResendCode}
-                  disabled={isResending}
-                  className="w-full"
+                  type="submit"
+                  className="w-full h-12 text-base"
+                  disabled={isLoading}
                   data-testid="button-resend-code"
                 >
                   {isResending ? "Sending..." : "Resend code"}
                 </Button>
                 <Button
-                  variant="ghost"
-                  onClick={handleBackToLogin}
-                  className="w-full text-sm"
+                  type="submit"
+                  className="w-full h-12 text-base"
+                  disabled={isLoading}
                   data-testid="button-back-login"
                 >
                   Back to login
