@@ -611,7 +611,10 @@ export default function Profile() {
                       className={errors.pet_birth_month ? "border-red-500" : ""}
                       data-testid="select-birth-month"
                     >
-                      <SelectValue placeholder="Month" />
+                      <SelectValue
+                        className="text-foreground"
+                        placeholder="Month"
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {MONTHS.map((month) => (
@@ -648,7 +651,10 @@ export default function Profile() {
                       className={errors.pet_birth_year ? "border-red-500" : ""}
                       data-testid="select-birth-year"
                     >
-                      <SelectValue placeholder="Year" />
+                      <SelectValue
+                        className="text-foreground"
+                        placeholder="Year"
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {YEARS.map((year) => (
