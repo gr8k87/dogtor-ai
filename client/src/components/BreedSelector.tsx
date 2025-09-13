@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Input } from './ui/input';
+import React, { useState } from "react";
+import { Label } from "./ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Input } from "./ui/input";
 
 interface BreedSelectorProps {
   value: string;
@@ -15,7 +21,7 @@ interface BreedSelectorProps {
 const POPULAR_BREEDS = [
   // Popular Dogs
   "Labrador Retriever",
-  "Golden Retriever", 
+  "Golden Retriever",
   "German Shepherd",
   "French Bulldog",
   "Bulldog",
@@ -54,10 +60,10 @@ const POPULAR_BREEDS = [
   "Havanese",
   "Irish Setter",
   "Papillon",
-  
+
   // Popular Cats
   "Domestic Shorthair",
-  "Domestic Longhair", 
+  "Domestic Longhair",
   "Persian",
   "Maine Coon",
   "Siamese",
@@ -85,18 +91,22 @@ const POPULAR_BREEDS = [
   "Selkirk Rex",
   "Tonkinese",
   "Turkish Van",
-  "Balinese"
+  "Balinese",
 ].sort();
 
-const SPECIAL_OPTIONS = [
-  "Mixed breed",
-  "Unknown", 
-  "Other"
-];
+const SPECIAL_OPTIONS = ["Mixed breed", "Unknown", "Other"];
 
-export default function BreedSelector({ value, onChange, className = "", required = false, error }: BreedSelectorProps) {
+export default function BreedSelector({
+  value,
+  onChange,
+  className = "",
+  required = false,
+  error,
+}: BreedSelectorProps) {
   const [showOtherInput, setShowOtherInput] = useState(
-    value && !POPULAR_BREEDS.includes(value) && !SPECIAL_OPTIONS.includes(value)
+    value &&
+      !POPULAR_BREEDS.includes(value) &&
+      !SPECIAL_OPTIONS.includes(value),
   );
 
   const handleBreedChange = (newValue: string) => {
@@ -115,10 +125,10 @@ export default function BreedSelector({ value, onChange, className = "", require
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <Label className="text-sm font-medium">
+      <Label className="text-sm font-medium text-foreground">
         Pet Breed {required && <span className="text-red-500">*</span>}
       </Label>
-      
+
       {showOtherInput ? (
         <div className="space-y-2">
           <Input
@@ -142,8 +152,13 @@ export default function BreedSelector({ value, onChange, className = "", require
           </button>
         </div>
       ) : (
-        <Select value={value} onValueChange={handleBreedChange} required={required}>
-          <SelectTrigger 
+        <Select
+          
+          value={value}
+          onValueChange={handleBreedChange}
+          required={required}
+        >
+          <SelectTrigger
             className={`w-full ${error ? "border-red-500" : ""}`}
             data-testid="select-breed"
           >
@@ -152,24 +167,32 @@ export default function BreedSelector({ value, onChange, className = "", require
           <SelectContent className="max-h-60">
             {/* Special options first */}
             {SPECIAL_OPTIONS.map((option) => (
-              <SelectItem key={option} value={option} data-testid={`option-breed-${option.toLowerCase().replace(' ', '-')}`}>
+              <SelectItem
+                key={option}
+                value={option}
+                data-testid={`option-breed-${option.toLowerCase().replace(" ", "-")}`}
+              >
                 {option}
               </SelectItem>
             ))}
-            
+
             {/* Separator */}
             <div className="border-t border-gray-200 my-1" />
-            
+
             {/* Popular breeds */}
             {POPULAR_BREEDS.map((breed) => (
-              <SelectItem key={breed} value={breed} data-testid={`option-breed-${breed.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+              <SelectItem
+                key={breed}
+                value={breed}
+                data-testid={`option-breed-${breed.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+              >
                 {breed}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       )}
-      
+
       {error && (
         <p className="text-sm text-red-500" data-testid="text-breed-error">
           {error}

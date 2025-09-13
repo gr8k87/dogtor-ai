@@ -194,18 +194,27 @@
   }
 
   /* Dropdown/Select text color */
-  .select-content {
+  .select,
+  .select-content,
+  .select-trigger,
+  .select-value {
     color: #020817 !important;
   }
 
+  /* DARK SELECT */
+  .dark select,
+  .dark select-content,
+  .dark select-trigger,
+  .dark select-value {
+    color: hsl(var(--textarea-text)) !important;
+  }
 
   /* Ensure all form elements have proper text color */
   .input,
   input[type="text"],
   input[type="email"],
   input[type="password"],
-  input[type="number"],
-  select {
+  input[type="number"] {
     color: #020817 !important;
     background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -217,9 +226,7 @@
   .dark input[type="text"],
   .dark input[type="email"],
   .dark input[type="password"],
-  .dark input[type="number"],
-  .dark select,
-  .select-content {
+  .dark input[type="number"] {
     color: hsl(var(--foreground)) !important;
   }
 
