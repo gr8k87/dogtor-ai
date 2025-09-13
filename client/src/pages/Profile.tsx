@@ -618,7 +618,7 @@ export default function Profile() {
                         placeholder="Month"
                       />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="text-foreground">
                       {MONTHS.map((month) => (
                         <SelectItem
                           key={month.value}
@@ -658,7 +658,7 @@ export default function Profile() {
                         placeholder="Year"
                       />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="text-foreground">
                       {YEARS.map((year) => (
                         <SelectItem
                           key={year.value}
