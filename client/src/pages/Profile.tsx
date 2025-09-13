@@ -320,14 +320,14 @@ export default function Profile() {
 
         setUser(updatedDemoUser);
         setSaveMessage("Demo profile updated successfully!");
-        
+
         // Set profile completed state for demo
         if (isProfileComplete(updatedDemoUser)) {
           setProfileCompleted(true);
           // Auto-hide celebration after 10 seconds
           setTimeout(() => setProfileCompleted(false), 10000);
         }
-        
+
         setTimeout(() => setSaveMessage(""), 3000);
         return;
       }
@@ -365,10 +365,10 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-        
+
         // Refresh auth context profile
         await refreshUserProfile();
-        
+
         // Set profile completed state
         if (isProfileComplete(updatedUser)) {
           setProfileCompleted(true);
@@ -404,7 +404,8 @@ export default function Profile() {
   const handleContinueToDogtor = () => {
     if (!isFormValid()) {
       setErrors({
-        general: "Please complete all required pet information before proceeding."
+        general:
+          "Please complete all required pet information before proceeding.",
       });
       return;
     }
@@ -448,7 +449,8 @@ export default function Profile() {
                   Profile Successfully Created!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Great! Your pet's information has been saved. You're now ready to start getting personalized health guidance.
+                  Great! Your pet's information has been saved. You're now ready
+                  to start getting personalized health guidance.
                 </p>
               </div>
             </HealthCardContent>
@@ -509,10 +511,13 @@ export default function Profile() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name">First Name</Label>
+                  <Label className="text-foreground" htmlFor="first_name">
+                    First Name
+                  </Label>
                   <Input
                     id="first_name"
                     name="first_name"
+                    type="text"
                     placeholder="Enter your first name"
                     value={formData.first_name}
                     onChange={handleInputChange}
@@ -522,8 +527,11 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="last_name">Last Name</Label>
+                  <Label className="text-foreground" htmlFor="last_name">
+                    Last Name
+                  </Label>
                   <Input
+                    type="text"
                     id="last_name"
                     name="last_name"
                     placeholder="Enter your last name"
@@ -536,8 +544,9 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label>Email Address</Label>
+                <Label className="text-foreground">Email Address</Label>
                 <Input
+                  type="email"
                   value={user.email}
                   disabled
                   className="bg-muted/50"
@@ -557,10 +566,11 @@ export default function Profile() {
             </HealthCardHeader>
             <HealthCardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="pet_name">
+                <Label className="text-foreground" htmlFor="pet_name">
                   Pet Name <span className="text-red-500">*</span>
                 </Label>
                 <Input
+                  type="text"
                   id="pet_name"
                   name="pet_name"
                   placeholder="Enter your pet's name"
@@ -589,7 +599,7 @@ export default function Profile() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>
+                  <Label className="text-foreground">
                     Birth Month <span className="text-red-500">*</span>
                   </Label>
                   <Select
@@ -626,7 +636,7 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>
+                  <Label className="text-foreground">
                     Birth Year <span className="text-red-500">*</span>
                   </Label>
                   <Select
@@ -664,7 +674,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label>Gender (optional)</Label>
+                <Label className="text-foreground">Gender (optional)</Label>
                 <Select
                   value={formData.pet_gender}
                   onValueChange={handleSelectChange("pet_gender")}
@@ -713,7 +723,7 @@ export default function Profile() {
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
-            
+
             <Button
               type="button"
               onClick={handleContinueToDogtor}
