@@ -467,7 +467,7 @@ export default function Profile() {
           <HealthCardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
               <div>
-                <p className="font-medium">{user.email}</p>
+                <p className="font-medium text-foreground">{user.email}</p>
                 <p className="text-sm text-muted-foreground">
                   {user.auth_method === "google"
                     ? "Google Account"
@@ -476,7 +476,9 @@ export default function Profile() {
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Pet</p>
-                <p className="font-medium">{user.pet_name || "Not set"}</p>
+                <p className="font-medium text-foreground">
+                  {user.pet_name || "Not set"}
+                </p>
                 <p className="text-xs text-muted-foreground">{getPetAge()}</p>
               </div>
             </div>
@@ -686,10 +688,13 @@ export default function Profile() {
                   onValueChange={handleSelectChange("pet_gender")}
                   disabled={isSaving}
                 >
-                  <SelectTrigger data-testid="select-gender">
+                  <SelectTrigger
+                    className="text-foreground"
+                    data-testid="select-gender"
+                  >
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="text-foreground">
                     {GENDERS.map((gender) => (
                       <SelectItem
                         key={gender.value}
