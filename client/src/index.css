@@ -197,9 +197,17 @@
   .select,
   .select-content,
   .select-trigger,
-  .select-value {
+  .select-value,
+  [data-radix-select-trigger],
+  [data-radix-select-content],
+  [data-radix-select-item],
+  [data-radix-select-item]:hover,
+  [data-radix-select-trigger],
+  [data-radix-select-value] {
     color: #020817 !important;
   }
+
+
 
   /* DARK SELECT */
   .dark select,
