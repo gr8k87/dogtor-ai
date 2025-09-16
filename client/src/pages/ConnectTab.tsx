@@ -88,7 +88,6 @@ export default function ConnectTab() {
             </div>
           </HealthCardContent>
         </HealthCard>
-
         {/* Call TeleVet Card */}
         <HealthCard
           colorIndex={2}
