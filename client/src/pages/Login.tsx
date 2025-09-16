@@ -3,10 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import {
-  HealthCard,
-  HealthCardContent,
-} from "../components/ui/health-card";
+import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
 import { supabase } from "../lib/supabase";
 
@@ -59,7 +56,8 @@ export default function Login() {
 
       if (error) {
         setErrors({
-          general: error.message || "Failed to send magic link. Please try again.",
+          general:
+            error.message || "Failed to send magic link. Please try again.",
         });
       } else {
         setMagicLinkSent(true);
@@ -102,7 +100,9 @@ export default function Login() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label className="text-foreground" htmlFor="email">
+                  Email Address
+                </Label>
                 <Input
                   id="email"
                   name="email"
@@ -133,19 +133,6 @@ export default function Login() {
                 {isLoading ? "Sending link..." : "Send sign-in link"}
               </Button>
             </form>
-
-            {/* Demo Link */}
-            <div className="text-center py-4">
-              <div className="text-xs text-muted-foreground">
-                <a
-                  href="/?demo=true"
-                  className="text-primary hover:text-primary/80 underline"
-                  data-testid="link-demo"
-                >
-                  Try demo version
-                </a>
-              </div>
-            </div>
           </HealthCardContent>
         </HealthCard>
 
