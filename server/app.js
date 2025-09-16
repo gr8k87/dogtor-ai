@@ -11,11 +11,11 @@ const app = express();
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : [
-      "http://0.0.0.0:5000", 
-      "http://localhost:3000", 
+      "http://0.0.0.0:5000",
+      "http://localhost:3000",
       "http://localhost:5000",
       "https://app.hellodogtor.com",
-      "https://hellodogtor.replit.app"
+      "https://hellodogtor.replit.app",
     ];
 
 app.use((req, res, next) => {
@@ -57,23 +57,24 @@ const supabase = createClient(
 const verifySupabaseAuth = async (req, res, next) => {
   try {
     // Check for demo mode
-    const isDemoMode = req.query.demo === 'true' || req.headers['x-demo-mode'] === 'true';
-    
+    const isDemoMode =
+      req.query.demo === "true" || req.headers["x-demo-mode"] === "true";
+
     if (isDemoMode) {
       // Create a demo user object
       req.user = {
-        id: 'demo-user-id',
-        email: 'demo@example.com',
-        auth_method: 'demo',
+        id: "demo-user-id",
+        email: "demo@example.com",
+        auth_method: "demo",
         email_verified: true,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        pet_name: 'Demo Pet',
-        pet_breed: 'Mixed Breed',
-        first_name: 'Demo',
-        last_name: 'User',
-        full_name: 'Demo User'
+        pet_name: "Demo Pet",
+        pet_breed: "Mixed Breed",
+        first_name: "Demo",
+        last_name: "User",
+        full_name: "Demo User",
       };
       req.currentUser = req.user;
       return next();
@@ -106,17 +107,20 @@ const verifySupabaseAuth = async (req, res, next) => {
     // If user doesn't exist by ID, try to find by email (for Google OAuth -> Magic Link migration)
     if (userError && userError.code === "PGRST116") {
       console.log("🔍 User not found by ID, checking by email:", user.email);
-      
+
       const { data: emailUserData, error: emailError } = await supabase
         .from("users")
         .select("*")
         .eq("email", user.email.toLowerCase())
         .single();
-      
+
       if (!emailError && emailUserData) {
         // Found existing user by email - preserve their data without mutating the primary key
-        console.log("✅ Found existing user by email, preserving data:", user.email);
-        
+        console.log(
+          "✅ Found existing user by email, preserving data:",
+          user.email,
+        );
+
         // Store Supabase auth ID in google_id field to link accounts without changing primary key
         const { data: updatedUser, error: updateError } = await supabase
           .from("users")
@@ -351,16 +355,29 @@ app.delete("/api/history/delete/:id", verifySupabaseAuth, async (req, res) => {
 const clientBuildPath = path.join(__dirname, "..", "client", "build");
 console.log("🎯 Serving React build from:", clientBuildPath);
 
-// Ensure proper static file serving with correct headers
-app.use(express.static(clientBuildPath, {
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (filePath.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    }
-  }
-}));
+// Ensure proper static file serving with cache-busting headers
+app.use(
+  express.static(clientBuildPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      } else if (filePath.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css");
+      }
+
+      // Cache-busting for index.html - force revalidation
+      if (filePath.endsWith("index.html")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      }
+      // Long cache for versioned assets (they have hashes in filename)
+      else if (filePath.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg)$/)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000"); // 1 year
+      }
+    },
+  }),
+);
 
 // Catch-all route must be LAST - after static file serving
 app.get("*", (_req, res) =>
