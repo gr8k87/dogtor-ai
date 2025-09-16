@@ -17,8 +17,9 @@ import {
   Video,
 } from "../components/icons";
 import { Button } from "../components/ui/button";
-const navigate = useNavigate();
+
 export default function ConnectTab() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-dvh">
       <main className="container max-w-2xl mx-auto p-6 space-y-8 pb-24">
