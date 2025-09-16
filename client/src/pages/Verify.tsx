@@ -3,10 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import {
-  HealthCard,
-  HealthCardContent,
-} from "../components/ui/health-card";
+import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
 import { supabase } from "../lib/supabase";
 import { apiRequest } from "../lib/api";
@@ -14,8 +11,8 @@ import { apiRequest } from "../lib/api";
 export default function Verify() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const email = searchParams.get('email') || '';
-  
+  const email = searchParams.get("email") || "";
+
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -23,14 +20,14 @@ export default function Verify() {
 
   // Auto-focus on input when component mounts
   useEffect(() => {
-    const input = document.getElementById('verification-code');
+    const input = document.getElementById("verification-code");
     if (input) {
       input.focus();
     }
   }, []);
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+    const value = e.target.value.replace(/\D/g, ""); // Only allow digits
     if (value.length <= 6) {
       setCode(value);
       // Clear error when user starts typing
@@ -67,12 +64,13 @@ export default function Verify() {
       const { data, error } = await supabase.auth.verifyOtp({
         email: email,
         token: code,
-        type: 'email',
+        type: "email",
       });
 
       if (error) {
         setErrors({
-          general: error.message || "Invalid verification code. Please try again.",
+          general:
+            error.message || "Invalid verification code. Please try again.",
         });
       } else if (data.session) {
         // Successful verification - check profile completion
@@ -137,7 +135,7 @@ export default function Verify() {
         });
       } else {
         setErrors({
-          general: "", 
+          general: "",
         });
         // Show success message
         setErrors({
@@ -195,7 +193,9 @@ export default function Verify() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="verification-code">6-digit verification code</Label>
+                <Label htmlFor="verification-code">
+                  6-digit verification code
+                </Label>
                 <Input
                   id="verification-code"
                   name="verification-code"
