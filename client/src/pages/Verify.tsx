@@ -234,7 +234,7 @@ export default function Verify() {
               </p>
               <div className="space-y-2">
                 <Button
-                  variant="outline"
+                  variant="default"
                   onClick={handleResendCode}
                   disabled={isResending}
                   className="w-full"
@@ -243,7 +243,7 @@ export default function Verify() {
                   {isResending ? "Sending..." : "Resend code"}
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="default"
                   onClick={handleBackToLogin}
                   className="w-full text-sm"
                   data-testid="button-back-login"
