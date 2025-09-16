@@ -1,0 +1,56 @@
+{
+  "name": "Dogtor",
+  "short_name": "Dogtor",
+  "description": "Dogtor is your AI-powered pet health companion. Simply share your dog’s symptoms to explore possible causes, understand potential treatments, and feel confident about your next vet visit. \nFrom skin rashes to tummy troubles, Dogtor helps you make informed decisions and find peace of mind before you head to the clinic.",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#FF5A5F",
+  "categories": [
+    "health",
+    "medical",
+    "pets"
+  ],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "pwa-120.png",
+      "sizes": "120x120",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-167.png",
+      "sizes": "167x167",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "id": "com.hellodogtor.app"
+}
