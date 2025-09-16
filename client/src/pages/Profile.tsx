@@ -22,7 +22,6 @@ import { ArrowLeft, User, Save } from "../components/icons";
 import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth-provider";
-import { apiRequest } from "../lib/api";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
@@ -193,7 +192,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await apiRequest("/api/auth/user", {
+      const response = await fetch("/api/auth/user", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -321,14 +320,14 @@ export default function Profile() {
 
         setUser(updatedDemoUser);
         setSaveMessage("Demo profile updated successfully!");
-        
+
         // Set profile completed state for demo
         if (isProfileComplete(updatedDemoUser)) {
           setProfileCompleted(true);
           // Auto-hide celebration after 10 seconds
           setTimeout(() => setProfileCompleted(false), 10000);
         }
-        
+
         setTimeout(() => setSaveMessage(""), 3000);
         return;
       }
@@ -353,7 +352,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await apiRequest("/api/auth/profile", {
+      const response = await fetch("/api/auth/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -366,10 +365,10 @@ export default function Profile() {
         const updatedUser = await response.json();
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
-        
+
         // Refresh auth context profile
         await refreshUserProfile();
-        
+
         // Set profile completed state
         if (isProfileComplete(updatedUser)) {
           setProfileCompleted(true);
@@ -405,7 +404,8 @@ export default function Profile() {
   const handleContinueToDogtor = () => {
     if (!isFormValid()) {
       setErrors({
-        general: "Please complete all required pet information before proceeding."
+        general:
+          "Please complete all required pet information before proceeding.",
       });
       return;
     }
@@ -449,7 +449,8 @@ export default function Profile() {
                   Profile Successfully Created!
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Great! Your pet's information has been saved. You're now ready to start getting personalized health guidance.
+                  Great! Your pet's information has been saved. You're now ready
+                  to start getting personalized health guidance.
                 </p>
               </div>
             </HealthCardContent>
@@ -466,7 +467,7 @@ export default function Profile() {
           <HealthCardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
               <div>
-                <p className="font-medium">{user.email}</p>
+                <p className="font-medium text-foreground">{user.email}</p>
                 <p className="text-sm text-muted-foreground">
                   {user.auth_method === "google"
                     ? "Google Account"
@@ -475,7 +476,9 @@ export default function Profile() {
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Pet</p>
-                <p className="font-medium">{user.pet_name || "Not set"}</p>
+                <p className="font-medium text-foreground">
+                  {user.pet_name || "Not set"}
+                </p>
                 <p className="text-xs text-muted-foreground">{getPetAge()}</p>
               </div>
             </div>
@@ -510,10 +513,13 @@ export default function Profile() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name">First Name</Label>
+                  <Label className="text-foreground" htmlFor="first_name">
+                    First Name
+                  </Label>
                   <Input
                     id="first_name"
                     name="first_name"
+                    type="text"
                     placeholder="Enter your first name"
                     value={formData.first_name}
                     onChange={handleInputChange}
@@ -523,8 +529,11 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="last_name">Last Name</Label>
+                  <Label className="text-foreground" htmlFor="last_name">
+                    Last Name
+                  </Label>
                   <Input
+                    type="text"
                     id="last_name"
                     name="last_name"
                     placeholder="Enter your last name"
@@ -537,8 +546,9 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label>Email Address</Label>
+                <Label className="text-foreground">Email Address</Label>
                 <Input
+                  type="email"
                   value={user.email}
                   disabled
                   className="bg-muted/50"
@@ -558,10 +568,11 @@ export default function Profile() {
             </HealthCardHeader>
             <HealthCardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="pet_name">
+                <Label className="text-foreground" htmlFor="pet_name">
                   Pet Name <span className="text-red-500">*</span>
                 </Label>
                 <Input
+                  type="text"
                   id="pet_name"
                   name="pet_name"
                   placeholder="Enter your pet's name"
@@ -590,32 +601,43 @@ export default function Profile() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>
+                  <Label className="text-foreground">
                     Birth Month <span className="text-red-500">*</span>
                   </Label>
-                  <Select
-                    value={formData.pet_birth_month}
-                    onValueChange={handleSelectChange("pet_birth_month")}
-                    disabled={isSaving}
+                  <div
+                    className={
+                      errors.pet_birth_month
+                        ? "border-red-500 border rounded-md"
+                        : ""
+                    }
                   >
-                    <SelectTrigger
-                      className={errors.pet_birth_month ? "border-red-500" : ""}
-                      data-testid="select-birth-month"
+                    <Select
+                      value={formData.pet_birth_month}
+                      onValueChange={handleSelectChange("pet_birth_month")}
+                      disabled={isSaving}
                     >
-                      <SelectValue placeholder="Month" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {MONTHS.map((month) => (
-                        <SelectItem
-                          key={month.value}
-                          value={month.value}
-                          data-testid={`option-month-${month.value}`}
-                        >
-                          {month.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger
+                        className="text-foreground border-none"
+                        data-testid="select-birth-month"
+                      >
+                        <SelectValue
+                          className="text-foreground"
+                          placeholder="Month"
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="text-foreground">
+                        {MONTHS.map((month) => (
+                          <SelectItem
+                            key={month.value}
+                            value={month.value}
+                            data-testid={`option-month-${month.value}`}
+                          >
+                            {month.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {errors.pet_birth_month && (
                     <p
                       className="text-sm text-red-500"
@@ -627,32 +649,43 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>
+                  <Label className="text-foreground">
                     Birth Year <span className="text-red-500">*</span>
                   </Label>
-                  <Select
-                    value={formData.pet_birth_year}
-                    onValueChange={handleSelectChange("pet_birth_year")}
-                    disabled={isSaving}
+                  <div
+                    className={
+                      errors.pet_birth_year
+                        ? "border-red-500 border rounded-md"
+                        : ""
+                    }
                   >
-                    <SelectTrigger
-                      className={errors.pet_birth_year ? "border-red-500" : ""}
-                      data-testid="select-birth-year"
+                    <Select
+                      value={formData.pet_birth_year}
+                      onValueChange={handleSelectChange("pet_birth_year")}
+                      disabled={isSaving}
                     >
-                      <SelectValue placeholder="Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {YEARS.map((year) => (
-                        <SelectItem
-                          key={year.value}
-                          value={year.value}
-                          data-testid={`option-year-${year.value}`}
-                        >
-                          {year.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger
+                        className="text-foreground border-none"
+                        data-testid="select-birth-year"
+                      >
+                        <SelectValue
+                          className="text-foreground"
+                          placeholder="Year"
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="text-foreground">
+                        {YEARS.map((year) => (
+                          <SelectItem
+                            key={year.value}
+                            value={year.value}
+                            data-testid={`option-year-${year.value}`}
+                          >
+                            {year.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {errors.pet_birth_year && (
                     <p
                       className="text-sm text-red-500"
@@ -665,16 +698,22 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label>Gender (optional)</Label>
+                <Label className="text-foreground">Gender (optional)</Label>
                 <Select
                   value={formData.pet_gender}
                   onValueChange={handleSelectChange("pet_gender")}
                   disabled={isSaving}
                 >
-                  <SelectTrigger data-testid="select-gender">
-                    <SelectValue placeholder="Select gender" />
+                  <SelectTrigger
+                    className="text-foreground"
+                    data-testid="select-gender"
+                  >
+                    <SelectValue
+                      className="text-foreground"
+                      placeholder="Select gender"
+                    />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="text-foreground">
                     {GENDERS.map((gender) => (
                       <SelectItem
                         key={gender.value}
@@ -714,7 +753,7 @@ export default function Profile() {
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
-            
+
             <Button
               type="button"
               onClick={handleContinueToDogtor}
