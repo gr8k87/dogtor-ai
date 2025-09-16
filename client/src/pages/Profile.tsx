@@ -22,6 +22,7 @@ import { ArrowLeft, User, Save } from "../components/icons";
 import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/auth-provider";
+import { apiRequest } from "../lib/api";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
@@ -192,7 +193,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch("/api/auth/user", {
+      const response = await apiRequest("/api/auth/user", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -352,7 +353,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch("/api/auth/profile", {
+      const response = await apiRequest("/api/auth/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

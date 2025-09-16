@@ -7,10 +7,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-// CORS configuration
+// CORS configuration for Vercel + Koyeb deployment
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://0.0.0.0:5000", "http://localhost:3000", "http://localhost:5000"];
+  : [
+      "http://0.0.0.0:5000", 
+      "http://localhost:3000", 
+      "http://localhost:5000",
+      // Add your Vercel domain here: "https://your-app.vercel.app"
+      // Koyeb backend will accept requests from Vercel frontend
+    ];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;

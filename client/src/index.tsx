@@ -7,21 +7,28 @@ import { HistoryProvider } from "./state/historyContext";
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <HistoryProvider persist={true}>
+    <HistoryProvider persist={false}>
       <App />
     </HistoryProvider>
   </React.StrictMode>
 );
 
-// Register service worker for PWA
+// Unregister existing service workers to prevent caching issues
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
-      });
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(registration => {
+      registration.unregister();
+      console.log('Unregistered existing service worker:', registration);
+    });
   });
+  
+  // Clear all caches to prevent blank screen from cached assets
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name);
+        console.log('Cleared cache:', name);
+      });
+    });
+  }
 }

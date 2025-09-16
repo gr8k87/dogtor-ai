@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
+import { apiRequest } from './api';
 import { Session, User } from '@supabase/supabase-js';
 
 interface UserProfile {
@@ -62,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (session: Session) => {
     try {
-      const response = await fetch("/api/auth/user", {
+      const response = await apiRequest("/api/auth/user", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },

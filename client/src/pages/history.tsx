@@ -8,6 +8,7 @@ import {
 } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
+import { apiRequest } from "../lib/api";
 import { AppIcons, Delete } from "../components/icons";
 import { useDogName } from "../lib/hooks";
 
@@ -42,7 +43,7 @@ export default function History() {
           return;
         }
 
-        const response = await fetch("/api/history/list", {
+        const response = await apiRequest("/api/history/list", {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
           },
@@ -81,7 +82,7 @@ export default function History() {
           return;
         }
 
-        const response = await fetch(`/api/history/delete/${id}`, {
+        const response = await apiRequest(`/api/history/delete/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${session.access_token}`,

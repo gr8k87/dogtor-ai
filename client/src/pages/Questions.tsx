@@ -18,6 +18,7 @@ import {
   AlertCircle,
 } from "../components/icons";
 import { supabase } from "../lib/supabase";
+import { apiRequest } from "../lib/api";
 
 interface BaseField {
   id: string;
@@ -103,7 +104,7 @@ export default function Questions() {
           headers.Authorization = `Bearer ${session.access_token}`;
         }
 
-        const response = await fetch(
+        const response = await apiRequest(
           `/api/diagnose/cases/${caseId}${isDemoMode ? "?demo=true" : ""}`,
           {
             headers,
@@ -175,7 +176,7 @@ export default function Questions() {
         return;
       }
 
-      const response = await fetch("/api/diagnose/results", {
+      const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -254,7 +255,7 @@ export default function Questions() {
         return;
       }
 
-      const response = await fetch("/api/diagnose/results", {
+      const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

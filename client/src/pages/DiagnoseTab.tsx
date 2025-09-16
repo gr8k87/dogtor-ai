@@ -10,6 +10,7 @@ import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
 import { useDogName } from "../lib/hooks";
+import { apiRequest } from "../lib/api";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -66,7 +67,7 @@ export default function DiagnoseTab() {
         headers.Authorization = `Bearer ${session.access_token}`;
       }
 
-      const caseResp = await fetch(
+      const caseResp = await apiRequest(
         `/api/diagnose/cases${isDemoMode ? "?demo=true" : ""}`,
         {
           method: "POST",

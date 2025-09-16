@@ -6,12 +6,11 @@ const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || ''
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    // Maximize session persistence
+    // Minimal session persistence using sessionStorage (clears on browser close)
     persistSession: true,
-    autoRefreshToken: true,
+    autoRefreshToken: true, // Prevent mid-session expiry
     detectSessionInUrl: true,
-    storage: window.localStorage, // Use localStorage for maximum persistence
-    storageKey: 'supabase.auth.token', // Custom storage key
+    storage: window.sessionStorage, // Use sessionStorage instead of localStorage
     flowType: 'pkce' // Use PKCE for better security
   }
 })
@@ -25,7 +24,7 @@ export const uploadImageToSupabase = async (file: File): Promise<string> => {
   const { error: uploadError } = await supabase.storage
     .from('pet-images')
     .upload(filePath, file, {
-      cacheControl: '3600',
+      cacheControl: '0', // Explicitly disable caching for uploads
       upsert: false
     })
 

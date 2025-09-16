@@ -28,9 +28,7 @@ export function ThemeProvider({
   storageKey = "dogtor-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const [theme, setTheme] = React.useState<Theme>(defaultTheme)
 
   React.useEffect(() => {
     const root = window.document.documentElement
@@ -40,10 +38,8 @@ export function ThemeProvider({
 
     // Add the current theme class - only light/dark mode
     root.classList.add(theme)
-
-    // Store in localStorage
-    localStorage.setItem(storageKey, theme)
-  }, [theme, storageKey])
+    // LocalStorage persistence removed to eliminate caching complexity
+  }, [theme])
 
   const value = {
     theme,

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppIcons } from "../components/icons";
 import { supabase } from "../lib/supabase";
+import { apiRequest } from "../lib/api";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export default function AuthCallback() {
     const handleSuccessfulAuth = async (session: any) => {
       try {
         // Check profile completion
-        const response = await fetch("/api/auth/user", {
+        const response = await apiRequest("/api/auth/user", {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
           },

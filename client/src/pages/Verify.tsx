@@ -9,6 +9,7 @@ import {
 } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
 import { supabase } from "../lib/supabase";
+import { apiRequest } from "../lib/api";
 
 export default function Verify() {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ export default function Verify() {
       } else if (data.session) {
         // Successful verification - check profile completion
         try {
-          const response = await fetch("/api/auth/user", {
+          const response = await apiRequest("/api/auth/user", {
             headers: {
               Authorization: `Bearer ${data.session.access_token}`,
             },

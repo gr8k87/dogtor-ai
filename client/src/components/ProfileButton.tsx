@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { User, Settings } from '../components/icons';
 import { LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { apiRequest } from '../lib/api';
 
 interface UserProfile {
   id: string;
@@ -50,7 +51,7 @@ export function ProfileButton() {
       } else {
         // Get additional user data from our API if needed
         const token = session.access_token;
-        const response = await fetch('/api/auth/user', {
+        const response = await apiRequest('/api/auth/user', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
