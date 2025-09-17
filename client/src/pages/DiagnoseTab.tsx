@@ -166,14 +166,18 @@ export default function DiagnoseTab() {
             <HealthCardContent className="p-0">
               <div className="space-y-1">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                    <AppIcons.camera
-                      size={20}
-                      className="text-primary flex-shrink-0"
-                    />
-                    What's worrying you about{" "}
-                    <strong className="text-[#FF5A5F]">{dogName}</strong>?
-                  </h2>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                      <AppIcons.camera
+                        size={20}
+                        className="text-primary flex-shrink-0"
+                      />
+                      <span>What's worrying you about</span>
+                    </div>
+                    <div className="text-lg font-semibold text-foreground pl-7">
+                      <strong className="text-[#FF5A5F]">{dogName}</strong>?
+                    </div>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     Upload a photo of the affected area.
                   </p>
@@ -205,11 +209,18 @@ export default function DiagnoseTab() {
               <HealthCardContent className="p-0">
                 <div className="space-y-1">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                      <Edit size={20} className="text-primary flex-shrink-0" />
-                      What have you noticed about{" "}
-                      <strong className="text-[#FF5A5F]">{dogName}</strong>?
-                    </h2>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                        <Edit
+                          size={20}
+                          className="text-primary flex-shrink-0"
+                        />
+                        <span>What have you noticed about</span>
+                      </div>
+                      <div className="text-lg font-semibold text-foreground pl-7">
+                        <strong className="text-[#FF5A5F]">{dogName}</strong>?
+                      </div>
+                    </div>
                     <p className="text-sm text-muted-foreground">
                       Describe any changes in{" "}
                       <strong className="text-[#FF5A5F]">{dogName}</strong>'s
