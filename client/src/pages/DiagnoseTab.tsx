@@ -172,9 +172,9 @@ export default function DiagnoseTab() {
                       className="text-primary flex-shrink-0"
                     />
                     <span className="flex-shrink-0">
-                      What's worrying you about
+                      What's worrying you about{" "}
+                      <span className="text-[#FF5A5F]">{dogName}</span>?
                     </span>
-                    <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Upload a photo of the affected area.
@@ -210,9 +210,9 @@ export default function DiagnoseTab() {
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
                       <Edit size={20} className="text-primary flex-shrink-0" />
                       <span className="flex-shrink-0">
-                        What have you noticed about
+                        What have you noticed about{" "}
+                        <span className="text-[#FF5A5F]">{dogName}</span>?
                       </span>
-                      <span className="text-[#FF5A5F]">{dogName}</span>?
                     </h2>
                     <p className="text-sm text-muted-foreground">
                       Describe any changes in{" "}
