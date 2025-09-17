@@ -209,7 +209,9 @@ export default function DiagnoseTab() {
                   <div className="space-y-1">
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
                       <Edit size={20} className="text-primary flex-shrink-0" />
-                      <span className="flex-shrink-0">What have you noticed about</span>
+                      <span className="flex-shrink-0">
+                        What have you noticed about
+                      </span>
                       <strong className="text-[#FF5A5F]">{dogName}</strong>?
                     </h2>
                     <p className="text-sm text-muted-foreground">
