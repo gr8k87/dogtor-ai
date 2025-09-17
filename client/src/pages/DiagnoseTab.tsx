@@ -207,9 +207,9 @@ export default function DiagnoseTab() {
               <HealthCardContent className="p-0">
                 <div className="space-y-1">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                    <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
                       <Edit size={20} className="text-primary flex-shrink-0" />
-                      What have you noticed about{" "}
+                      <span className="flex-shrink-0">What have you noticed about</span>
                       <strong className="text-[#FF5A5F]">{dogName}</strong>?
                     </h2>
                     <p className="text-sm text-muted-foreground">
