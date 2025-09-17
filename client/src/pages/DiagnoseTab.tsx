@@ -171,8 +171,8 @@ export default function DiagnoseTab() {
                       size={20}
                       className="text-primary flex-shrink-0"
                     />
-                    What's worrying you about&nbsp;
-                    <span className="text-[#FF5A5F]">{dogName}</span>?
+                    What's worrying you about{" "}
+                    <strong className="text-[#FF5A5F]">{dogName}</strong>?
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Upload a photo of the affected area.
@@ -207,13 +207,13 @@ export default function DiagnoseTab() {
                   <div className="space-y-1">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={20} className="text-primary flex-shrink-0" />
-                      What have you noticed about&nbsp;
-                      <span className="text-[#FF5A5F]">{dogName}</span>?
+                      What have you noticed about{" "}
+                      <strong className="text-[#FF5A5F]">{dogName}</strong>?
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      Describe any changes in&nbsp;
-                      <span className="text-[#FF5A5F]">{dogName}</span>'s health
-                      or behavior. Even small details can help.
+                      Describe any changes in{" "}
+                      <strong className="text-[#FF5A5F]">{dogName}</strong>'s
+                      health or behavior. Even small details can help.
                     </p>
                   </div>
 
