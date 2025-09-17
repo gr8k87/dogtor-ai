@@ -127,9 +127,9 @@ export default function Results({}: ResultsProps) {
           className="border-accent gradient-card transition-smooth hover:shadow-floating rounded-2xl"
         >
           <HealthCardHeader className="pb-4 text-black">
-            <HealthCardTitle className="flex items-center gap-3 text-2xl text-foreground">
-              <ClipboardList size={32} className="text-primary" />
-              Here's what we found about{" "}
+            <HealthCardTitle className="text-2xl text-foreground flex items-center gap-3 flex-wrap">
+              <ClipboardList size={32} className="text-primary flex-shrink-0" />
+              <span className="flex-shrink-0">Here's what we found about</span>
               <span
                 className="text-[#FF5A5F] font-bold tracking-tight"
                 style={{
