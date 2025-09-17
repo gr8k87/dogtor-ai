@@ -129,7 +129,16 @@ export default function Results({}: ResultsProps) {
           <HealthCardHeader className="pb-4 text-black">
             <HealthCardTitle className="flex items-center gap-3 text-2xl text-foreground">
               <ClipboardList size={32} className="text-primary" />
-              Here's what we found about <span className="text-[#FF5A5F] font-bold tracking-tight" style={{fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'}}>{dogName}</span>
+              Here's what we found about{" "}
+              <span
+                className="text-[#FF5A5F] font-bold tracking-tight"
+                style={{
+                  fontFamily:
+                    'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                }}
+              >
+                {dogName}
+              </span>
             </HealthCardTitle>
           </HealthCardHeader>
           <HealthCardContent className="space-y-8 text-black">

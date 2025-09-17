@@ -171,7 +171,7 @@ export default function DiagnoseTab() {
                       size={20}
                       className="text-primary flex-shrink-0"
                     />
-                    What's worrying you about{" "}
+                    What's worrying you about&nbsp;
                     <span className="text-[#FF5A5F]">{dogName}</span>?
                   </h2>
                   <p className="text-sm text-muted-foreground">
@@ -207,13 +207,13 @@ export default function DiagnoseTab() {
                   <div className="space-y-1">
                     <h2 className="text-lg font-semibold flex items-center gap-2 text-foreground">
                       <Edit size={20} className="text-primary flex-shrink-0" />
-                      What have you noticed about{" "}
+                      What have you noticed about&nbsp;
                       <span className="text-[#FF5A5F]">{dogName}</span>?
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      Describe any changes in{" "}
-                      <span className="text-[#FF5A5F]">{dogName}</span>
-                      's health or behavior. Even small details can help.
+                      Describe any changes in&nbsp;
+                      <span className="text-[#FF5A5F]">{dogName}</span>'s health
+                      or behavior. Even small details can help.
                     </p>
                   </div>
 
