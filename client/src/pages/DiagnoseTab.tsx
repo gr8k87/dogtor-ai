@@ -87,7 +87,12 @@ export default function DiagnoseTab() {
       }
 
       const caseJson = await caseResp.json();
-      const caseId = caseJson.caseId;
+      let caseId = caseJson.caseId;
+
+      // Prefix with "demo-" if in demo mode
+      if (isDemoMode) {
+        caseId = `demo-${caseId}`;
+      }
 
       setDebugMsg("✅ Case created! Redirecting to questions...");
       navigate(`/questions/${caseId}`);
