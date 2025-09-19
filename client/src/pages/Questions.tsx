@@ -255,13 +255,16 @@ export default function Questions() {
         return;
       }
 
+      // Strip demo- prefix for backend API calls
+      const backendCaseId = caseId?.startsWith("demo-") ? caseId.substring(5) : caseId;
+
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`, // ✅ ADD JWT TOKEN
         },
-        body: JSON.stringify({ caseId }),
+        body: JSON.stringify({ caseId: backendCaseId }),
       });
 
       // Handle 400 status responses with specific error details
