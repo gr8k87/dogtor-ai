@@ -133,6 +133,19 @@ export default function Login() {
                 {isLoading ? "Sending link..." : "Send sign-in link"}
               </Button>
             </form>
+
+            {/* Demo Link */}
+            <div className="text-center py-2">
+              <div className="text-xs text-muted-foreground">
+                <a
+                  href="/?demo=true"
+                  className="text-primary hover:text-primary/80 underline"
+                  data-testid="link-demo"
+                >
+                  Try demo version
+                </a>
+              </div>
+            </div>
           </HealthCardContent>
         </HealthCard>
 
