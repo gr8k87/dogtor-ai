@@ -175,17 +175,17 @@ export default function Questions() {
         setError("Authentication required");
         return;
       }
-
+      // Strip demo- prefix for backend API calls
+      const backendCaseId = caseId?.startsWith("demo-")
+        ? caseId.substring(5)
+        : caseId;
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`, // ✅ NEW AUTH METHOD
         },
-        body: JSON.stringify({
-          caseId,
-          answers,
-        }),
+        body: JSON.stringify({ caseId: backendCaseId }),
       });
 
       // Handle 400 status responses with specific error details
