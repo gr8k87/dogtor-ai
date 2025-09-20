@@ -136,7 +136,7 @@ export default function Questions() {
     };
 
     fetchCaseData();
-  }, [caseId, navigate]);
+  }, [caseId]);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -256,7 +256,9 @@ export default function Questions() {
       }
 
       // Strip demo- prefix for backend API calls
-      const backendCaseId = caseId?.startsWith("demo-") ? caseId.substring(5) : caseId;
+      const backendCaseId = caseId?.startsWith("demo-")
+        ? caseId.substring(5)
+        : caseId;
 
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
