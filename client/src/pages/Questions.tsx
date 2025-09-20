@@ -156,26 +156,14 @@ export default function Questions() {
         error: sessionError,
       } = await supabase.auth.getSession();
 
-      // Check for demo mode
+      // Check for demo mode for authentication only
       const isDemoMode =
         sessionStorage.getItem("demo-mode") === "true" ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");
 
-      if (isDemoMode) {
-        setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
-        navigate(`/results/${caseId}`, {
-          state: {
-            cards: [
-              { title: "Demo Result", description: "This is a demo analysis." },
-            ],
-          },
-        });
-        return;
-      }
-
-      if (sessionError || !session) {
+      if (!isDemoMode && (sessionError || !session)) {
         console.error("Authentication required for diagnosis");
         setError("Authentication required");
         return;
@@ -184,12 +172,20 @@ export default function Questions() {
       const backendCaseId = caseId?.startsWith("demo-")
         ? caseId.substring(5)
         : caseId;
+
+      let headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (isDemoMode) {
+        headers["x-demo-mode"] = "true";
+      } else {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`, // ✅ NEW AUTH METHOD
-        },
+        headers,
         body: JSON.stringify({ caseId: backendCaseId }),
       });
 
@@ -234,26 +230,14 @@ export default function Questions() {
         error: sessionError,
       } = await supabase.auth.getSession();
 
-      // Check for demo mode
+      // Check for demo mode for authentication only
       const isDemoMode =
         sessionStorage.getItem("demo-mode") === "true" ||
         new URLSearchParams(window.location.search).get("demo") === "true" ||
         window.location.pathname.includes("/demo") ||
         caseId?.startsWith("demo-");
 
-      if (isDemoMode) {
-        setDebugMsg("✅ Demo analysis complete! Redirecting to results...");
-        navigate(`/results/${caseId}`, {
-          state: {
-            cards: [
-              { title: "Demo Result", description: "This is a demo analysis." },
-            ],
-          },
-        });
-        return;
-      }
-
-      if (sessionError || !session) {
+      if (!isDemoMode && (sessionError || !session)) {
         console.error("Authentication required for results");
         setError("Authentication required");
         setSubmitting(false);
@@ -265,12 +249,19 @@ export default function Questions() {
         ? caseId.substring(5)
         : caseId;
 
+      let headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (isDemoMode) {
+        headers["x-demo-mode"] = "true";
+      } else {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`, // ✅ ADD JWT TOKEN
-        },
+        headers,
         body: JSON.stringify({ caseId: backendCaseId }),
       });
 
