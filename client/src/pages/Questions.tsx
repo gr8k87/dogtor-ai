@@ -104,8 +104,13 @@ export default function Questions() {
           headers.Authorization = `Bearer ${session.access_token}`;
         }
 
+        // Strip demo- prefix for backend API calls
+        const backendCaseId = caseId?.startsWith("demo-")
+          ? caseId.substring(5)
+          : caseId;
+
         const response = await apiRequest(
-          `/api/diagnose/cases/${caseId}${isDemoMode ? "?demo=true" : ""}`,
+          `/api/diagnose/cases/${backendCaseId}${isDemoMode ? "?demo=true" : ""}`,
           {
             headers,
           },
