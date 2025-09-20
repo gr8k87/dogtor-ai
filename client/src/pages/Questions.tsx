@@ -71,6 +71,12 @@ export default function Questions() {
   // Mock case data structure for demo mode
   const [caseData, setCaseData] = useState<any>(null);
 
+  const isDemoMode = () =>
+    sessionStorage.getItem("demo-mode") === "true" ||
+    new URLSearchParams(window.location.search).get("demo") === "true" ||
+    window.location.pathname.includes("/demo") ||
+    caseId?.startsWith("demo-");
+
   useEffect(() => {
     const fetchCaseData = async () => {
       if (!caseId) return;
@@ -79,16 +85,9 @@ export default function Questions() {
       setError("");
 
       try {
-        // Check for demo mode
-        const isDemoMode =
-          sessionStorage.getItem("demo-mode") === "true" ||
-          new URLSearchParams(window.location.search).get("demo") === "true" ||
-          window.location.pathname.includes("/demo") ||
-          caseId?.startsWith("demo-");
-
         let headers: HeadersInit = {};
 
-        if (isDemoMode) {
+        if (isDemoMode()) {
           headers["x-demo-mode"] = "true";
         } else {
           const {
@@ -110,7 +109,7 @@ export default function Questions() {
           : caseId;
 
         const response = await apiRequest(
-          `/api/diagnose/cases/${backendCaseId}${isDemoMode ? "?demo=true" : ""}`,
+          `/api/diagnose/cases/${backendCaseId}${isDemoMode() ? "?demo=true" : ""}`,
           {
             headers,
           },
@@ -156,14 +155,7 @@ export default function Questions() {
         error: sessionError,
       } = await supabase.auth.getSession();
 
-      // Check for demo mode for authentication only
-      const isDemoMode =
-        sessionStorage.getItem("demo-mode") === "true" ||
-        new URLSearchParams(window.location.search).get("demo") === "true" ||
-        window.location.pathname.includes("/demo") ||
-        caseId?.startsWith("demo-");
-
-      if (!isDemoMode && (sessionError || !session)) {
+      if (!isDemoMode() && (sessionError || !session)) {
         console.error("Authentication required for diagnosis");
         setError("Authentication required");
         return;
@@ -177,10 +169,15 @@ export default function Questions() {
         "Content-Type": "application/json",
       };
 
-      if (isDemoMode) {
+      if (isDemoMode()) {
         headers["x-demo-mode"] = "true";
-      } else {
+      } else if (session) {
         headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      // Ensure we have proper authentication for non-demo requests
+      if (!isDemoMode() && !session) {
+        throw new Error("Authentication session expired");
       }
 
       const response = await apiRequest("/api/diagnose/results", {
@@ -230,14 +227,7 @@ export default function Questions() {
         error: sessionError,
       } = await supabase.auth.getSession();
 
-      // Check for demo mode for authentication only
-      const isDemoMode =
-        sessionStorage.getItem("demo-mode") === "true" ||
-        new URLSearchParams(window.location.search).get("demo") === "true" ||
-        window.location.pathname.includes("/demo") ||
-        caseId?.startsWith("demo-");
-
-      if (!isDemoMode && (sessionError || !session)) {
+      if (!isDemoMode() && (sessionError || !session)) {
         console.error("Authentication required for results");
         setError("Authentication required");
         setSubmitting(false);
@@ -253,10 +243,15 @@ export default function Questions() {
         "Content-Type": "application/json",
       };
 
-      if (isDemoMode) {
+      if (isDemoMode()) {
         headers["x-demo-mode"] = "true";
-      } else {
+      } else if (session) {
         headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      // Ensure we have proper authentication for non-demo requests
+      if (!isDemoMode() && !session) {
+        throw new Error("Authentication session expired");
       }
 
       const response = await apiRequest("/api/diagnose/results", {
