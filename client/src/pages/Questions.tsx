@@ -72,8 +72,6 @@ export default function Questions() {
   // Mock case data structure for demo mode
   const [caseData, setCaseData] = useState<any>(null);
 
-
-
   useEffect(() => {
     const fetchCaseData = async () => {
       if (!caseId) return;
@@ -93,7 +91,7 @@ export default function Questions() {
           } = await supabase.auth.getSession();
 
           if (sessionError || !session) {
-            setError("Authentication required");
+            setError("Your session expired — sign in again to continue.");
             return;
           }
 
@@ -146,7 +144,7 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Analyzing your pet's condition...");
-      
+
       // Strip demo- prefix for backend API calls
       const backendCaseId = caseId?.startsWith("demo-")
         ? caseId.substring(5)
@@ -167,7 +165,7 @@ export default function Questions() {
 
         if (sessionError || !session) {
           console.error("Authentication required for diagnosis");
-          setError("Authentication required");
+          setError("Your session expired — sign in again to continue.");
           return;
         }
 
@@ -188,13 +186,20 @@ export default function Questions() {
         if (errorReason && errorReason.includes("illustration")) {
           setError("IMAGE_REJECTED");
         } else {
-          setError(errorReason || errorData.error || "Analysis not possible");
+          setError(
+            errorReason ||
+              errorData.error ||
+              "Dogtor lost the trail for a moment. Let’s give it another go. For best results, add a clear photo and a few details about your furry friend.",
+          );
         }
         setDebugMsg(`❌ Error: ${errorReason || "Analysis failed"}`);
         return;
       }
 
-      if (!response.ok) throw new Error("Failed to get results");
+      if (!response.ok)
+        throw new Error(
+          "Dogtor lost the trail for a moment. Let’s give it another go.",
+        );
 
       setDebugMsg("✅ Analysis complete! Redirecting to results...");
       const data = await response.json();
@@ -215,7 +220,7 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Generating results with initial information...");
-      
+
       // Strip demo- prefix for backend API calls
       const backendCaseId = caseId?.startsWith("demo-")
         ? caseId.substring(5)
@@ -236,7 +241,7 @@ export default function Questions() {
 
         if (sessionError || !session) {
           console.error("Authentication required for results");
-          setError("Authentication required");
+          setError("Your session expired — sign in again to continue.");
           setSubmitting(false);
           return;
         }
@@ -452,12 +457,12 @@ export default function Questions() {
                 <div className="space-y-3">
                   <h3 className="font-semibold text-destructive">
                     {isImageRejected
-                      ? "Image Not Suitable for Analysis"
-                      : "Error Generating Results"}
+                      ? "This picture won’t work for analysis"
+                      : "Whoops! That didn’t fetch right"}
                   </h3>
                   <p className="text-destructive/80 text-sm">
                     {isImageRejected
-                      ? "The uploaded image appears to be an illustration or drawing. Please upload a clear photograph of your real pet for accurate analysis."
+                      ? "Dogtor can only analyze real photos of pets. Try snapping a clear picture of your furry friend instead"
                       : error}
                   </p>
 
