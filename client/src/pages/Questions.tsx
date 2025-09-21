@@ -72,7 +72,7 @@ export default function Questions() {
   // Mock case data structure for demo mode
   const [caseData, setCaseData] = useState<any>(null);
 
-  
+
 
   useEffect(() => {
     const fetchCaseData = async () => {
@@ -172,11 +172,6 @@ export default function Questions() {
         headers.Authorization = `Bearer ${session.access_token}`;
       }
 
-      // Ensure we have proper authentication for non-demo requests
-      if (!isDemoMode() && !session) {
-        throw new Error("Authentication session expired");
-      }
-
       const response = await apiRequest("/api/diagnose/results", {
         method: "POST",
         headers,
@@ -244,11 +239,6 @@ export default function Questions() {
         headers["x-demo-mode"] = "true";
       } else if (session) {
         headers.Authorization = `Bearer ${session.access_token}`;
-      }
-
-      // Ensure we have proper authentication for non-demo requests
-      if (!isDemoMode() && !session) {
-        throw new Error("Authentication session expired");
       }
 
       const response = await apiRequest("/api/diagnose/results", {
