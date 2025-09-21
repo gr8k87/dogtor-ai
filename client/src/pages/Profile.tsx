@@ -23,6 +23,7 @@ import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
 import { apiRequest } from "../lib/api";
 import { isDemoMode, createDemoUser } from "../lib/demo-utils";
+import { useAuth } from "../lib/auth-provider";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
@@ -54,7 +55,7 @@ interface UserProfile {
   pet_birth_month?: number;
   pet_birth_year?: number;
   pet_gender?: string;
-  auth_method: "google" | "email";
+  auth_method: "google" | "email" | "demo";
 }
 
 interface ProfileFormData {

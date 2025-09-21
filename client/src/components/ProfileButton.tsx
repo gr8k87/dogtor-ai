@@ -15,6 +15,7 @@ interface UserProfile {
   last_name?: string;
   full_name?: string;
   pet_name?: string;
+  auth_method?: "google" | "email" | "demo";
 }
 
 export function ProfileButton() {
