@@ -11,6 +11,7 @@ import BottomTabs from "../components/BottomTabs";
 import { supabase } from "../lib/supabase";
 import { useDogName } from "../lib/hooks";
 import { apiRequest } from "../lib/api";
+import { isDemoMode } from "../lib/demo-utils";
 
 export default function DiagnoseTab() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Changed from imageFile
@@ -42,19 +43,14 @@ export default function DiagnoseTab() {
     setErrors({});
 
     try {
-      // Check if we're in demo mode
-      const isDemoMode =
-        new URLSearchParams(window.location.search).get("demo") === "true" ||
-        window.location.pathname.includes("/demo");
-
       let headers: HeadersInit = {
         "Content-Type": "application/json",
       };
 
-      if (isDemoMode) {
+      if (isDemoMode()) {
         headers["x-demo-mode"] = "true";
       } else {
-        // Get Supabase session token for authenticated users
+        // Only call Supabase auth for non-demo users
         const {
           data: { session },
           error: sessionError,
@@ -68,7 +64,7 @@ export default function DiagnoseTab() {
       }
 
       const caseResp = await apiRequest(
-        `/api/diagnose/cases${isDemoMode ? "?demo=true" : ""}`,
+        `/api/diagnose/cases${isDemoMode() ? "?demo=true" : ""}`,
         {
           method: "POST",
           headers,
@@ -90,7 +86,7 @@ export default function DiagnoseTab() {
       let caseId = caseJson.caseId;
 
       // Prefix with "demo-" if in demo mode
-      if (isDemoMode) {
+      if (isDemoMode()) {
         caseId = `demo-${caseId}`;
       }
 
