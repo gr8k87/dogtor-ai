@@ -88,15 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Create demo user immediately without any Supabase calls
       const demoUser = createDemoUser();
       setSession(null);
-      setUser({
-        id: demoUser.id,
-        email: demoUser.email,
-        user_metadata: {
-          first_name: demoUser.first_name,
-          last_name: demoUser.last_name,
-          full_name: demoUser.full_name,
-        }
-      } as User);
+      setUser(null); // Set to null since we use userProfile for demo data
       setUserProfile(demoUser);
       setLoading(false);
       return;
