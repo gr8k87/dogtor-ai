@@ -146,17 +146,7 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Analyzing your pet's condition...");
-      // Get Supabase session token first
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (!isDemoMode() && (sessionError || !session)) {
-        console.error("Authentication required for diagnosis");
-        setError("Authentication required");
-        return;
-      }
+      
       // Strip demo- prefix for backend API calls
       const backendCaseId = caseId?.startsWith("demo-")
         ? caseId.substring(5)
@@ -168,7 +158,19 @@ export default function Questions() {
 
       if (isDemoMode()) {
         headers["x-demo-mode"] = "true";
-      } else if (session) {
+      } else {
+        // Only call Supabase auth for non-demo users
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          console.error("Authentication required for diagnosis");
+          setError("Authentication required");
+          return;
+        }
+
         headers.Authorization = `Bearer ${session.access_token}`;
       }
 
@@ -213,19 +215,7 @@ export default function Questions() {
 
     try {
       setDebugMsg("🤖 Generating results with initial information...");
-      // Get Supabase session token first
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (!isDemoMode() && (sessionError || !session)) {
-        console.error("Authentication required for results");
-        setError("Authentication required");
-        setSubmitting(false);
-        return;
-      }
-
+      
       // Strip demo- prefix for backend API calls
       const backendCaseId = caseId?.startsWith("demo-")
         ? caseId.substring(5)
@@ -237,7 +227,20 @@ export default function Questions() {
 
       if (isDemoMode()) {
         headers["x-demo-mode"] = "true";
-      } else if (session) {
+      } else {
+        // Only call Supabase auth for non-demo users
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError || !session) {
+          console.error("Authentication required for results");
+          setError("Authentication required");
+          setSubmitting(false);
+          return;
+        }
+
         headers.Authorization = `Bearer ${session.access_token}`;
       }
 
