@@ -471,7 +471,7 @@ export default function Questions() {
                       : error}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <div className="flex justify-center pt-4">
                     <Button
                       variant="default"
                       onClick={() => navigate("/")}
@@ -483,23 +483,6 @@ export default function Questions() {
                         ? "Upload Different Photo"
                         : "Start Over"}
                     </Button>
-                    {!isImageRejected && (
-                      <Button
-                        onClick={handleSkip}
-                        disabled={submitting}
-                        className="w-full"
-                        data-testid="button-skip"
-                      >
-                        {submitting ? (
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                            Analyzing...
-                          </div>
-                        ) : (
-                          "Skip to Results"
-                        )}
-                      </Button>
-                    )}
                   </div>
                 </div>
               </div>
