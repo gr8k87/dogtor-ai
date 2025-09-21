@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from './supabase';
-import { apiRequest } from './api';
-import { Session, User } from '@supabase/supabase-js';
-import { isDemoMode, createDemoUser } from './demo-utils';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "./supabase";
+import { apiRequest } from "./api";
+import { Session, User } from "@supabase/supabase-js";
+import { isDemoMode, createDemoUser } from "./demo-utils";
 
 interface UserProfile {
   id: string;
@@ -15,7 +15,7 @@ interface UserProfile {
   pet_birth_month?: number;
   pet_birth_year?: number;
   pet_gender?: string;
-  auth_method: "google" | "email";
+  auth_method: "google" | "email" | "demo";
 }
 
 interface AuthContextType {
@@ -39,12 +39,14 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -52,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const isProfileComplete = (): boolean => {
     if (!userProfile) return false;
-    
+
     // Check mandatory pet fields
     return !!(
       userProfile.pet_name &&
@@ -98,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         fetchUserProfile(session).finally(() => setLoading(false));
       } else {
@@ -115,10 +117,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (isDemoMode()) {
         return;
       }
-      
+
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         fetchUserProfile(session).finally(() => setLoading(false));
       } else {
@@ -137,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserProfile(demoUser);
       return;
     }
-    
+
     if (session) {
       await fetchUserProfile(session);
     }
