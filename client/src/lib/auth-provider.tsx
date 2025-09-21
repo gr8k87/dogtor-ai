@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import { apiRequest } from './api';
 import { Session, User } from '@supabase/supabase-js';
+import { isDemoMode, createDemoUser } from './demo-utils';
 
 interface UserProfile {
   id: string;
@@ -82,7 +83,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Get initial session
+    // Check for demo mode first
+    if (isDemoMode()) {
+      // Create demo user immediately without any Supabase calls
+      const demoUser = createDemoUser();
+      setSession(null);
+      setUser({
+        id: demoUser.id,
+        email: demoUser.email,
+        user_metadata: {
+          first_name: demoUser.first_name,
+          last_name: demoUser.last_name,
+          full_name: demoUser.full_name,
+        }
+      } as User);
+      setUserProfile(demoUser);
+      setLoading(false);
+      return;
+    }
+
+    // Get initial session for non-demo users
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -95,10 +115,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    // Listen for auth changes
+    // Listen for auth changes for non-demo users
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Skip auth changes if we're in demo mode
+      if (isDemoMode()) {
+        return;
+      }
+      
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -114,6 +139,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const refreshUserProfile = async () => {
+    if (isDemoMode()) {
+      // For demo mode, just refresh the demo user
+      const demoUser = createDemoUser();
+      setUserProfile(demoUser);
+      return;
+    }
+    
     if (session) {
       await fetchUserProfile(session);
     }

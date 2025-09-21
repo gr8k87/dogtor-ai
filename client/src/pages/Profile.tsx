@@ -21,7 +21,8 @@ import BreedSelector from "../components/BreedSelector";
 import { ArrowLeft, User, Save } from "../components/icons";
 import { GlobalHeader } from "../components/GlobalHeader";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/auth-provider";
+import { apiRequest } from "../lib/api";
+import { isDemoMode, createDemoUser } from "../lib/demo-utils";
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
@@ -142,26 +143,9 @@ export default function Profile() {
   const fetchUserProfile = async () => {
     try {
       // Check for demo mode first
-      const isDemoMode =
-        sessionStorage.getItem("demo-mode") === "true" ||
-        new URLSearchParams(window.location.search).get("demo") === "true" ||
-        window.location.pathname.includes("/demo");
-
-      if (isDemoMode) {
+      if (isDemoMode()) {
         // Set demo user data
-        const demoUser: UserProfile = {
-          id: "demo-user-id",
-          email: "demo@example.com",
-          first_name: "Demo",
-          last_name: "User",
-          full_name: "Demo User",
-          pet_name: "Demo Pet",
-          pet_breed: "Mixed Breed",
-          pet_birth_month: 6,
-          pet_birth_year: 2020,
-          pet_gender: "Male",
-          auth_method: "email",
-        };
+        const demoUser = createDemoUser();
 
         setUser(demoUser);
         setFormData({
@@ -291,12 +275,7 @@ export default function Profile() {
 
     try {
       // Check for demo mode
-      const isDemoMode =
-        sessionStorage.getItem("demo-mode") === "true" ||
-        new URLSearchParams(window.location.search).get("demo") === "true" ||
-        window.location.pathname.includes("/demo");
-
-      if (isDemoMode) {
+      if (isDemoMode()) {
         // Simulate saving for demo mode
         await new Promise((resolve) => setTimeout(resolve, 1000));
 

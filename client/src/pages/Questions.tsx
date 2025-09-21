@@ -19,6 +19,7 @@ import {
 } from "../components/icons";
 import { supabase } from "../lib/supabase";
 import { apiRequest } from "../lib/api";
+import { isDemoMode } from "../lib/demo-utils";
 
 interface BaseField {
   id: string;
@@ -71,11 +72,7 @@ export default function Questions() {
   // Mock case data structure for demo mode
   const [caseData, setCaseData] = useState<any>(null);
 
-  const isDemoMode = () =>
-    sessionStorage.getItem("demo-mode") === "true" ||
-    new URLSearchParams(window.location.search).get("demo") === "true" ||
-    window.location.pathname.includes("/demo") ||
-    caseId?.startsWith("demo-");
+  
 
   useEffect(() => {
     const fetchCaseData = async () => {

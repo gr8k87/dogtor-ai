@@ -6,6 +6,7 @@ import { User, Settings } from '../components/icons';
 import { LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { apiRequest } from '../lib/api';
+import { isDemoMode, createDemoUser } from '../lib/demo-utils';
 
 interface UserProfile {
   id: string;
@@ -27,27 +28,25 @@ export function ProfileButton() {
 
   const checkAuthStatus = async () => {
     try {
+      // Check for demo mode first
+      if (isDemoMode()) {
+        const demoUser = createDemoUser();
+        setUser({
+          id: demoUser.id,
+          email: demoUser.email,
+          full_name: demoUser.full_name,
+          first_name: demoUser.first_name,
+          last_name: demoUser.last_name,
+          pet_name: demoUser.pet_name
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error || !session) {
-        // Check for demo mode if no session
-        const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                           new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                           window.location.pathname.includes('/demo');
-
-        if (isDemoMode) {
-          // Simulate a demo user
-          setUser({
-            id: 'demo-user-id',
-            email: 'demo@example.com',
-            full_name: 'Demo User',
-            first_name: 'Demo',
-            last_name: 'User',
-            pet_name: 'Buddy'
-          });
-        } else {
-          setUser(null);
-        }
+        setUser(null);
       } else {
         // Get additional user data from our API if needed
         const token = session.access_token;
@@ -84,25 +83,12 @@ export function ProfileButton() {
   };
 
   const handleProfile = () => {
-    // Check for demo mode to decide where to navigate
-    const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                       new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                       window.location.pathname.includes('/demo');
-    if (isDemoMode) {
-      navigate('/demo/profile'); // Assuming a specific route for demo profile
-    } else {
-      navigate('/profile');
-    }
+    navigate('/profile');
   };
 
   const handleLogout = async () => {
     try {
-      // Check for demo mode
-      const isDemoMode = sessionStorage.getItem('demo-mode') === 'true' ||
-                         new URLSearchParams(window.location.search).get('demo') === 'true' ||
-                         window.location.pathname.includes('/demo');
-
-      if (isDemoMode) {
+      if (isDemoMode()) {
         // Clear demo mode from sessionStorage and navigate to login
         sessionStorage.removeItem('demo-mode');
         setUser(null); // Clear the simulated user

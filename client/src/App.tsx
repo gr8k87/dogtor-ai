@@ -25,33 +25,13 @@ import { ThemeToggle } from "./components/theme-toggle";
 import { ProfileButton } from "./components/ProfileButton";
 import { AppIcons } from "./components/icons";
 import { AuthProvider, useAuth } from "./lib/auth-provider";
+import { isDemoMode } from "./lib/demo-utils";
 
 import React, { useState, useEffect } from "react";
 import OfflineBadge from "./components/OfflineBadge";
 
 type Tab = "Diagnose" | "History" | "Connect" | "Results";
 const tabs: Tab[] = ["Diagnose", "History", "Connect"];
-
-// Demo user detection with sessionStorage persistence
-const isDemoMode = () => {
-  // Check sessionStorage first
-  const storedDemo = sessionStorage.getItem("demo-mode");
-  if (storedDemo === "true") {
-    return true;
-  }
-
-  // Check URL parameters and paths
-  const isDemo =
-    new URLSearchParams(window.location.search).get("demo") === "true" ||
-    window.location.pathname.includes("/demo");
-
-  // If demo mode detected from URL, store it in sessionStorage
-  if (isDemo) {
-    sessionStorage.setItem("demo-mode", "true");
-  }
-
-  return isDemo;
-};
 
 function Splash({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
