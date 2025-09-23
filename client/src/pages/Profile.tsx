@@ -301,6 +301,9 @@ export default function Profile() {
         setUser(updatedDemoUser);
         setSaveMessage("Demo profile updated successfully!");
 
+        // Scroll to top to show success message
+        window.scrollTo(0, 0);
+
         // Set profile completed state for demo
         if (isProfileComplete(updatedDemoUser)) {
           setProfileCompleted(true);
@@ -309,6 +312,9 @@ export default function Profile() {
         }
 
         setTimeout(() => setSaveMessage(""), 3000);
+
+        // Navigate to dogtor after successful save
+        navigate("/");
         return;
       }
       const updateData = {
@@ -346,6 +352,9 @@ export default function Profile() {
         setUser(updatedUser);
         setSaveMessage("Profile updated successfully!");
 
+        // Scroll to top to show success message
+        window.scrollTo(0, 0);
+
         // Refresh auth context profile
         await refreshUserProfile();
 
@@ -358,6 +367,9 @@ export default function Profile() {
 
         // Clear save message after 3 seconds
         setTimeout(() => setSaveMessage(""), 3000);
+
+        // Navigate to dogtor after successful save
+        navigate("/");
       } else {
         const errorData = await response.json();
         setErrors({
@@ -723,7 +735,7 @@ export default function Profile() {
           </HealthCard>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+          <div className="flex justify-end">
             <Button
               type="submit"
               disabled={isSaving}
@@ -731,18 +743,19 @@ export default function Profile() {
               data-testid="button-save-profile"
             >
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Saving..." : "Save & Continue to Dogtor"}
             </Button>
 
-            <Button
+            {/*  <Button
               type="button"
               onClick={handleContinueToDogtor}
               disabled={!profileCompleted && !isFormValid()}
               className="min-w-[140px] btn-primary"
               data-testid="button-continue-dogtor"
             >
+             
               Continue to Dogtor
-            </Button>
+            </Button> */}
           </div>
         </form>
       </div>
