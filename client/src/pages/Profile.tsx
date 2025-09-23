@@ -412,6 +412,8 @@ export default function Profile() {
         general:
           "Please complete all required pet information before proceeding.",
       });
+      // Scroll to top to show success message
+      window.scrollTo(0, 0);
       return;
     }
     navigate("/");
