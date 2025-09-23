@@ -827,16 +827,15 @@ export default function Profile() {
           </div>
         </form>
 
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Confirmation Dialog | Added 09/23 */}
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Delete Profile</DialogTitle>
               <DialogDescription>
-                {isDemoMode() 
+                {isDemoMode()
                   ? "Profile deletion is not available in demo mode. This feature is only available for real accounts."
-                  : "Are you sure you want to delete your profile? This action cannot be undone. Your account and all associated data will be permanently removed."
-                }
+                  : "Are you sure you want to delete your profile? This action cannot be undone. Your account and all associated data will be permanently removed."}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
