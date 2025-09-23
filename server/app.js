@@ -115,35 +115,44 @@ const verifySupabaseAuth = async (req, res, next) => {
         .single();
 
       if (!emailError && emailUserData) {
-        // Found existing user by email - preserve their data without mutating the primary key
-        console.log(
-          "✅ Found existing user by email, preserving data:",
-          user.email,
-        );
+        // Check if this is a deleted user account - don't link to deleted accounts
+        if (emailUserData.email.startsWith("deleted-")) {
+          console.log("🚫 Found deleted user account, treating as new user:", user.email);
+          // Treat as new user - don't link to deleted account
+        } else {
+          // Found existing user by email - preserve their data without mutating the primary key
+          console.log(
+            "✅ Found existing user by email, preserving data:",
+            user.email,
+          );
 
-        // Store Supabase auth ID in google_id field to link accounts without changing primary key
-        const { data: updatedUser, error: updateError } = await supabase
-          .from("users")
-          .update({
-            google_id: user.id, // Repurpose google_id to store Supabase auth ID for migration
-            auth_method: "email",
-            email_verified: true,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("email", user.email.toLowerCase())
-          .select()
-          .single();
+          // Store Supabase auth ID in google_id field to link accounts without changing primary key
+          const { data: updatedUser, error: updateError } = await supabase
+            .from("users")
+            .update({
+              google_id: user.id, // Repurpose google_id to store Supabase auth ID for migration
+              auth_method: "email",
+              email_verified: true,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("email", user.email.toLowerCase())
+            .select()
+            .single();
 
-        if (updateError) {
-          console.error("❌ Failed to link existing user:", updateError);
-          return res.status(500).json({
-            error: "Failed to link user account",
-            details: updateError.message,
-          });
+          if (updateError) {
+            console.error("❌ Failed to link existing user:", updateError);
+            return res.status(500).json({
+              error: "Failed to link user account",
+              details: updateError.message,
+            });
+          }
+          userData = updatedUser;
         }
-        userData = updatedUser;
-      } else {
-        // No existing user found by email either - create new user
+      }
+      
+      // Create new user if no existing user found or if existing user was deleted
+      if (emailError || !emailUserData || emailUserData.email.startsWith("deleted-")) {
+        // Create new user
         console.log("🆕 Creating new user in database:", user.id);
         const { data: newUser, error: createError } = await supabase
           .from("users")
@@ -282,19 +291,32 @@ app.delete("/api/auth/profile", verifySupabaseAuth, async (req, res) => {
   try {
     console.log("🗑️ Deleting profile for user:", req.user.id);
 
-    // Update email with deleted prefix to soft delete the account
-    const { data: deletedUser, error } = await supabase
+    const deletedEmail = `deleted-${req.user.email}`;
+
+    // 1. Update Supabase auth user email
+    const { error: authUpdateError } = await supabase.auth.admin.updateUserById(
+      req.user.id, 
+      { email: deletedEmail }
+    );
+
+    if (authUpdateError) {
+      console.error("❌ Failed to update Supabase auth user:", authUpdateError);
+      return res.status(500).json({ error: "Failed to update auth user" });
+    }
+
+    // 2. Update your custom users table
+    const { data: deletedUser, error: dbUpdateError } = await supabase
       .from("users")
       .update({
-        email: `deleted-${req.user.email}`,
+        email: deletedEmail,
         updated_at: new Date().toISOString(),
       })
       .eq("id", req.user.id)
       .select()
       .single();
 
-    if (error) {
-      console.error("❌ Profile deletion error:", error);
+    if (dbUpdateError) {
+      console.error("❌ Profile deletion error:", dbUpdateError);
       return res.status(500).json({ error: "Failed to delete profile" });
     }
 
