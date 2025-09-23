@@ -277,6 +277,35 @@ app.put("/api/auth/profile", verifySupabaseAuth, async (req, res) => {
   }
 });
 
+// Delete user profile (soft delete by prefixing email)
+app.delete("/api/auth/profile", verifySupabaseAuth, async (req, res) => {
+  try {
+    console.log("🗑️ Deleting profile for user:", req.user.id);
+
+    // Update email with deleted prefix to soft delete the account
+    const { data: deletedUser, error } = await supabase
+      .from("users")
+      .update({
+        email: `deleted-${req.user.email}`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", req.user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("❌ Profile deletion error:", error);
+      return res.status(500).json({ error: "Failed to delete profile" });
+    }
+
+    console.log("✅ Profile deleted successfully for user:", req.user.id);
+    res.json({ success: true, message: "Profile deleted successfully" });
+  } catch (error) {
+    console.error("❌ Profile deletion error:", error);
+    res.status(500).json({ error: "Failed to delete profile" });
+  }
+});
+
 // History API endpoints (protected)
 app.get("/api/history/list", verifySupabaseAuth, async (req, res) => {
   try {

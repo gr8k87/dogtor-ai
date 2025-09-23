@@ -11,6 +11,14 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../components/ui/dialog";
+import {
   HealthCard,
   HealthCardHeader,
   HealthCardTitle,
@@ -117,6 +125,8 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [profileCompleted, setProfileCompleted] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Check if user was redirected here for profile completion
   const isIncompleteProfile =
@@ -405,6 +415,61 @@ export default function Profile() {
       return;
     }
     navigate("/");
+  };
+
+  const handleDeleteProfile = async () => {
+    setIsDeleting(true);
+
+    try {
+      // Check for demo mode
+      if (isDemoMode()) {
+        // For demo mode, just show message and close dialog
+        setShowDeleteDialog(false);
+        setErrors({
+          general: "Profile deletion not available in demo mode",
+        });
+        setIsDeleting(false);
+        return;
+      }
+
+      // Get Supabase session token
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch("/api/auth/profile", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        // Profile deleted successfully, user will be automatically logged out
+        // due to email prefix change breaking auth lookup
+        navigate("/login");
+      } else {
+        const errorData = await response.json();
+        setErrors({
+          general:
+            errorData.error || "Failed to delete profile. Please try again.",
+        });
+        setShowDeleteDialog(false);
+      }
+    } catch (error) {
+      setErrors({
+        general: "Network error. Please check your connection and try again.",
+      });
+      setShowDeleteDialog(false);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading) {
@@ -738,7 +803,18 @@ export default function Profile() {
           </HealthCard>
 
           {/* Action Buttons */}
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center">
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              disabled={!isFormValid() || isSaving || isDeleting}
+              className="min-w-[120px]"
+              data-testid="button-delete-profile"
+            >
+              {isDemoMode() ? "Delete Profile (Demo)" : "Delete Profile"}
+            </Button>
+
             <Button
               type="submit"
               disabled={isSaving}
@@ -748,19 +824,42 @@ export default function Profile() {
               <Save className="mr-2 h-4 w-4" />
               {isSaving ? "Saving..." : "Save & Continue to Dogtor"}
             </Button>
-
-            {/*  <Button
-              type="button"
-              onClick={handleContinueToDogtor}
-              disabled={!profileCompleted && !isFormValid()}
-              className="min-w-[140px] btn-primary"
-              data-testid="button-continue-dogtor"
-            >
-             
-              Continue to Dogtor
-            </Button> */}
           </div>
         </form>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Profile</DialogTitle>
+              <DialogDescription>
+                {isDemoMode() 
+                  ? "Profile deletion is not available in demo mode. This feature is only available for real accounts."
+                  : "Are you sure you want to delete your profile? This action cannot be undone. Your account and all associated data will be permanently removed."
+                }
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              {!isDemoMode() && (
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteProfile}
+                  disabled={isDeleting}
+                  data-testid="button-confirm-delete"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Profile"}
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
