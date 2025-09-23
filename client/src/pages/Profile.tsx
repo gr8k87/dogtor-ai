@@ -24,6 +24,9 @@ import { supabase } from "../lib/supabase";
 import { apiRequest } from "../lib/api";
 import { isDemoMode, createDemoUser } from "../lib/demo-utils";
 import { useAuth } from "../lib/auth-provider";
+
+// ************* V2 Stable ADDDED SAVE&CONTINUE ON 09/23/2023 **************
+
 // Helper function to format pet age from birth month/year
 function formatPetAge(birthMonth: number, birthYear: number): string {
   const today = new Date();
