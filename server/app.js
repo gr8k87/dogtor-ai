@@ -300,6 +300,13 @@ app.delete("/api/auth/profile", verifySupabaseAuth, async (req, res) => {
 
     const deletedEmail = `deleted-${req.user.email}`;
 
+    // Debug logging for troubleshooting Vercel deployment
+    console.log('🔍 Service key length:', process.env.SUPABASE_SERVICE_KEY?.length);
+    console.log('🔍 Service key prefix:', process.env.SUPABASE_SERVICE_KEY?.substring(0, 20));
+    console.log('🔍 Supabase URL:', process.env.SUPABASE_URL);
+    console.log('🔍 User ID to update:', req.user.id);
+    console.log('🔍 New email:', deletedEmail);
+
     // 1. Update Supabase auth user email
     const { error: authUpdateError } = await supabase.auth.admin.updateUserById(
       req.user.id,
