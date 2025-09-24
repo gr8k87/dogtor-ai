@@ -117,7 +117,10 @@ const verifySupabaseAuth = async (req, res, next) => {
       if (!emailError && emailUserData) {
         // Check if this is a deleted user account - don't link to deleted accounts
         if (emailUserData.email.startsWith("deleted-")) {
-          console.log("🚫 Found deleted user account, treating as new user:", user.email);
+          console.log(
+            "🚫 Found deleted user account, treating as new user:",
+            user.email,
+          );
           // Treat as new user - don't link to deleted account
         } else {
           // Found existing user by email - preserve their data without mutating the primary key
@@ -149,9 +152,13 @@ const verifySupabaseAuth = async (req, res, next) => {
           userData = updatedUser;
         }
       }
-      
+
       // Create new user if no existing user found or if existing user was deleted
-      if (emailError || !emailUserData || emailUserData.email.startsWith("deleted-")) {
+      if (
+        emailError ||
+        !emailUserData ||
+        emailUserData.email.startsWith("deleted-")
+      ) {
         // Create new user
         console.log("🆕 Creating new user in database:", user.id);
         const { data: newUser, error: createError } = await supabase
@@ -295,8 +302,8 @@ app.delete("/api/auth/profile", verifySupabaseAuth, async (req, res) => {
 
     // 1. Update Supabase auth user email
     const { error: authUpdateError } = await supabase.auth.admin.updateUserById(
-      req.user.id, 
-      { email: deletedEmail }
+      req.user.id,
+      { email: deletedEmail },
     );
 
     if (authUpdateError) {
