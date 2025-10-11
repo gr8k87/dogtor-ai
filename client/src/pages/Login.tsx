@@ -133,6 +133,18 @@ export default function Login() {
                 {isLoading ? "Sending link..." : "Send sign-in link"}
               </Button>
             </form>
+
+            {/* Signup Link */}
+            <div className="text-center text-sm text-muted-foreground pt-4 border-t">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-primary hover:text-primary/80 font-medium"
+                data-testid="link-signup"
+              >
+                Sign up
+              </Link>
+            </div>
           </HealthCardContent>
         </HealthCard>
 
