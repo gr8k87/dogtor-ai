@@ -3,10 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import {
-  HealthCard,
-  HealthCardContent,
-} from "../components/ui/health-card";
+import { HealthCard, HealthCardContent } from "../components/ui/health-card";
 import { AppIcons } from "../components/icons";
 import { supabase } from "../lib/supabase";
 
@@ -58,7 +55,8 @@ export default function Signup() {
 
       if (error) {
         setErrors({
-          general: error.message || "Failed to send magic link. Please try again.",
+          general:
+            error.message || "Failed to send magic link. Please try again.",
         });
       } else {
         // Navigate to verification page with email
@@ -142,19 +140,6 @@ export default function Signup() {
               >
                 Sign in
               </Link>
-            </div>
-
-            {/* Demo Link */}
-            <div className="text-center py-2">
-              <div className="text-xs text-muted-foreground">
-                <a
-                  href="/?demo=true"
-                  className="text-primary hover:text-primary/80 underline"
-                  data-testid="link-demo"
-                >
-                  Try demo version
-                </a>
-              </div>
             </div>
           </HealthCardContent>
         </HealthCard>
