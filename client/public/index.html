@@ -74,6 +74,32 @@
     <meta property="og:image" content="%PUBLIC_URL%/pwa-512.png" />
     <meta property="og:type" content="website" />
 
+    <!-- Firebase Google Analytics -->
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2jgI1PSJJbwNsTedQYXq9bZin21ir-C0",
+        authDomain: "dogtor-2025.firebaseapp.com",
+        projectId: "dogtor-2025",
+        storageBucket: "dogtor-2025.firebasestorage.app",
+        messagingSenderId: "136955019863",
+        appId: "1:136955019863:web:76d43e3907dc2622df9912",
+        measurementId: "G-Y0G1G4PTJR",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
+
     <title>Dogtor - Your first step before the vet</title>
   </head>
   <body>
