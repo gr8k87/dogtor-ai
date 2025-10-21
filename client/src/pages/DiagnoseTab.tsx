@@ -24,8 +24,7 @@ export default function DiagnoseTab() {
 
   function validate() {
     const e: Record<string, string> = {};
-    if (!imageUrl) e.image = "Please add a photo"; // Changed from imageFile
-    if (!notes.trim()) e.notes = "Please describe what you've noticed";
+    if (!notes.trim()) e.notes = `Please describe what you've noticed about ${dogName}`;
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -35,7 +34,7 @@ export default function DiagnoseTab() {
     setDebugMsg("✅ Starting analysis...");
 
     if (!validate()) {
-      setDebugMsg("❌ Please add a photo and describe what you've noticed");
+      setDebugMsg(`❌ Please describe what you've noticed about ${dogName}`);
       return;
     }
 
@@ -159,47 +158,7 @@ export default function DiagnoseTab() {
             </div>
           </div>
 
-          {/* Enhanced Photo upload section */}
-          <HealthCard
-            colorIndex={2}
-            className="border-accent gradient-card transition-smooth hover:shadow-elevated"
-          >
-            <HealthCardContent className="p-0">
-              <div className="space-y-1">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
-                    <AppIcons.camera
-                      size={20}
-                      className="text-primary flex-shrink-0"
-                    />
-                    <span className="flex-shrink-0">
-                      What's worrying you about{" "}
-                      <span className="text-[#FF5A5F]">{dogName}</span>?
-                    </span>
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    Upload a photo of the affected area.
-                  </p>
-                </div>
-
-                <ImagePicker
-                  onChange={setImageUrl} // Changed to setImageUrl
-                  className="mb-0"
-                />
-                {errors.image && (
-                  <div className="flex items-start gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 transition-smooth">
-                    <AlertCircle
-                      size={14}
-                      className="text-destructive mt-0.5 flex-shrink-0"
-                    />
-                    <p className="text-xs text-destructive">{errors.image}</p>
-                  </div>
-                )}
-              </div>
-            </HealthCardContent>
-          </HealthCard>
-
-          {/* Enhanced Notes section */}
+          {/* Enhanced Notes section - NOW FIRST (Required) */}
           <form onSubmit={onInitialSubmit} className="space-y-8">
             <HealthCard
               colorIndex={2}
@@ -218,7 +177,7 @@ export default function DiagnoseTab() {
                     <p className="text-sm text-muted-foreground">
                       Describe any changes in{" "}
                       <span className="text-[#FF5A5F]">{dogName}</span>'s health
-                      or behavior. Even small details can help.
+                      or behavior - be as detailed as possible.
                     </p>
                   </div>
 
@@ -238,6 +197,37 @@ export default function DiagnoseTab() {
                       <p className="text-xs text-destructive">{errors.notes}</p>
                     </div>
                   )}
+                </div>
+              </HealthCardContent>
+            </HealthCard>
+
+            {/* Enhanced Photo upload section - NOW SECOND (Optional) */}
+            <HealthCard
+              colorIndex={2}
+              className="border-accent gradient-card transition-smooth hover:shadow-elevated"
+            >
+              <HealthCardContent className="p-0">
+                <div className="space-y-1">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
+                      <AppIcons.camera
+                        size={20}
+                        className="text-primary flex-shrink-0"
+                      />
+                      <span className="flex-shrink-0">
+                        Do you have a photo?{" "}
+                        <span className="text-muted-foreground font-normal">(Optional)</span>
+                      </span>
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      If there's a visible issue, a photo can help - but it's not required.
+                    </p>
+                  </div>
+
+                  <ImagePicker
+                    onChange={setImageUrl}
+                    className="mb-0"
+                  />
                 </div>
               </HealthCardContent>
             </HealthCard>
