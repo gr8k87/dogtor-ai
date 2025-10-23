@@ -313,6 +313,158 @@ Generate 3 diagnostic questions based on these symptoms: ${symptoms || "general 
       }
 
       console.log("✅ Questions generated and stored for case:", caseId);
+
+      // If no questions generated, immediately generate diagnosis results
+      if (!parsed.questions || parsed.questions.length === 0) {
+        console.log("📋 No questions generated, generating results immediately...");
+        
+        try {
+          // Generate diagnosis results using the same logic as /api/diagnose/results
+          const diagnosisPrompt = {
+            role: "system",
+            content: `
+    You are a veterinary diagnostic assistant.
+
+    Analyze the provided photo and notes.
+
+    - If you can analyze: return the structured JSON object with diagnosis, care, and costs.
+    - If you cannot analyze (due to content policy, low quality, unsupported format, safety restrictions, or missing data), 
+      return a JSON object like this:
+      {
+        "error": {
+          "reason": "Explain why analysis could not be done",
+          "suggestions": ["Actionable fix 1", "Actionable fix 2"]
+        }
+      }
+
+    Return ONLY JSON. Do not include extra text or markdown.
+
+    If analysis is possible, return this structure:
+    {
+      "diagnosis": {
+        "title": "Diagnosis",
+        "likely_condition": "...", 
+        "other_possibilities": [
+          { "name": "...", "likelihood": "high/medium/low" }
+        ],
+        "urgency": {
+          "badge": "🟢 | 🟡 | 🔴",
+          "level": "Low | Moderate | High",
+          "note": "short explanation"
+        }
+      },
+      "care": {
+        "title": "General Care Tips",
+        "tips": [
+          { "icon": "🧼", "text": "Tip 1" },
+          { "icon": "🥩", "text": "Tip 2" }
+        ],
+        "disclaimer": "This information is for educational purposes only and not a substitute for professional veterinary advice."
+      },
+      "costs": {
+        "title": "Vet Procedures & Costs",
+        "disclaimer": "Prices are typical for GTA, Ontario clinics. Costs may vary.",
+        "steps": [
+          { "icon": "💉", "name": "Procedure", "likelihood": "high/medium/low", "desc": "short description", "cost": "$100–$300 CAD" }
+        ]
+      }
+    }
+    `,
+          };
+
+          const diagnosisMessages = [diagnosisPrompt];
+          const diagnosisUserPrompt = imageUrl
+            ? `Analyze this pet image for health concerns. Symptoms: ${symptoms || "none provided"}${petContext}`
+            : `Pet health analysis based on symptoms: ${symptoms || "none provided"}${petContext}`;
+
+          if (imageUrl) {
+            let imageBuffer;
+
+            if (imageUrl.startsWith('http')) {
+              const response = await fetch(imageUrl);
+              if (response.ok) {
+                const arrayBuffer = await response.arrayBuffer();
+                imageBuffer = Buffer.from(arrayBuffer);
+              }
+            } else {
+              const imagePath = path.join(__dirname, "..", imageUrl);
+              if (fs.existsSync(imagePath)) {
+                imageBuffer = fs.readFileSync(imagePath);
+              }
+            }
+
+            if (imageBuffer) {
+              imageBuffer = await sharp(imageBuffer)
+                .resize(1024, 1024, { 
+                  fit: 'inside', 
+                  withoutEnlargement: true 
+                })
+                .jpeg({ quality: 85 })
+                .toBuffer();
+
+              const base64Image = imageBuffer.toString("base64");
+              const mimeType = "image/jpeg";
+
+              diagnosisMessages.push({
+                role: "user",
+                content: [
+                  { type: "text", text: diagnosisUserPrompt },
+                  {
+                    type: "image_url",
+                    image_url: { url: `data:${mimeType};base64,${base64Image}` },
+                  },
+                ],
+              });
+            } else {
+              diagnosisMessages.push({ role: "user", content: diagnosisUserPrompt });
+            }
+          } else {
+            diagnosisMessages.push({ role: "user", content: diagnosisUserPrompt });
+          }
+
+          const diagnosisCompletion = await openaiClient.chat.completions.create({
+            model: "gpt-4o",
+            messages: diagnosisMessages,
+            temperature: 0.3,
+            max_tokens: 500,
+          });
+
+          let rawDiagnosisContent = diagnosisCompletion.choices[0].message.content.trim();
+          if (rawDiagnosisContent.startsWith("```")) {
+            rawDiagnosisContent = rawDiagnosisContent
+              .replace(/```(json)?\n?/, "")
+              .replace(/\n?```$/, "");
+          }
+
+          const diagnosisParsed = JSON.parse(rawDiagnosisContent);
+
+          // Check if AI returned an error response
+          if (diagnosisParsed.error) {
+            console.log("🚫 AI refused analysis:", diagnosisParsed.error.reason);
+            // Return questions as empty but don't include cards
+            return res.json({ caseId, questions: [] });
+          }
+
+          // Update case with diagnosis
+          await supabase
+            .from("cases")
+            .update({ 
+              status: "completed",
+              diagnosis: diagnosisParsed,
+              completed_at: new Date().toISOString()
+            })
+            .eq("id", caseId);
+
+          console.log("✅ Results generated immediately, returning with cards");
+          return res.json({ caseId, questions: [], cards: diagnosisParsed });
+
+        } catch (diagnosisError) {
+          console.error("❌ Immediate diagnosis generation error:", diagnosisError.message);
+          // Fall back to returning empty questions
+          return res.json({ caseId, questions: [] });
+        }
+      }
+
       res.json({ caseId, questions: parsed.questions });
 
     } catch (aiError) {

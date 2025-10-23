@@ -89,8 +89,14 @@ export default function DiagnoseTab() {
         caseId = `demo-${caseId}`;
       }
 
-      setDebugMsg("✅ Case created! Redirecting to questions...");
-      navigate(`/questions/${caseId}`);
+      // Check if diagnosis results were generated immediately (no questions needed)
+      if (caseJson.cards) {
+        setDebugMsg("✅ Analysis complete! Redirecting to results...");
+        navigate(`/results/${caseId}`, { state: { cards: caseJson.cards } });
+      } else {
+        setDebugMsg("✅ Case created! Redirecting to questions...");
+        navigate(`/questions/${caseId}`);
+      }
     } catch (err: any) {
       console.error("❌ Case creation error", err);
       setDebugMsg(`❌ Error: ${err.message}`);
