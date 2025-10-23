@@ -31,6 +31,7 @@
     "clsx": "^2.1.1",
     "connect-pg-simple": "^10.0.0",
     "express-session": "^1.18.2",
+    "firebase": "^12.4.0",
     "lucide-react": "^0.541.0",
     "memoizee": "^0.4.17",
     "openid-client": "^6.6.4",
