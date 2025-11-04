@@ -4,9 +4,10 @@
   "scripts": {
     "dev": "npm run build:client && concurrently \"npm run dev --prefix server\" \"cd client && npm start\"",
     "build:client": "cd client && npm run build",
-    "build": "npm run build:client",
+    "build:copy": "npm run build:client && rm -rf server/public && cp -r client/build server/public",
+    "build": "npm run build:copy",
     "start": "cd server && npm start",
-    "vercel-build": "npm run build:client && npm install --prefix server"
+    "vercel-build": "npm run build:copy && npm install --prefix server"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

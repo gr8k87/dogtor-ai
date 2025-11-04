@@ -417,7 +417,7 @@ app.delete("/api/history/delete/:id", verifySupabaseAuth, async (req, res) => {
 });
 
 // serve client build
-const clientBuildPath = path.join(__dirname, "..", "client", "build");
+const clientBuildPath = path.join(__dirname, "public");
 console.log("🎯 Serving React build from:", clientBuildPath);
 
 // Ensure proper static file serving with cache-busting headers
