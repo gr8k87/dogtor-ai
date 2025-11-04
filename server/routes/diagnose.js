@@ -216,7 +216,7 @@ Make questions specific to the likely condition you see. Focus on symptoms, dura
     try {
       // Use Gemini for questions generation
       const model = geminiClient.getGenerativeModel({
-        model: "gemini-1.5-pro",
+        model: "gemini-1.5-flash",
       });
 
       const systemPrompt = `You are a veterinary AI assistant. Analyze the provided photo/symptoms and generate 3 targeted questions to gather more diagnostic information.
