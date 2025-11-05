@@ -7,7 +7,7 @@
     "build:copy": "npm run build:client && rm -rf server/public && cp -r client/build server/public",
     "build": "npm run build:copy",
     "start": "cd server && npm start",
-    "vercel-build": "npm run build:copy && npm install --prefix server"
+   
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
