@@ -6,8 +6,7 @@
     "build:client": "cd client && npm run build",
     "build:copy": "npm run build:client && rm -rf server/public && cp -r client/build server/public",
     "build": "npm run build:copy",
-    "start": "cd server && npm start",
-   
+    "start": "cd server && npm start"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

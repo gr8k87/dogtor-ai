@@ -1,0 +1,172 @@
+H
+steady-phebe/dogtor-ai
+dogtor-ai
+
+Web service
+app.hellodogtor.com/
+Redeploy
+Koyeb CLI 
+Service degraded
+The latest deployment 750d7ff5 did not complete successfully. The service continues to operate with the active deployment 0debdf24.
+Overview
+Metrics
+Console
+Settings
+
+View active deployment
+View latest deployment
+750d7ff5
+
+Error
+1h ago
+
+Add polling on DynamicQuestions Page
+An error occurred while building your application
+Why it happened?
+Different reasons can result in a build failure. The most common ones are:
+The language or package manager used by your application is not supported
+Your application is missing required dependencies
+An invalid configuration results in an error during the build process
+How to solve the problem?
+First, make sure that your application builds properly on your machine. Build logs also provide useful information to help you identify and resolve the root cause. Read our troubleshooting documentation to view and resolve common errors.
+Check the build logs for more details.
+Overview
+Web service
+Public URL
+app.hellodogtor.com/
+(forwarded to port 8000)
+
+Repository
+gr8k87/dogtor-ai
+Branch
+main
+Commit
+679f8464
+Builder type
+Buildpack
+Privileged
+False
+Instance
+Free
+Configure
+Scaling
+0 of 1 running
+Configure
+Regions
+
+Washington, D.C
+Configure
+Environment
+15 variables
+Configure
+Volumes
+0 volumes attached
+Configure
+View more
+Build
+Failed
+Clone repository
+Repository cloned
+1s
+Start Docker
+Docker daemon started successfully
+2s
+Analyze
+Files analysis completed successfully
+7s
+Detect runtime
+Application type detected successfully
+1s
+Restore build cache
+Cache layers restored successfully
+5s
+Build
+We couldn't build the runnable container. Check the logs for more information. The "build" step of buildpacks failed with exit code 51
+1s
+Export docker image
+Logs
+
+Build ready to start ▶️
+>> Cloning github.com/gr8k87/dogtor-ai.git commit sha 679f8464f50b26be1ec6ffdaf7a4daf472c98854 into /builder/workspace
+Initialized empty Git repository in /builder/workspace/.git/
+From https://github.com/gr8k87/dogtor-ai
+ * branch            679f8464f50b26be1ec6ffdaf7a4daf472c98854 -> FETCH_HEAD
+HEAD is now at 679f846 Add polling on DynamicQuestions Page
+Starting Docker daemon...
+Waiting for the Docker daemon to start...
+done
+Timer: Analyzer started at 2025-11-05T00:03:05Z
+Restoring data for SBOM from previous image
+Timer: Analyzer ran for 2.970845809s and ended at 2025-11-05T00:03:08Z
+Timer: Detector started at 2025-11-05T00:03:09Z
+======== Output: heroku/nodejs-corepack@3.6.5 ========
+- Debug Info:
+  - trailing comma at line 11 column 3
+! Error parsing `./package.json`
+!
+! The Heroku Node.js Corepack reads from `./package.json` to complete the build but the file isn't valid JSON.
+!
+! Suggestions:
+! - Ensure the file follows the JSON format described at https://www.json.org/
+!
+! Use the debug information above to troubleshoot and retry your build.
+err:  heroku/nodejs-corepack@3.6.5 (1)
+======== Output: heroku/nodejs-corepack@3.6.5 ========
+- Debug Info:
+  - trailing comma at line 11 column 3
+! Error parsing `./package.json`
+!
+! The Heroku Node.js Corepack reads from `./package.json` to complete the build but the file isn't valid JSON.
+!
+! Suggestions:
+! - Ensure the file follows the JSON format described at https://www.json.org/
+!
+! Use the debug information above to troubleshoot and retry your build.
+err:  heroku/nodejs-corepack@3.6.5 (1)
+======== Output: heroku/nodejs-corepack@3.6.5 ========
+- Debug Info:
+  - trailing comma at line 11 column 3
+! Error parsing `./package.json`
+!
+! The Heroku Node.js Corepack reads from `./package.json` to complete the build but the file isn't valid JSON.
+!
+! Suggestions:
+! - Ensure the file follows the JSON format described at https://www.json.org/
+!
+! Use the debug information above to troubleshoot and retry your build.
+======== Output: heroku/nodejs-npm-engine@3.6.5 ========
+- Debug Info:
+  - trailing comma at line 11 column 3
+! Error parsing `./package.json`
+!
+! The Heroku Node.js npm Engine reads from `./package.json` to complete the build but the file isn't valid JSON.
+!
+! Suggestions:
+! - Ensure the file follows the JSON format described at https://www.json.org/
+!
+! Use the debug information above to troubleshoot and retry your build.
+err:  heroku/nodejs-corepack@3.6.5 (1)
+err:  heroku/nodejs-npm-engine@3.6.5 (1)
+2 of 3 buildpacks participating
+koyeb/build-command-nodejs 0.1.0
+heroku/nodejs-engine       3.6.5
+Timer: Detector ran for 100.691248ms and ended at 2025-11-05T00:03:09Z
+Timer: Restorer started at 2025-11-05T00:03:10Z
+Restoring metadata for "heroku/nodejs-engine:dist" from app image
+Restoring metadata for "heroku/nodejs-engine:web_env" from app image
+Restoring data for "heroku/nodejs-engine:dist" from cache
+Timer: Restorer ran for 2.502496587s and ended at 2025-11-05T00:03:12Z
+Timer: Builder started at 2025-11-05T00:03:14Z
+[INFO] Found custom build command: 'npm run build:copy && cd server && npm install'
+parse error: Expected another key-value pair at line 11, column 3
+Timer: Builder ran for 18.627339ms and ended at 2025-11-05T00:03:14Z
+ERROR: failed to build: exit status 4
+Build failed ❌
+Download
+Copy
+
+Deployment
+Not started
+
+
+
