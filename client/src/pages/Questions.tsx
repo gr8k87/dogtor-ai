@@ -79,63 +79,91 @@ export default function Questions() {
       setLoading(true);
       setError("");
 
-      try {
-        let headers: HeadersInit = {};
+      const MAX_RETRIES = 15; // 15 attempts * 2 seconds = 30 seconds max
+      let retryCount = 0;
 
-        if (isDemoMode()) {
-          headers["x-demo-mode"] = "true";
-        } else {
-          const {
-            data: { session },
-            error: sessionError,
-          } = await supabase.auth.getSession();
+      const attemptFetch = async (): Promise<boolean> => {
+        try {
+          let headers: HeadersInit = {};
 
-          if (sessionError || !session) {
-            setError("Your session expired — sign in again to continue.");
-            return;
-          }
-
-          headers.Authorization = `Bearer ${session.access_token}`;
-        }
-
-        // Strip demo- prefix for backend API calls
-        const backendCaseId = caseId?.startsWith("demo-")
-          ? caseId.substring(5)
-          : caseId;
-
-        const response = await apiRequest(
-          `/api/diagnose/cases/${backendCaseId}${isDemoMode() ? "?demo=true" : ""}`,
-          {
-            headers,
-          },
-        );
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            navigate("/");
+          if (isDemoMode()) {
+            headers["x-demo-mode"] = "true";
           } else {
-            const errorText = await response.text();
-            throw new Error(
-              `Failed to fetch case data: ${response.status} ${errorText}`,
-            );
-          }
-          return;
-        }
+            const {
+              data: { session },
+              error: sessionError,
+            } = await supabase.auth.getSession();
 
-        const data = await response.json();
-        setCaseData(data);
-        setQuestions(data.questions || []);
-      } catch (err: any) {
-        console.error("Error fetching case data:", err);
-        setError(err.message || "Failed to load case details.");
-        navigate("/"); // Redirect on error
-      } finally {
-        setLoading(false);
-      }
+            if (sessionError || !session) {
+              setError("Your session expired — sign in again to continue.");
+              setLoading(false);
+              return false;
+            }
+
+            headers.Authorization = `Bearer ${session.access_token}`;
+          }
+
+          // Strip demo- prefix for backend API calls
+          const backendCaseId = caseId?.startsWith("demo-")
+            ? caseId.substring(5)
+            : caseId;
+
+          const response = await apiRequest(
+            `/api/diagnose/cases/${backendCaseId}${isDemoMode() ? "?demo=true" : ""}`,
+            {
+              headers,
+            },
+          );
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              navigate("/");
+              return false;
+            } else {
+              const errorText = await response.text();
+              throw new Error(
+                `Failed to fetch case data: ${response.status} ${errorText}`,
+              );
+            }
+          }
+
+          const data = await response.json();
+          setCaseData(data);
+
+          // Check if questions exist and are non-empty
+          if (data.questions && data.questions.length > 0) {
+            setQuestions(data.questions);
+            setLoading(false);
+            return true; // Success - questions are ready
+          }
+
+          // Questions not ready yet, check if we should retry
+          retryCount++;
+          if (retryCount < MAX_RETRIES) {
+            console.log(`Questions not ready yet, retrying in 2 seconds (attempt ${retryCount}/${MAX_RETRIES})...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return await attemptFetch(); // Recursive retry
+          } else {
+            // Max retries reached, proceed with empty questions
+            console.log("Max retries reached, proceeding with no questions");
+            setQuestions([]);
+            setLoading(false);
+            return true;
+          }
+        } catch (err: any) {
+          console.error("Error fetching case data:", err);
+          setError(err.message || "Failed to load case details.");
+          setLoading(false);
+          navigate("/"); // Redirect on error
+          return false;
+        }
+      };
+
+      attemptFetch();
     };
 
     fetchCaseData();
-  }, [caseId]);
+  }, [caseId, navigate]);
 
   const handleSubmit = async () => {
     setSubmitting(true);
