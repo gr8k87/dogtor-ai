@@ -29,4 +29,5 @@ jobs:
         working-directory: server
         env:
           SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          NODE_OPTIONS: --dns-result-order=ipv4first
         run: node scripts/keepalive.js
